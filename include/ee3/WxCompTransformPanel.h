@@ -25,7 +25,7 @@ private:
 	void UpdateTextValue(wxCommandEvent& event);
 
 private:
-	n3::CompTransform& m_trans;
+	n3::CompTransform& m_ctrans;
 	ee0::SubjectMgr& m_sub_mgr;
 
 	wxTextCtrl *m_pos_x, *m_pos_y, *m_pos_z;
