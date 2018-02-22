@@ -4,8 +4,8 @@
 #include <ee0/color_config.h>
 #include <ee0/EditOP.h>
 
+#include <painting2/RenderCtxStack.h>
 #include <painting3/PrimitiveDraw.h>
-#include <sprite2/RenderCtxStack.h>
 #include <node3/RenderCtxStack.h>
 #include <node3/DrawNode.h>
 
@@ -55,7 +55,7 @@ void WxStageCanvas::OnSize(int w, int h)
 
 	if (m_has2d)
 	{
-		auto ctx = const_cast<s2::RenderContext*>(s2::RenderCtxStack::Instance()->Top());
+		auto ctx = const_cast<pt2::RenderContext*>(pt2::RenderCtxStack::Instance()->Top());
 		if (ctx)
 		{
 			ctx->SetScreen(w, h);
@@ -74,7 +74,7 @@ void WxStageCanvas::OnDrawSprites() const
 
 	if (m_has2d)
 	{
-		auto ctx = const_cast<s2::RenderContext*>(s2::RenderCtxStack::Instance()->Top());
+		auto ctx = const_cast<pt2::RenderContext*>(pt2::RenderCtxStack::Instance()->Top());
 		if (ctx) {
 			ctx->SetModelView(sm::vec2(0, 0), 1);
 		}
