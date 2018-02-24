@@ -2,6 +2,8 @@
 #include "ee3/WxStagePage.h"
 #include "ee3/WxStageCanvas.h"
 
+#include <ee0/MsgHelper.h>
+
 #include <painting3/Camera.h>
 #include <node0/SceneNode.h>
 #include <node3/SerializeSystem.h>
@@ -49,13 +51,7 @@ void Serializer::LoadFroimJson(const std::string& filepath, WxStagePage* stage)
 		n0::SceneNodePtr n3_node = node;
 		n3::SerializeSystem::LoadNodeFromJson(n3_node, node_val);
 
-		ee0::VariantSet vars;
-		ee0::Variant var;
-		var.m_type = ee0::VT_PVOID;
-		var.m_val.pv = &node;
-		vars.SetVariant("node", var);
-
-		bool succ = stage->GetSubjectMgr().NotifyObservers(ee0::MSG_INSERT_SCENE_NODE, vars);
+		bool succ = ee0::MsgHelper::InsertNode(stage->GetSubjectMgr(), node);
 		GD_ASSERT(succ, "no MSG_INSERT_SCENE_NODE");
 	}
 

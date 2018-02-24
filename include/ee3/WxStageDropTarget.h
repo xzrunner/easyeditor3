@@ -20,7 +20,7 @@ public:
 	virtual void OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames) override;
 
 private:
-	void InsertNode(const n0::SceneNodePtr& node);
+	void InsertNode(n0::SceneNodePtr& node);
 
 private:
 	ee0::WxLibraryPanel* m_library;
