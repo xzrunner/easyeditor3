@@ -6,9 +6,11 @@
 
 #include <painting3/Camera.h>
 #include <node0/SceneNode.h>
-#include <node3/SerializeSystem.h>
+#include <node0/SerializeSystem.h>
 #include <js/RapidJsonHelper.h>
 #include <guard/check.h>
+
+#include <boost/filesystem.hpp>
 
 namespace ee3
 {
@@ -21,14 +23,16 @@ void Serializer::StoreToJson(const std::string& filepath, const WxStagePage* sta
 	rapidjson::Value val_nodes;
 	val_nodes.SetArray();
 
+	auto dir = boost::filesystem::path(filepath).parent_path().string();
+
 	auto& alloc = doc.GetAllocator();
-	auto& nodes = stage->GetAllNodes();
-	for (auto& node : nodes)
+	stage->Traverse([&](const n0::SceneNodePtr& node)->bool
 	{
 		rapidjson::Value val_node;
-		n3::SerializeSystem::StoreNodeToJson(node, val_node, alloc);
+		n0::SerializeSystem::StoreNodeToJson(node, dir, val_node, alloc);
 		val_nodes.PushBack(val_node, alloc);
-	}
+		return true;
+	});
 	doc.AddMember("nodes", val_nodes, alloc);
 
 	auto canvas = std::dynamic_pointer_cast<const WxStageCanvas>(stage->GetImpl().GetCanvas());
@@ -44,12 +48,14 @@ void Serializer::LoadFroimJson(const std::string& filepath, WxStagePage* stage)
 	rapidjson::Document doc;
 	js::RapidJsonHelper::ReadFromFile(filepath.c_str(), doc);
 
+	auto dir = boost::filesystem::path(filepath).parent_path().string();
+
 	auto& nodes_val = doc["nodes"];
 	for (auto& node_val : nodes_val.GetArray()) 
 	{
 		auto node = std::make_shared<n0::SceneNode>();
 		n0::SceneNodePtr n3_node = node;
-		n3::SerializeSystem::LoadNodeFromJson(n3_node, node_val);
+		n0::SerializeSystem::LoadNodeFromJson(n3_node, dir, node_val);
 
 		bool succ = ee0::MsgHelper::InsertNode(stage->GetSubjectMgr(), node);
 		GD_ASSERT(succ, "no MSG_INSERT_SCENE_NODE");
