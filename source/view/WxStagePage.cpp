@@ -33,6 +33,15 @@ void WxStagePage::OnNotify(ee0::MessageID msg, const ee0::VariantSet& variants)
 	}
 }
 
+void WxStagePage::Traverse(std::function<bool(const n0::SceneNodePtr&)> func) const
+{
+	for (auto& node : m_nodes) {
+		if (!func(node)) {
+			break;
+		}
+	}
+}
+
 sm::vec3 WxStagePage::TransPosScrToProj3d(int x, int y) const
 {
 	auto& canvas = std::dynamic_pointer_cast<const WxStageCanvas>(GetImpl().GetCanvas());

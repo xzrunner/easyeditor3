@@ -109,12 +109,11 @@ void WxStageCanvas::DrawBackground() const
 
 void WxStageCanvas::DrawNodes() const
 {
-	auto& nodes = m_stage->GetAllNodes();
-
 	auto mt = m_camera.GetModelViewMat();
-	for (auto& node : nodes) {
+	m_stage->Traverse([&](const n0::SceneNodePtr& node)->bool {
 		n3::DrawNode::Draw(node, mt);
-	}
+		return true;
+	});
 }
 
 }

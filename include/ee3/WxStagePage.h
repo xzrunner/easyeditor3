@@ -16,9 +16,9 @@ public:
 
 	virtual void OnNotify(ee0::MessageID msg, const ee0::VariantSet& variants) override;
 
-	sm::vec3 TransPosScrToProj3d(int x, int y) const;
+	virtual void Traverse(std::function<bool(const n0::SceneNodePtr&)> func) const override;
 
-	const std::vector<n0::SceneNodePtr>& GetAllNodes() const { return m_nodes; }
+	sm::vec3 TransPosScrToProj3d(int x, int y) const;
 
 private:
 	void InsertSceneNode(const ee0::VariantSet& variants);

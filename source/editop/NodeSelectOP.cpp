@@ -27,28 +27,26 @@ bool NodeSelectOP::OnDraw() const
 		return true;
 	}
 
-	m_stage.GetNodeSelection().Traverse(
-		[](const n0::SceneNodePtr& node)->bool
+	m_stage.GetNodeSelection().Traverse([](const n0::SceneNodePtr& node)->bool
+	{
+		pt3::PrimitiveDraw::SetColor(ee0::MID_RED.ToABGR());
+
+		auto& caabb = node->GetComponent<n3::CompAABB>();
+		auto& ctrans = node->GetComponent<n3::CompTransform>();
+
+		sm::mat4 prev_mt;
+		auto parent = node->GetParent();
+		while (parent)
 		{
-			pt3::PrimitiveDraw::SetColor(ee0::MID_RED.ToABGR());
-
-			auto& caabb = node->GetComponent<n3::CompAABB>();
-			auto& ctrans = node->GetComponent<n3::CompTransform>();
-
-			sm::mat4 prev_mt;
-			auto parent = node->GetParent();
-			while (parent)
-			{
-				auto& pctrans = parent->GetComponent<n3::CompTransform>();
-				prev_mt = pctrans.GetTransformMat() * prev_mt;
-				parent = parent->GetParent();
-			}
-
-			pt3::PrimitiveDraw::Cube(prev_mt * ctrans.GetTransformMat(), caabb.GetAABB());
-
-			return true;
+			auto& pctrans = parent->GetComponent<n3::CompTransform>();
+			prev_mt = pctrans.GetTransformMat() * prev_mt;
+			parent = parent->GetParent();
 		}
-	);
+
+		pt3::PrimitiveDraw::Cube(prev_mt * ctrans.GetTransformMat(), caabb.GetAABB());
+
+		return true;
+	});
 
 	return false;
 }
@@ -56,14 +54,14 @@ bool NodeSelectOP::OnDraw() const
 // AABB not changed, transform ray from Camera and spr's mat
 n0::SceneNodePtr NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
 {
-	auto& nodes = dynamic_cast<WxStagePage&>(m_stage).GetAllNodes();
-
 	auto canvas = std::dynamic_pointer_cast<WxStageCanvas>(m_stage.GetImpl().GetCanvas());
 	auto& vp = canvas->GetViewport();
 	auto& cam = canvas->GetCamera();
 	sm::vec3 ray_dir = vp.TransPos3ScreenToDir(sm::vec2(screen_x, screen_y), cam);
 	pt3::Ray ray(cam.GetPos(), ray_dir);
-	for (auto& node : nodes)
+
+	n0::SceneNodePtr ret = nullptr;
+	m_stage.Traverse([&](const n0::SceneNodePtr& node)->bool
 	{
 		auto& caabb = node->GetComponent<n3::CompAABB>();
 		auto& ctrans = node->GetComponent<n3::CompTransform>();
@@ -71,16 +69,19 @@ n0::SceneNodePtr NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
 		sm::vec3 cross;
 		bool intersect = n3::Math::RayOBBIntersection(
 			caabb.GetAABB(),
-			ctrans.GetPosition(), 
-			ctrans.GetAngle(), 
-			ray, 
+			ctrans.GetPosition(),
+			ctrans.GetAngle(),
+			ray,
 			&cross);
 		if (intersect) {
-			return node;
+			ret = node;
+			return false;
+		} else {
+			return true;
 		}
-	}
+	});
 
-	return nullptr;
+	return ret;
 }
 
 }
