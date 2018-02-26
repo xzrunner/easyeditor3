@@ -12,7 +12,7 @@
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
 #include <gum/StringHelper.h>
-#include <gum/SymbolPool.h>
+#include <ns/NodeFactory.h>
 
 namespace ee3
 {
@@ -40,15 +40,7 @@ void WxStageDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& text)
 			continue;
 		}
 
-		auto sym = gum::SymbolPool::Instance()->Fetch(item->GetFilepath().c_str());
-
-		sm::vec3 pos = m_stage->TransPosScrToProj3d(x, y);
-		bool handled = OnDropSymbol(sym, sm::vec2(pos.x, pos.y));
-		if (handled) {
-			continue;
-		}
-
-		auto node = NodeFactory::Instance()->Create(sym);
+		auto node = ns::NodeFactory::CreateNode(item->GetFilepath());
 		if (!node) {
 			continue;
 		}
@@ -56,6 +48,7 @@ void WxStageDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& text)
 		InsertNode(node);
 
 		// transform
+		sm::vec3 pos = m_stage->TransPosScrToProj3d(x, y);
 		auto& ctrans = node->AddComponent<n3::CompTransform>();
 		auto parent = node->GetParent();
 		if (parent) {
