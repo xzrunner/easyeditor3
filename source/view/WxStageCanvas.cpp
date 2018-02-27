@@ -5,6 +5,8 @@
 #include <ee0/EditOP.h>
 
 #include <painting2/RenderCtxStack.h>
+#include <painting2/Blackboard.h>
+#include <painting2/Context.h>
 #include <painting3/PrimitiveDraw.h>
 #include <node3/RenderCtxStack.h>
 #include <node3/DrawNode.h>
@@ -58,7 +60,8 @@ void WxStageCanvas::OnSize(int w, int h)
 
 	if (m_has2d)
 	{
-		auto ctx = const_cast<pt2::RenderContext*>(pt2::RenderCtxStack::Instance()->Top());
+		auto& pt2_ctx = pt2::Blackboard::Instance()->GetContext();
+		auto ctx = const_cast<pt2::RenderContext*>(pt2_ctx.GetCtxStack().Top());
 		if (ctx)
 		{
 			ctx->SetScreen(w, h);
@@ -77,7 +80,8 @@ void WxStageCanvas::OnDrawSprites() const
 
 	if (m_has2d)
 	{
-		auto ctx = const_cast<pt2::RenderContext*>(pt2::RenderCtxStack::Instance()->Top());
+		auto& pt2_ctx = pt2::Blackboard::Instance()->GetContext();
+		auto ctx = const_cast<pt2::RenderContext*>(pt2_ctx.GetCtxStack().Top());
 		if (ctx) {
 			ctx->SetModelView(sm::vec2(0, 0), 1);
 		}
