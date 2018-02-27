@@ -12,8 +12,11 @@
 namespace ee3
 {
 
-WxStageCanvas::WxStageCanvas(WxStagePage* stage, const std::shared_ptr<wxGLContext>& glctx, bool has2d)
-	: ee0::WxStageCanvas(stage, stage->GetImpl(), glctx, USE_CONTEXT_STACK | HAS_2D * has2d | HAS_3D)
+WxStageCanvas::WxStageCanvas(WxStagePage* stage, 
+	                         const std::shared_ptr<wxGLContext>& glctx, 
+	                         const std::shared_ptr<gum::RenderContext>& gum_rc, 
+	                         bool has2d)
+	: ee0::WxStageCanvas(stage, stage->GetImpl(), glctx, gum_rc, USE_CONTEXT_STACK | HAS_2D * has2d | HAS_3D)
 	, m_stage(stage)
 	, m_has2d(has2d)
 	, m_camera(sm::vec3(0, 2, -2), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0))
