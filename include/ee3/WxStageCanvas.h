@@ -7,7 +7,7 @@
 #include <painting3/Viewport.h>
 #include <node0/typedef.h>
 
-namespace ee0 { class WxLibraryPanel; }
+namespace ee0 { class WxLibraryPanel; class RenderContext;  }
 
 namespace ee3
 {
@@ -17,8 +17,8 @@ class WxStagePage;
 class WxStageCanvas : public ee0::WxStageCanvas, public ee0::Observer
 {
 public:
-	WxStageCanvas(WxStagePage* stage, const std::shared_ptr<wxGLContext>& glctx = nullptr,
-		const std::shared_ptr<gum::RenderContext>& gum_rc = nullptr, bool has2d = false);
+	WxStageCanvas(WxStagePage* stage, const std::shared_ptr<ee0::RenderContext>& rc = nullptr, 
+		bool has2d = false);
 
 	virtual void OnNotify(ee0::MessageID msg, const ee0::VariantSet& variants) override;
 
