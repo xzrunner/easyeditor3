@@ -4,20 +4,20 @@
 #include <ee0/color_config.h>
 #include <ee0/EditOP.h>
 
-#include <painting2/WndCtxStack.h>
+#include <painting2/WindowContext.h>
 #include <painting2/Blackboard.h>
 #include <painting2/RenderContext.h>
 #include <painting3/PrimitiveDraw.h>
-#include <painting3/WndCtxStack.h>
+#include <painting3/WindowContext.h>
+#include <painting3/Blackboard.h>
 #include <node3/DrawNode.h>
 
 namespace ee3
 {
 
-WxStageCanvas::WxStageCanvas(WxStagePage* stage, 
-	                         const std::shared_ptr<ee0::RenderContext>& rc, 
-	                         bool has2d)
-	: ee0::WxStageCanvas(stage, stage->GetImpl(), rc, USE_CONTEXT_STACK | HAS_2D * has2d | HAS_3D)
+WxStageCanvas::WxStageCanvas(WxStagePage* stage, const ee0::RenderContext* rc,
+	                         const ee0::WindowContext* wc, bool has2d)
+	: ee0::WxStageCanvas(stage, stage->GetImpl(), rc, wc, HAS_2D * has2d | HAS_3D)
 	, m_stage(stage)
 	, m_has2d(has2d)
 	, m_camera(sm::vec3(0, 2, -2), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0))
@@ -47,42 +47,40 @@ void WxStageCanvas::OnNotify(ee0::MessageID msg, const ee0::VariantSet& variants
 
 void WxStageCanvas::OnSize(int w, int h)
 {
-	auto ctx = const_cast<pt3::WindowContext*>(pt3::WndCtxStack::Instance()->Top());
-	if (ctx)
+	auto& wc = pt3::Blackboard::Instance()->GetWindowContext();
+	if (wc)
 	{
-		ctx->SetScreen(w, h);
+		wc->SetScreen(w, h);
 		m_viewport.SetSize(w, h);
 
 		m_camera.SetAspect((float)w / h);
-		ctx->SetProjection(m_camera.GetProjectionMat());
+		wc->SetProjection(m_camera.GetProjectionMat());
 	}
 
 	if (m_has2d)
 	{
-		auto& pt2_ctx = pt2::Blackboard::Instance()->GetContext();
-		auto ctx = const_cast<pt2::WindowContext*>(pt2_ctx.GetCtxStack().Top());
-		if (ctx)
+		auto& wc = pt2::Blackboard::Instance()->GetWindowContext();
+		if (wc)
 		{
-			ctx->SetScreen(w, h);
-			ctx->SetProjection(w, h);
+			wc->SetScreen(w, h);
+			wc->SetProjection(w, h);
 		}
 	}
 }
 
 void WxStageCanvas::OnDrawSprites() const
 {
-	auto ctx = const_cast<pt3::WindowContext*>(pt3::WndCtxStack::Instance()->Top());
-	if (!ctx) {
+	auto& wc = pt3::Blackboard::Instance()->GetWindowContext();
+	if (!wc) {
 		return;
 	}
-	const_cast<pt3::WindowContext*>(ctx)->SetModelView(GetCamera().GetModelViewMat());
+	wc->SetModelView(GetCamera().GetModelViewMat());
 
 	if (m_has2d)
 	{
-		auto& pt2_ctx = pt2::Blackboard::Instance()->GetContext();
-		auto ctx = const_cast<pt2::WindowContext*>(pt2_ctx.GetCtxStack().Top());
-		if (ctx) {
-			ctx->SetModelView(sm::vec2(0, 0), 1);
+		auto& wc = pt2::Blackboard::Instance()->GetWindowContext();
+		if (wc) {
+			wc->SetModelView(sm::vec2(0, 0), 1);
 		}
 	}
 

@@ -17,8 +17,8 @@ class WxStagePage;
 class WxStageCanvas : public ee0::WxStageCanvas, public ee0::Observer
 {
 public:
-	WxStageCanvas(WxStagePage* stage, const std::shared_ptr<ee0::RenderContext>& rc = nullptr, 
-		bool has2d = false);
+	WxStageCanvas(WxStagePage* stage, const ee0::RenderContext* rc = nullptr,
+		const ee0::WindowContext* wc = nullptr, bool has2d = false);
 
 	virtual void OnNotify(ee0::MessageID msg, const ee0::VariantSet& variants) override;
 
