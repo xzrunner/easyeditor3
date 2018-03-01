@@ -4,18 +4,18 @@
 #include <ee0/color_config.h>
 #include <ee0/EditOP.h>
 
-#include <painting2/WindowContext.h>
 #include <painting2/Blackboard.h>
 #include <painting2/RenderContext.h>
+#include <painting2/WindowContext.h>
 #include <painting3/PrimitiveDraw.h>
-#include <painting3/WindowContext.h>
 #include <painting3/Blackboard.h>
+#include <painting3/WindowContext.h>
 #include <node3/DrawNode.h>
 
 namespace ee3
 {
 
-WxStageCanvas::WxStageCanvas(WxStagePage* stage, const ee0::RenderContext* rc,
+WxStageCanvas::WxStageCanvas(WxStagePage* stage, const ee0::RenderContext* rc, 
 	                         const ee0::WindowContext* wc, bool has2d)
 	: ee0::WxStageCanvas(stage, stage->GetImpl(), rc, wc, HAS_2D * has2d | HAS_3D)
 	, m_stage(stage)
