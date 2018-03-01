@@ -4,11 +4,11 @@
 #include <ee0/color_config.h>
 #include <ee0/EditOP.h>
 
-#include <painting2/RenderCtxStack.h>
+#include <painting2/WndCtxStack.h>
 #include <painting2/Blackboard.h>
-#include <painting2/Context.h>
+#include <painting2/RenderContext.h>
 #include <painting3/PrimitiveDraw.h>
-#include <node3/RenderCtxStack.h>
+#include <painting3/WndCtxStack.h>
 #include <node3/DrawNode.h>
 
 namespace ee3
@@ -47,7 +47,7 @@ void WxStageCanvas::OnNotify(ee0::MessageID msg, const ee0::VariantSet& variants
 
 void WxStageCanvas::OnSize(int w, int h)
 {
-	auto ctx = const_cast<n3::RenderContext*>(n3::RenderCtxStack::Instance()->Top());
+	auto ctx = const_cast<pt3::WindowContext*>(pt3::WndCtxStack::Instance()->Top());
 	if (ctx)
 	{
 		ctx->SetScreen(w, h);
@@ -60,7 +60,7 @@ void WxStageCanvas::OnSize(int w, int h)
 	if (m_has2d)
 	{
 		auto& pt2_ctx = pt2::Blackboard::Instance()->GetContext();
-		auto ctx = const_cast<pt2::RenderContext*>(pt2_ctx.GetCtxStack().Top());
+		auto ctx = const_cast<pt2::WindowContext*>(pt2_ctx.GetCtxStack().Top());
 		if (ctx)
 		{
 			ctx->SetScreen(w, h);
@@ -71,16 +71,16 @@ void WxStageCanvas::OnSize(int w, int h)
 
 void WxStageCanvas::OnDrawSprites() const
 {
-	auto ctx = const_cast<n3::RenderContext*>(n3::RenderCtxStack::Instance()->Top());
+	auto ctx = const_cast<pt3::WindowContext*>(pt3::WndCtxStack::Instance()->Top());
 	if (!ctx) {
 		return;
 	}
-	const_cast<n3::RenderContext*>(ctx)->SetModelView(GetCamera().GetModelViewMat());
+	const_cast<pt3::WindowContext*>(ctx)->SetModelView(GetCamera().GetModelViewMat());
 
 	if (m_has2d)
 	{
 		auto& pt2_ctx = pt2::Blackboard::Instance()->GetContext();
-		auto ctx = const_cast<pt2::RenderContext*>(pt2_ctx.GetCtxStack().Top());
+		auto ctx = const_cast<pt2::WindowContext*>(pt2_ctx.GetCtxStack().Top());
 		if (ctx) {
 			ctx->SetModelView(sm::vec2(0, 0), 1);
 		}
