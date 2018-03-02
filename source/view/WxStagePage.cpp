@@ -37,7 +37,8 @@ void WxStagePage::OnNotify(ee0::MessageID msg, const ee0::VariantSet& variants)
 	}
 }
 
-void WxStagePage::Traverse(std::function<bool(const n0::SceneNodePtr&)> func) const
+void WxStagePage::Traverse(std::function<bool(const n0::SceneNodePtr&)> func,
+	                       const ee0::VariantSet& variants) const
 {
 	for (auto& node : m_nodes) {
 		if (!func(node)) {
