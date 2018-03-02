@@ -6,8 +6,8 @@
 
 #include <painting3/Camera.h>
 #include <node0/SceneNode.h>
-#include <node0/SerializeSystem.h>
 #include <js/RapidJsonHelper.h>
+#include <ns/NodeSerializer.h>
 #include <guard/check.h>
 
 #include <boost/filesystem.hpp>
@@ -29,7 +29,7 @@ void Serializer::StoreToJson(const std::string& filepath, const WxStagePage* sta
 	stage->Traverse([&](const n0::SceneNodePtr& node)->bool
 	{
 		rapidjson::Value val_node;
-		n0::SerializeSystem::StoreNodeToJson(node, dir, val_node, alloc);
+		ns::NodeSerializer::StoreNodeToJson(node, dir, val_node, alloc);
 		val_nodes.PushBack(val_node, alloc);
 		return true;
 	});
@@ -55,7 +55,7 @@ void Serializer::LoadFroimJson(const std::string& filepath, WxStagePage* stage)
 	{
 		auto node = std::make_shared<n0::SceneNode>();
 		n0::SceneNodePtr n3_node = node;
-		n0::SerializeSystem::LoadNodeFromJson(n3_node, dir, node_val);
+		ns::NodeSerializer::LoadNodeFromJson(n3_node, dir, node_val);
 
 		bool succ = ee0::MsgHelper::InsertNode(stage->GetSubjectMgr(), node);
 		GD_ASSERT(succ, "no MSG_INSERT_SCENE_NODE");
