@@ -1,9 +1,9 @@
 #include "ee3/NodeSelectOP.h"
-#include "ee3/WxStagePage.h"
 #include "ee3/WxStageCanvas.h"
 
 #include <ee0/MessageID.h>
 #include <ee0/color_config.h>
+#include <ee0/WxStagePage.h>
 
 #include <guard/check.h>
 #include <painting3/Ray.h>
@@ -16,7 +16,7 @@
 namespace ee3
 {
 
-NodeSelectOP::NodeSelectOP(WxStagePage& stage)
+NodeSelectOP::NodeSelectOP(ee0::WxStagePage& stage)
 	: ee0::NodeSelectOP(stage)
 {
 }
@@ -35,13 +35,14 @@ bool NodeSelectOP::OnDraw() const
 		auto& ctrans = node->GetComponent<n3::CompTransform>();
 
 		sm::mat4 prev_mt;
-		auto parent = node->GetParent();
-		while (parent)
-		{
-			auto& pctrans = parent->GetComponent<n3::CompTransform>();
-			prev_mt = pctrans.GetTransformMat() * prev_mt;
-			parent = parent->GetParent();
-		}
+		// todo
+		//auto parent = node->GetParent();
+		//while (parent)
+		//{
+		//	auto& pctrans = parent->GetComponent<n3::CompTransform>();
+		//	prev_mt = pctrans.GetTransformMat() * prev_mt;
+		//	parent = parent->GetParent();
+		//}
 
 		pt3::PrimitiveDraw::Cube(prev_mt * ctrans.GetTransformMat(), caabb.GetAABB());
 

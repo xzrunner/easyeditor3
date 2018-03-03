@@ -4,18 +4,17 @@
 
 #include <string>
 
+namespace ee0 { class WxStagePage; }
 namespace pt3 { class Camera; }
 
 namespace ee3
 {
 
-class WxStagePage;
-
 class Serializer
 {
 public:
-	static void StoreToJson(const std::string& filepath, const WxStagePage* stage);
-	static void LoadFroimJson(const std::string& filepath, WxStagePage* stage);
+	static void StoreToJson(const std::string& filepath, const ee0::WxStagePage* stage);
+	static void LoadFroimJson(const std::string& filepath, ee0::WxStagePage* stage);
 
 private:
 	static rapidjson::Value StoreCamera(const pt3::Camera& cam, rapidjson::MemoryPoolAllocator<>& alloc);

@@ -27,7 +27,6 @@
     <ClInclude Include="..\..\..\include\ee3\Serializer.h" />
     <ClInclude Include="..\..\..\include\ee3\WxStageCanvas.h" />
     <ClInclude Include="..\..\..\include\ee3\WxStageDropTarget.h" />
-    <ClInclude Include="..\..\..\include\ee3\WxStagePage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\include\ee3\WxLibObjPage.cpp" />
@@ -45,7 +44,6 @@
     <ClCompile Include="..\..\..\source\view\WxLibGeoPage.cpp" />
     <ClCompile Include="..\..\..\source\view\WxStageCanvas.cpp" />
     <ClCompile Include="..\..\..\source\view\WxStageDropTarget.cpp" />
-    <ClCompile Include="..\..\..\source\view\WxStagePage.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>4.easyeditor3</ProjectName>

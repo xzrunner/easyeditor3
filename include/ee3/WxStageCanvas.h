@@ -7,17 +7,15 @@
 #include <painting3/Viewport.h>
 #include <node0/typedef.h>
 
-namespace ee0 { class WxLibraryPanel; class RenderContext;  }
+namespace ee0 { class WxLibraryPanel; class RenderContext; class WxStagePage; }
 
 namespace ee3
 {
 
-class WxStagePage;
-
 class WxStageCanvas : public ee0::WxStageCanvas, public ee0::Observer
 {
 public:
-	WxStageCanvas(WxStagePage* stage, const ee0::RenderContext* rc = nullptr, 
+	WxStageCanvas(ee0::WxStagePage* stage, const ee0::RenderContext* rc = nullptr, 
 		const ee0::WindowContext* wc = nullptr, bool has2d = false);
 
 	virtual void OnNotify(ee0::MessageID msg, const ee0::VariantSet& variants) override;
@@ -40,7 +38,7 @@ private:
 	void DrawNodes() const;
 
 private:
-	WxStagePage* m_stage;
+	ee0::WxStagePage* m_stage;
 
 	bool m_has2d;
 

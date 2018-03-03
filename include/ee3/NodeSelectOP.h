@@ -2,15 +2,15 @@
 
 #include <ee0/NodeSelectOP.h>
 
+namespace ee0 { class WxStagePage; }
+
 namespace ee3
 {
-
-class WxStagePage;
 
 class NodeSelectOP : public ee0::NodeSelectOP
 {
 public:	
-	NodeSelectOP(WxStagePage& stage);
+	NodeSelectOP(ee0::WxStagePage& stage);
 
 	virtual bool OnDraw() const override;
 

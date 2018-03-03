@@ -1,8 +1,8 @@
 #include "ee3/Serializer.h"
-#include "ee3/WxStagePage.h"
 #include "ee3/WxStageCanvas.h"
 
 #include <ee0/MsgHelper.h>
+#include <ee0/WxStagePage.h>
 
 #include <painting3/Camera.h>
 #include <node0/SceneNode.h>
@@ -15,7 +15,7 @@
 namespace ee3
 {
 
-void Serializer::StoreToJson(const std::string& filepath, const WxStagePage* stage)
+void Serializer::StoreToJson(const std::string& filepath, const ee0::WxStagePage* stage)
 {
 	rapidjson::Document doc;
 	doc.SetObject();
@@ -43,7 +43,7 @@ void Serializer::StoreToJson(const std::string& filepath, const WxStagePage* sta
 	js::RapidJsonHelper::WriteToFile(filepath.c_str(), doc);
 }
 
-void Serializer::LoadFroimJson(const std::string& filepath, WxStagePage* stage)
+void Serializer::LoadFroimJson(const std::string& filepath, ee0::WxStagePage* stage)
 {
 	rapidjson::Document doc;
 	js::RapidJsonHelper::ReadFromFile(filepath.c_str(), doc);

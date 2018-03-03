@@ -1,5 +1,4 @@
 #include "ee3/NodeArrangeOP.h"
-#include "ee3/WxStagePage.h"
 #include "ee3/WxStageCanvas.h"
 #include "ee3/CamTranslateState.h"
 #include "ee3/CamRotateState.h"
@@ -7,13 +6,15 @@
 #include "ee3/NodeTranslateState.h"
 #include "ee3/NodeRotateState.h"
 
+#include <ee0/WxStagePage.h>
+
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
 
 namespace ee3
 {
 
-NodeArrangeOP::NodeArrangeOP(WxStagePage& stage)
+NodeArrangeOP::NodeArrangeOP(ee0::WxStagePage& stage)
 	: NodeSelectOP(stage)
 	, m_sub_mgr(stage.GetSubjectMgr())
 	, m_node_selection(stage.GetNodeSelection())

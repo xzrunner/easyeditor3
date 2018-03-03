@@ -5,7 +5,7 @@
 #include <ee0/SelectionSet.h>
 #include <ee0/typedef.h>
 
-namespace ee0 { class EditOpState; class SubjectMgr; }
+namespace ee0 { class EditOpState; class SubjectMgr; class WxStagePage; }
 
 namespace ee3
 {
@@ -15,7 +15,7 @@ class WxStageCanvas;
 class NodeArrangeOP : public NodeSelectOP
 {
 public:
-	NodeArrangeOP(WxStagePage& stage);
+	NodeArrangeOP(ee0::WxStagePage& stage);
 
 	virtual bool OnKeyDown(int keyCode) override;
 	virtual bool OnMouseLeftDown(int x, int y) override;

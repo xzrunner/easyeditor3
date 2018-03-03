@@ -87,9 +87,6 @@
     <ClInclude Include="..\..\..\include\ee3\WxStageDropTarget.h">
       <Filter>view\stage</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\WxStagePage.h">
-      <Filter>view\stage</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\editop\NodeRotateState.cpp">
@@ -135,9 +132,6 @@
       <Filter>view\stage</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\view\WxStageDropTarget.cpp">
-      <Filter>view\stage</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\view\WxStagePage.cpp">
       <Filter>view\stage</Filter>
     </ClCompile>
   </ItemGroup>
