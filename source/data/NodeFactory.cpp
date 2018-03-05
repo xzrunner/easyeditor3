@@ -37,15 +37,15 @@ n0::SceneNodePtr NodeFactory::Create(const s2::SymPtr& sym)
 				node = std::make_shared<n0::SceneNode>();
 
 				// model
-				auto& cmodel = node->AddComponent<n3::CompModel>();
+				auto& cmodel = node->AddSharedComp<n3::CompModel>();
 				cmodel.SetModel(model);
 
 				// aabb
-				auto& caabb = node->AddComponent<n3::CompAABB>();
+				auto& caabb = node->AddUniqueComp<n3::CompAABB>();
 				caabb.SetAABB(model_sym->GetAABB());
 
 				// editor
-				node->AddComponent<ee0::CompNodeEditor>();
+				node->AddUniqueComp<ee0::CompNodeEditor>();
 			}
 		}
 		break;
@@ -58,17 +58,17 @@ n0::SceneNodePtr NodeFactory::Create(const s2::SymPtr& sym)
 				node = std::make_shared<n0::SceneNode>();
 
 				// model
-				auto& cmodel = node->AddComponent<n3::CompModel>();
-				auto& src_model = src_node->GetComponent<n3::CompModel>();
+				auto& cmodel = node->AddSharedComp<n3::CompModel>();
+				auto& src_model = src_node->GetSharedComp<n3::CompModel>();
 				cmodel.SetModel(src_model.GetModel());
 
 				// aabb
-				auto& caabb = node->AddComponent<n3::CompAABB>();
-				auto& src_aabb = src_node->GetComponent<n3::CompAABB>();
+				auto& caabb = node->AddUniqueComp<n3::CompAABB>();
+				auto& src_aabb = src_node->GetUniqueComp<n3::CompAABB>();
 				caabb.SetAABB(src_aabb.GetAABB());
 
 				// editor
-				node->AddComponent<ee0::CompNodeEditor>();
+				node->AddUniqueComp<ee0::CompNodeEditor>();
 			}
 		}
 		break;

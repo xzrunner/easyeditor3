@@ -51,7 +51,7 @@ void NodeTranslateState::Translate(const sm::ivec2& first, const sm::ivec2& curr
 	m_selection.Traverse(
 		[&](const n0::SceneNodePtr& node)->bool
 		{
-			auto& ctrans = node->GetComponent<n3::CompTransform>();
+			auto& ctrans = node->GetUniqueComp<n3::CompTransform>();
 
 			float dist = m_cam.GetToward().Dot(ctrans.GetPosition() - m_cam.GetPos());
 

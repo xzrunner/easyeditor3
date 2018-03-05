@@ -31,15 +31,15 @@ bool NodeSelectOP::OnDraw() const
 	{
 		pt3::PrimitiveDraw::SetColor(ee0::MID_RED.ToABGR());
 
-		auto& caabb = node->GetComponent<n3::CompAABB>();
-		auto& ctrans = node->GetComponent<n3::CompTransform>();
+		auto& caabb = node->GetUniqueComp<n3::CompAABB>();
+		auto& ctrans = node->GetUniqueComp<n3::CompTransform>();
 
 		sm::mat4 prev_mt;
 		// todo
 		//auto parent = node->GetParent();
 		//while (parent)
 		//{
-		//	auto& pctrans = parent->GetComponent<n3::CompTransform>();
+		//	auto& pctrans = parent->GetUniqueComp<n3::CompTransform>();
 		//	prev_mt = pctrans.GetTransformMat() * prev_mt;
 		//	parent = parent->GetParent();
 		//}
@@ -64,8 +64,8 @@ n0::SceneNodePtr NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
 	n0::SceneNodePtr ret = nullptr;
 	m_stage.Traverse([&](const n0::SceneNodePtr& node)->bool
 	{
-		auto& caabb = node->GetComponent<n3::CompAABB>();
-		auto& ctrans = node->GetComponent<n3::CompTransform>();
+		auto& caabb = node->GetUniqueComp<n3::CompAABB>();
+		auto& ctrans = node->GetUniqueComp<n3::CompTransform>();
 
 		sm::vec3 cross;
 		bool intersect = n3::Math::RayOBBIntersection(

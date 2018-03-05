@@ -50,11 +50,11 @@ void WxStageDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& text)
 
 		// transform
 		sm::vec3 pos = TransPosScrToProj3d(x, y);
-		auto& ctrans = node->AddComponent<n3::CompTransform>();
+		auto& ctrans = node->AddUniqueComp<n3::CompTransform>();
 		// todo
 		//auto parent = node->GetParent();
 		//if (parent) {
-		//	auto p_pos = parent->GetComponent<n3::CompTransform>().GetTransformMat() * sm::vec3(0, 0, 0);
+		//	auto p_pos = parent->GetUniqueComp<n3::CompTransform>().GetTransformMat() * sm::vec3(0, 0, 0);
 		//	pos -= p_pos;
 		//}
 		ctrans.SetPosition(pos);

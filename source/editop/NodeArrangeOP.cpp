@@ -49,7 +49,7 @@ bool NodeArrangeOP::OnKeyDown(int keyCode)
 			m_node_selection.Traverse(
 				[](const n0::SceneNodePtr& node)->bool
 				{
-					auto& ctrans = node->GetComponent<n3::CompTransform>();
+					auto& ctrans = node->GetUniqueComp<n3::CompTransform>();
 					ctrans.SetPosition(sm::vec3(0, 0, 0));
 					ctrans.SetAngle(sm::Quaternion());
 					ctrans.SetScale(sm::vec3(1, 1, 1));
