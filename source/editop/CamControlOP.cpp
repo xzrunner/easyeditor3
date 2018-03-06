@@ -27,13 +27,13 @@ CamControlOP::CamControlOP(pt3::Camera& cam, const pt3::Viewport& vp,
 	m_op_state = m_rotate_state;
 }
 
-bool CamControlOP::OnKeyDown(int keyCode)
+bool CamControlOP::OnKeyDown(int key_code)
 {
-	if (ee0::EditOP::OnKeyDown(keyCode)) { return true; }
+	if (ee0::EditOP::OnKeyDown(key_code)) { return true; }
 
 	static const float OFFSET = 0.1f;
 
-	switch (keyCode)
+	switch (key_code)
 	{
 	case WXK_ESCAPE:
 		m_cam.Reset();

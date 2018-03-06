@@ -17,7 +17,7 @@ class NodeArrangeOP : public NodeSelectOP
 public:
 	NodeArrangeOP(ee0::WxStagePage& stage);
 
-	virtual bool OnKeyDown(int keyCode) override;
+	virtual bool OnKeyDown(int key_code) override;
 	virtual bool OnMouseLeftDown(int x, int y) override;
 	virtual bool OnMouseLeftUp(int x, int y) override;
 	virtual bool OnMouseRightDown(int x, int y) override;

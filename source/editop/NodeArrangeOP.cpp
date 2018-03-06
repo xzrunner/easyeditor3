@@ -33,13 +33,13 @@ NodeArrangeOP::NodeArrangeOP(ee0::WxStagePage& stage)
 	m_op_state = m_cam_rotate_state;
 }
 
-bool NodeArrangeOP::OnKeyDown(int keyCode)
+bool NodeArrangeOP::OnKeyDown(int key_code)
 {
-	if (NodeSelectOP::OnKeyDown(keyCode)) {
+	if (NodeSelectOP::OnKeyDown(key_code)) {
 		return true;
 	}
 
-	switch (keyCode)
+	switch (key_code)
 	{
 	case WXK_ESCAPE:
 		m_canvas->GetCamera().Reset();

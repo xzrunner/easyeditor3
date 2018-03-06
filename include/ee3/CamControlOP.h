@@ -16,7 +16,7 @@ class CamControlOP : public ee0::EditOP
 public:
 	CamControlOP(pt3::Camera& cam, const pt3::Viewport& vp, ee0::SubjectMgr& sub_mgr);
 
-	virtual bool OnKeyDown(int keyCode) override;
+	virtual bool OnKeyDown(int key_code) override;
 	virtual bool OnMouseLeftDown(int x, int y) override;
 	virtual bool OnMouseLeftUp(int x, int y) override;
 	virtual bool OnMouseRightDown(int x, int y) override;
