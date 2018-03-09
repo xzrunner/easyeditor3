@@ -5,6 +5,8 @@
 #include <ee0/SelectionSet.h>
 #include <ee0/typedef.h>
 
+#include <node0/NodeWithPos.h>
+
 namespace ee0 { class EditOpState; class SubjectMgr; class WxStagePage; }
 
 namespace ee3
@@ -32,7 +34,7 @@ private:
 private:
 	ee0::SubjectMgr& m_sub_mgr;
 
-	ee0::SelectionSet<n0::SceneNode>& m_node_selection;
+	ee0::SelectionSet<n0::NodeWithPos>& m_node_selection;
 
 	std::shared_ptr<WxStageCanvas> m_canvas = nullptr;
 

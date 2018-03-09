@@ -27,12 +27,12 @@ bool NodeSelectOP::OnDraw() const
 		return true;
 	}
 
-	m_stage.GetNodeSelection().Traverse([](const n0::SceneNodePtr& node)->bool
+	m_stage.GetNodeSelection().Traverse([](const n0::NodeWithPos& nwp)->bool
 	{
 		pt3::PrimitiveDraw::SetColor(ee0::MID_RED.ToABGR());
 
-		auto& caabb = node->GetUniqueComp<n3::CompAABB>();
-		auto& ctrans = node->GetUniqueComp<n3::CompTransform>();
+		auto& caabb = nwp.node->GetUniqueComp<n3::CompAABB>();
+		auto& ctrans = nwp.node->GetUniqueComp<n3::CompTransform>();
 
 		sm::mat4 prev_mt;
 		// todo

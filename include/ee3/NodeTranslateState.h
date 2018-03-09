@@ -3,7 +3,7 @@
 #include <ee0/EditOpState.h>
 #include <ee0/SelectionSet.h>
 
-#include <node0/typedef.h>
+#include <node0/NodeWithPos.h>
 #include <SM_Vector.h>
 
 namespace ee0 { class SubjectMgr; }
@@ -16,7 +16,7 @@ class NodeTranslateState : public ee0::EditOpState
 {
 public:
 	NodeTranslateState(const pt3::Camera& cam, const pt3::Viewport& vp, 
-		ee0::SubjectMgr& sub_mgr, const ee0::SelectionSet<n0::SceneNode>& selection);
+		ee0::SubjectMgr& sub_mgr, const ee0::SelectionSet<n0::NodeWithPos>& selection);
 
 	virtual bool OnMousePress(int x, int y) override;
 	virtual bool OnMouseRelease(int x, int y) override;
@@ -31,7 +31,7 @@ private:
 
 	ee0::SubjectMgr& m_sub_mgr;
 
-	const ee0::SelectionSet<n0::SceneNode>& m_selection;
+	const ee0::SelectionSet<n0::NodeWithPos>& m_selection;
 
 	sm::ivec2 m_last_pos;
 

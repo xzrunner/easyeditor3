@@ -11,7 +11,7 @@ namespace ee3
 {
 
 NodeRotateState::NodeRotateState(const pt3::Camera& cam, const pt3::Viewport& vp, ee0::SubjectMgr& sub_mgr,
-	                             const ee0::SelectionSet<n0::SceneNode>& selection)
+	                             const ee0::SelectionSet<n0::NodeWithPos>& selection)
 	: m_cam(cam)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
@@ -46,29 +46,27 @@ bool NodeRotateState::OnMouseDrag(int x, int y)
 
 void NodeRotateState::Rotate(const sm::ivec2& start, const sm::ivec2& end)
 {
-	m_selection.Traverse(
-		[&](const n0::SceneNodePtr& node)->bool
-		{
-			auto& ctrans = node->GetUniqueComp<n3::CompTransform>();
+	m_selection.Traverse([&](const n0::NodeWithPos& nwp)->bool
+	{
+		auto& ctrans = nwp.node->GetUniqueComp<n3::CompTransform>();
 
-			sm::vec2 center = TransPos3ProjectToScreen(ctrans.GetPosition());
-			sm::vec2 base = TransPos3ProjectToScreen(sm::vec3(0, 0, 0));
+		sm::vec2 center = TransPos3ProjectToScreen(ctrans.GetPosition());
+		sm::vec2 base = TransPos3ProjectToScreen(sm::vec3(0, 0, 0));
 
-   			sm::vec3 start3 = m_vp.MapToSphere(
-				base + sm::vec2(static_cast<float>(start.x), static_cast<float>(start.y)) -  center);
-   			sm::vec3 end3   = m_vp.MapToSphere(
-				base + sm::vec2(static_cast<float>(end.x), static_cast<float>(end.y)) - center);
+   		sm::vec3 start3 = m_vp.MapToSphere(
+			base + sm::vec2(static_cast<float>(start.x), static_cast<float>(start.y)) -  center);
+   		sm::vec3 end3   = m_vp.MapToSphere(
+			base + sm::vec2(static_cast<float>(end.x), static_cast<float>(end.y)) - center);
 
-			auto cam_mat = m_cam.GetRotateMat().Inverted();
-			start3 = cam_mat * start3;
-			end3   = cam_mat * end3;
+		auto cam_mat = m_cam.GetRotateMat().Inverted();
+		start3 = cam_mat * start3;
+		end3   = cam_mat * end3;
 		
-   			sm::Quaternion delta = sm::Quaternion::CreateFromVectors(start3, end3);
-			ctrans.Rotate(-delta);
+   		sm::Quaternion delta = sm::Quaternion::CreateFromVectors(start3, end3);
+		ctrans.Rotate(-delta);
 
-			return true;
-		}
-	);
+		return true;
+	});
 }
 
 sm::vec2 NodeRotateState::TransPos3ProjectToScreen(const sm::vec3& proj) const

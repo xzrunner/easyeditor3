@@ -46,16 +46,14 @@ bool NodeArrangeOP::OnKeyDown(int key_code)
 		break;
 	case WXK_SPACE:
 		{
-			m_node_selection.Traverse(
-				[](const n0::SceneNodePtr& node)->bool
-				{
-					auto& ctrans = node->GetUniqueComp<n3::CompTransform>();
-					ctrans.SetPosition(sm::vec3(0, 0, 0));
-					ctrans.SetAngle(sm::Quaternion());
-					ctrans.SetScale(sm::vec3(1, 1, 1));
-					return true;
-				}
-			);
+			m_node_selection.Traverse([](const n0::NodeWithPos& nwp)->bool
+			{
+				auto& ctrans = nwp.node->GetUniqueComp<n3::CompTransform>();
+				ctrans.SetPosition(sm::vec3(0, 0, 0));
+				ctrans.SetAngle(sm::Quaternion());
+				ctrans.SetScale(sm::vec3(1, 1, 1));
+				return true;
+			});
 			m_sub_mgr.NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 		}
 		break;
