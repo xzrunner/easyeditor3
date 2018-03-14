@@ -48,7 +48,7 @@ void NodeRotateState::Rotate(const sm::ivec2& start, const sm::ivec2& end)
 {
 	m_selection.Traverse([&](const n0::NodeWithPos& nwp)->bool
 	{
-		auto& ctrans = nwp.node->GetUniqueComp<n3::CompTransform>();
+		auto& ctrans = nwp.GetNode()->GetUniqueComp<n3::CompTransform>();
 
 		sm::vec2 center = TransPos3ProjectToScreen(ctrans.GetPosition());
 		sm::vec2 base = TransPos3ProjectToScreen(sm::vec3(0, 0, 0));

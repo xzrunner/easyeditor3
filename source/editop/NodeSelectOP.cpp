@@ -31,8 +31,8 @@ bool NodeSelectOP::OnDraw() const
 	{
 		pt3::PrimitiveDraw::SetColor(ee0::MID_RED.ToABGR());
 
-		auto& caabb = nwp.node->GetUniqueComp<n3::CompAABB>();
-		auto& ctrans = nwp.node->GetUniqueComp<n3::CompTransform>();
+		auto& caabb = nwp.GetNode()->GetUniqueComp<n3::CompAABB>();
+		auto& ctrans = nwp.GetNode()->GetUniqueComp<n3::CompTransform>();
 
 		sm::mat4 prev_mt;
 		// todo
