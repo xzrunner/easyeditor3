@@ -57,15 +57,21 @@ void WxCompTransformPanel::InitLayout()
 
 		auto& pos = m_ctrans.GetPosition();
 		sizer->Add(new wxStaticText(win, wxID_ANY, wxT("X ")));
-		sizer->Add(m_pos_x = new wxTextCtrl(win, wxID_ANY, std::to_string(pos.x), wxDefaultPosition, INPUT_SIZE));
+		sizer->Add(m_pos_x = new wxTextCtrl(win, wxID_ANY, std::to_string(pos.x), 
+			wxDefaultPosition, INPUT_SIZE, wxEVT_COMMAND_TEXT_ENTER));
 		sizer->Add(new wxStaticText(win, wxID_ANY, wxT("  Y ")));
-		sizer->Add(m_pos_y = new wxTextCtrl(win, wxID_ANY, std::to_string(pos.y), wxDefaultPosition, INPUT_SIZE));
+		sizer->Add(m_pos_y = new wxTextCtrl(win, wxID_ANY, std::to_string(pos.y), 
+			wxDefaultPosition, INPUT_SIZE, wxEVT_COMMAND_TEXT_ENTER));
 		sizer->Add(new wxStaticText(win, wxID_ANY, wxT("  Z ")));
-		sizer->Add(m_pos_z = new wxTextCtrl(win, wxID_ANY, std::to_string(pos.z), wxDefaultPosition, INPUT_SIZE));
+		sizer->Add(m_pos_z = new wxTextCtrl(win, wxID_ANY, std::to_string(pos.z), 
+			wxDefaultPosition, INPUT_SIZE, wxEVT_COMMAND_TEXT_ENTER));
 
-		Connect(m_pos_x->GetId(), wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(WxCompTransformPanel::UpdateTextValue));
-		Connect(m_pos_y->GetId(), wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(WxCompTransformPanel::UpdateTextValue));
-		Connect(m_pos_z->GetId(), wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(WxCompTransformPanel::UpdateTextValue));
+		Connect(m_pos_x->GetId(), wxEVT_COMMAND_TEXT_ENTER, 
+			wxCommandEventHandler(WxCompTransformPanel::EnterTextValue));
+		Connect(m_pos_y->GetId(), wxEVT_COMMAND_TEXT_ENTER, 
+			wxCommandEventHandler(WxCompTransformPanel::EnterTextValue));
+		Connect(m_pos_z->GetId(), wxEVT_COMMAND_TEXT_ENTER, 
+			wxCommandEventHandler(WxCompTransformPanel::EnterTextValue));
 
 		pane_sizer->Add(sizer);
 	}
@@ -78,15 +84,21 @@ void WxCompTransformPanel::InitLayout()
 		float roll, pitch, yaw;
 		sm::Quaternion::TransToEulerAngle(m_ctrans.GetAngle(), roll, pitch, yaw);
 		sizer->Add(new wxStaticText(win, wxID_ANY, wxT("X ")));
-		sizer->Add(m_angle_x = new wxTextCtrl(win, wxID_ANY, std::to_string(pitch), wxDefaultPosition, INPUT_SIZE));
+		sizer->Add(m_angle_x = new wxTextCtrl(win, wxID_ANY, std::to_string(pitch), 
+			wxDefaultPosition, INPUT_SIZE, wxTE_PROCESS_ENTER));
 		sizer->Add(new wxStaticText(win, wxID_ANY, wxT("  Y ")));
-		sizer->Add(m_angle_y = new wxTextCtrl(win, wxID_ANY, std::to_string(yaw), wxDefaultPosition, INPUT_SIZE));
+		sizer->Add(m_angle_y = new wxTextCtrl(win, wxID_ANY, std::to_string(yaw), 
+			wxDefaultPosition, INPUT_SIZE, wxTE_PROCESS_ENTER));
 		sizer->Add(new wxStaticText(win, wxID_ANY, wxT("  Z ")));
-		sizer->Add(m_angle_z = new wxTextCtrl(win, wxID_ANY, std::to_string(roll), wxDefaultPosition, INPUT_SIZE));
+		sizer->Add(m_angle_z = new wxTextCtrl(win, wxID_ANY, std::to_string(roll), 
+			wxDefaultPosition, INPUT_SIZE, wxTE_PROCESS_ENTER));
 
-		Connect(m_angle_x->GetId(), wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(WxCompTransformPanel::UpdateTextValue));
-		Connect(m_angle_y->GetId(), wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(WxCompTransformPanel::UpdateTextValue));
-		Connect(m_angle_z->GetId(), wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(WxCompTransformPanel::UpdateTextValue));
+		Connect(m_angle_x->GetId(), wxEVT_COMMAND_TEXT_ENTER, 
+			wxCommandEventHandler(WxCompTransformPanel::EnterTextValue));
+		Connect(m_angle_y->GetId(), wxEVT_COMMAND_TEXT_ENTER, 
+			wxCommandEventHandler(WxCompTransformPanel::EnterTextValue));
+		Connect(m_angle_z->GetId(), wxEVT_COMMAND_TEXT_ENTER, 
+			wxCommandEventHandler(WxCompTransformPanel::EnterTextValue));
 
 		pane_sizer->Add(sizer);
 	}
@@ -98,15 +110,21 @@ void WxCompTransformPanel::InitLayout()
 
 		auto& scale = m_ctrans.GetScale();
 		sizer->Add(new wxStaticText(win, wxID_ANY, wxT("X ")));
-		sizer->Add(m_scale_x = new wxTextCtrl(win, wxID_ANY, std::to_string(scale.x), wxDefaultPosition, INPUT_SIZE));
+		sizer->Add(m_scale_x = new wxTextCtrl(win, wxID_ANY, std::to_string(scale.x), 
+			wxDefaultPosition, INPUT_SIZE, wxTE_PROCESS_ENTER));
 		sizer->Add(new wxStaticText(win, wxID_ANY, wxT("  Y ")));
-		sizer->Add(m_scale_y = new wxTextCtrl(win, wxID_ANY, std::to_string(scale.y), wxDefaultPosition, INPUT_SIZE));
+		sizer->Add(m_scale_y = new wxTextCtrl(win, wxID_ANY, std::to_string(scale.y), 
+			wxDefaultPosition, INPUT_SIZE, wxTE_PROCESS_ENTER));
 		sizer->Add(new wxStaticText(win, wxID_ANY, wxT("  Z ")));
-		sizer->Add(m_scale_z = new wxTextCtrl(win, wxID_ANY, std::to_string(scale.z), wxDefaultPosition, INPUT_SIZE));
+		sizer->Add(m_scale_z = new wxTextCtrl(win, wxID_ANY, std::to_string(scale.z), 
+			wxDefaultPosition, INPUT_SIZE, wxTE_PROCESS_ENTER));
 
-		Connect(m_scale_x->GetId(), wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(WxCompTransformPanel::UpdateTextValue));
-		Connect(m_scale_y->GetId(), wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(WxCompTransformPanel::UpdateTextValue));
-		Connect(m_scale_z->GetId(), wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(WxCompTransformPanel::UpdateTextValue));
+		Connect(m_scale_x->GetId(), wxEVT_COMMAND_TEXT_ENTER, 
+			wxCommandEventHandler(WxCompTransformPanel::EnterTextValue));
+		Connect(m_scale_y->GetId(), wxEVT_COMMAND_TEXT_ENTER, 
+			wxCommandEventHandler(WxCompTransformPanel::EnterTextValue));
+		Connect(m_scale_z->GetId(), wxEVT_COMMAND_TEXT_ENTER, 
+			wxCommandEventHandler(WxCompTransformPanel::EnterTextValue));
 
 		pane_sizer->Add(sizer);
 	}
@@ -115,7 +133,7 @@ void WxCompTransformPanel::InitLayout()
 	pane_sizer->SetSizeHints(win);
 }
 
-void WxCompTransformPanel::UpdateTextValue(wxCommandEvent& event)
+void WxCompTransformPanel::EnterTextValue(wxCommandEvent& event)
 {
 	// pos
 	if (event.GetId() == m_pos_x->GetId()) 
