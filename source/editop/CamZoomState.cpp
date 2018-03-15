@@ -9,7 +9,7 @@ namespace ee3
 {
 
 CamZoomState::CamZoomState(pt3::Camera& cam, const pt3::Viewport& vp,
-	                       ee0::SubjectMgr& sub_mgr)
+	                       const ee0::SubjectMgrPtr& sub_mgr)
 	: m_cam(cam)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
@@ -27,7 +27,7 @@ bool CamZoomState::OnMouseWheelRotation(int x, int y, int direction)
 		m_cam.Move(dir, - m_cam.GetDistance() * OFFSET);
 	}
 
-	m_sub_mgr.NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 
 	return false;
 }

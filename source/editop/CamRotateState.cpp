@@ -8,7 +8,7 @@
 namespace ee3
 {
 
-CamRotateState::CamRotateState(pt3::Camera& cam, ee0::SubjectMgr& sub_mgr)
+CamRotateState::CamRotateState(pt3::Camera& cam, const ee0::SubjectMgrPtr& sub_mgr)
 	: m_cam(cam)
 	, m_sub_mgr(sub_mgr)
 {
@@ -38,7 +38,7 @@ bool CamRotateState::OnMouseDrag(int x, int y)
 
 	m_last_pos.Set(x, y);
 
-	m_sub_mgr.NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 
 	return false;
 }

@@ -7,6 +7,7 @@
 #include "ee3/NodeRotateState.h"
 
 #include <ee0/WxStagePage.h>
+#include <ee0/SubjectMgr.h>
 
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
@@ -54,7 +55,7 @@ bool NodeArrangeOP::OnKeyDown(int key_code)
 				ctrans.SetScale(sm::vec3(1, 1, 1));
 				return true;
 			});
-			m_sub_mgr.NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+			m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 		}
 		break;
 	}

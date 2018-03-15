@@ -8,6 +8,7 @@
 #include <ee0/WxLibraryItem.h>
 #include <ee0/MsgHelper.h>
 #include <ee0/WxStagePage.h>
+#include <ee0/SubjectMgr.h>
 
 #include <guard/check.h>
 #include <node0/SceneNode.h>
@@ -60,7 +61,7 @@ void WxStageDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& text)
 		ctrans.SetPosition(pos);
 	}
 
-	m_stage->GetSubjectMgr().NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+	m_stage->GetSubjectMgr()->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 }
 
 void WxStageDropTarget::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames)
@@ -69,7 +70,7 @@ void WxStageDropTarget::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& f
 
 void WxStageDropTarget::InsertNode(n0::SceneNodePtr& node)
 {
-	bool succ = ee0::MsgHelper::InsertNode(m_stage->GetSubjectMgr(), node);
+	bool succ = ee0::MsgHelper::InsertNode(*m_stage->GetSubjectMgr(), node);
 	GD_ASSERT(succ, "no MSG_INSERT_SCENE_NODE");
 }
 

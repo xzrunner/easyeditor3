@@ -11,7 +11,8 @@ namespace ee3
 {
 
 NodeTranslateState::NodeTranslateState(const pt3::Camera& cam, const pt3::Viewport& vp, 
-	                                   ee0::SubjectMgr& sub_mgr, const ee0::SelectionSet<n0::NodeWithPos>& selection)
+	                                   const ee0::SubjectMgrPtr& sub_mgr, 
+	                                   const ee0::SelectionSet<n0::NodeWithPos>& selection)
 	: m_cam(cam)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
@@ -28,7 +29,7 @@ bool NodeTranslateState::OnMousePress(int x, int y)
 
 bool NodeTranslateState::OnMouseRelease(int x, int y)
 {
-	m_sub_mgr.NotifyObservers(ee0::MSG_UPDATE_COMPONENTS);
+	m_sub_mgr->NotifyObservers(ee0::MSG_UPDATE_COMPONENTS);
 	return false;
 }
 
@@ -41,7 +42,7 @@ bool NodeTranslateState::OnMouseDrag(int x, int y)
 	Translate(m_last_pos, sm::ivec2(x, y));
 	m_last_pos.Set(x, y);
 
-	m_sub_mgr.NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 
 	return false;
 }

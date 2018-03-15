@@ -4,7 +4,6 @@
 #include <ee0/typedef.h>
 
 namespace pt3 { class Camera; class Viewport; }
-namespace ee0 { class SubjectMgr; }
 
 namespace ee3
 {
@@ -14,7 +13,8 @@ class Camera;
 class CamControlOP : public ee0::EditOP
 {
 public:
-	CamControlOP(pt3::Camera& cam, const pt3::Viewport& vp, ee0::SubjectMgr& sub_mgr);
+	CamControlOP(pt3::Camera& cam, const pt3::Viewport& vp, 
+		const ee0::SubjectMgrPtr& sub_mgr);
 
 	virtual bool OnKeyDown(int key_code) override;
 	virtual bool OnMouseLeftDown(int x, int y) override;
@@ -29,8 +29,8 @@ private:
 	void ChangeEditOpState(const ee0::EditOpStatePtr& state);
 
 private:
-	pt3::Camera&         m_cam;
-	ee0::SubjectMgr&    m_sub_mgr;
+	pt3::Camera&        m_cam;
+	ee0::SubjectMgrPtr  m_sub_mgr;
 
 	ee0::EditOpStatePtr m_op_state = nullptr;
 

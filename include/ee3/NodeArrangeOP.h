@@ -7,7 +7,7 @@
 
 #include <node0/NodeWithPos.h>
 
-namespace ee0 { class EditOpState; class SubjectMgr; class WxStagePage; }
+namespace ee0 { class EditOpState; class WxStagePage; }
 
 namespace ee3
 {
@@ -32,7 +32,7 @@ private:
 	void ChangeEditOpState(const ee0::EditOpStatePtr& state);
 
 private:
-	ee0::SubjectMgr& m_sub_mgr;
+	ee0::SubjectMgrPtr m_sub_mgr;
 
 	ee0::SelectionSet<n0::NodeWithPos>& m_node_selection;
 

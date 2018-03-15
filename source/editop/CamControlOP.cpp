@@ -16,7 +16,7 @@ namespace ee3
 static const float MOUSE_SENSITIVITY = 0.3f;
 
 CamControlOP::CamControlOP(pt3::Camera& cam, const pt3::Viewport& vp,
-	                       ee0::SubjectMgr& sub_mgr)
+	                       const ee0::SubjectMgrPtr& sub_mgr)
 	: ee0::EditOP()
 	, m_cam(cam)
 	, m_sub_mgr(sub_mgr)
@@ -37,23 +37,23 @@ bool CamControlOP::OnKeyDown(int key_code)
 	{
 	case WXK_ESCAPE:
 		m_cam.Reset();
-		m_sub_mgr.NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 		break;
 	case 'w': case 'W':
 		m_cam.Translate(0, OFFSET);
-		m_sub_mgr.NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 		break;
 	case 's': case 'S':
 		m_cam.Translate(0, -OFFSET);
-		m_sub_mgr.NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 		break;
  	case 'a': case 'A':
 		m_cam.Translate(OFFSET, 0);
-		m_sub_mgr.NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
  		break;
  	case 'd': case 'D':
 		m_cam.Translate(-OFFSET, 0);
-		m_sub_mgr.NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
  		break;
 	}
 

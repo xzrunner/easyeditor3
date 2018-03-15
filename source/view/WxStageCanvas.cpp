@@ -3,6 +3,7 @@
 #include <ee0/color_config.h>
 #include <ee0/EditOP.h>
 #include <ee0/WxStagePage.h>
+#include <ee0/SubjectMgr.h>
 
 #include <painting2/Blackboard.h>
 #include <painting2/RenderContext.h>
@@ -22,7 +23,7 @@ WxStageCanvas::WxStageCanvas(ee0::WxStagePage* stage, const ee0::RenderContext* 
 	, m_has2d(has2d)
 	, m_camera(sm::vec3(0, 2, -2), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0))
 {
-	stage->GetSubjectMgr().RegisterObserver(ee0::MSG_SET_CANVAS_DIRTY, this);
+	stage->GetSubjectMgr()->RegisterObserver(ee0::MSG_SET_CANVAS_DIRTY, this);
 }
 
 void WxStageCanvas::OnNotify(ee0::MessageID msg, const ee0::VariantSet& variants)

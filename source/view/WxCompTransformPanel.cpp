@@ -12,8 +12,8 @@ namespace ee3
 {
 
 WxCompTransformPanel::WxCompTransformPanel(wxWindow* parent, 
-	                                   n3::CompTransform& trans,
-	                                   ee0::SubjectMgr& sub_mgr)
+	                                       n3::CompTransform& trans,
+	                                       const ee0::SubjectMgrPtr& sub_mgr)
 	: ee0::WxCompPanel(parent, "Transform")
 	, m_ctrans(trans)
 	, m_sub_mgr(sub_mgr)
@@ -211,7 +211,7 @@ void WxCompTransformPanel::EnterTextValue(wxCommandEvent& event)
 		m_ctrans.SetScale(sm::vec3(scale.x, scale.y, z));
 	}
 
-	m_sub_mgr.NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 }
 
 }

@@ -1,12 +1,11 @@
 #pragma once
 
 #include <ee0/WxCompPanel.h>
+#include <ee0/typedef.h>
 
 #include <node3/CompTransform.h>
 
 class wxTextCtrl;
-
-namespace ee0 { class SubjectMgr; }
 
 namespace ee3
 {
@@ -15,7 +14,7 @@ class WxCompTransformPanel : public ee0::WxCompPanel
 {
 public:
 	WxCompTransformPanel(wxWindow* parent, n3::CompTransform& trans,
-		ee0::SubjectMgr& sub_mgr);
+		const ee0::SubjectMgrPtr& sub_mgr);
 
 	virtual void RefreshNodeComp() override;
 
@@ -26,7 +25,7 @@ private:
 
 private:
 	n3::CompTransform& m_ctrans;
-	ee0::SubjectMgr& m_sub_mgr;
+	ee0::SubjectMgrPtr m_sub_mgr;
 
 	wxTextCtrl *m_pos_x, *m_pos_y, *m_pos_z;
 	wxTextCtrl *m_angle_x, *m_angle_y, *m_angle_z;
