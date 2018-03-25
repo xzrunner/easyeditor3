@@ -26,7 +26,7 @@ WxStageCanvas::WxStageCanvas(ee0::WxStagePage* stage, const ee0::RenderContext* 
 	stage->GetSubjectMgr()->RegisterObserver(ee0::MSG_SET_CANVAS_DIRTY, this);
 }
 
-void WxStageCanvas::OnNotify(ee0::MessageID msg, const ee0::VariantSet& variants)
+void WxStageCanvas::OnNotify(uint32_t msg, const ee0::VariantSet& variants)
 {
 	switch (msg)
 	{

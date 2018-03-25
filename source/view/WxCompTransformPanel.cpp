@@ -3,6 +3,7 @@
 #include <node3/CompTransform.h>
 
 #include <ee0/SubjectMgr.h>
+#include <ee0/MessageID.h>
 
 #include <wx/sizer.h>
 #include <wx/stattext.h>

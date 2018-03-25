@@ -18,7 +18,7 @@ public:
 	WxStageCanvas(ee0::WxStagePage* stage, const ee0::RenderContext* rc = nullptr, 
 		const ee0::WindowContext* wc = nullptr, bool has2d = false);
 
-	virtual void OnNotify(ee0::MessageID msg, const ee0::VariantSet& variants) override;
+	virtual void OnNotify(uint32_t msg, const ee0::VariantSet& variants) override;
 
 	pt3::Camera& GetCamera() { return m_camera; }
 	const pt3::Camera& GetCamera() const { return m_camera; }

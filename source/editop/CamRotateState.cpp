@@ -1,6 +1,7 @@
 #include "ee3/CamRotateState.h"
 
 #include <ee0/SubjectMgr.h>
+#include <ee0/MessageID.h>
 
 #include <SM_Calc.h>
 #include <painting3/Camera.h>

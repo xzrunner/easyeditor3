@@ -1,6 +1,7 @@
 #include "ee3/NodeTranslateState.h"
 
 #include <ee0/SubjectMgr.h>
+#include <ee0/MessageID.h>
 
 #include <painting3/Camera.h>
 #include <painting3/Viewport.h>
