@@ -133,11 +133,17 @@ void WxStageCanvas::DrawBackground() const
 
 void WxStageCanvas::DrawNodes() const
 {
+	ee0::VariantSet vars;
+	ee0::Variant var;
+	var.m_type = ee0::VT_LONG;
+	var.m_val.l = ee0::WxStagePage::TRAV_DRAW;
+	vars.SetVariant("type", var);
+
 	auto mt = m_camera.GetModelViewMat();
 	m_stage->Traverse([&](const n0::SceneNodePtr& node)->bool {
 		n3::DrawNode::Draw(node, mt);
 		return true;
-	});
+	}, vars);
 }
 
 }

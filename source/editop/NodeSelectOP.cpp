@@ -61,6 +61,12 @@ n0::SceneNodePtr NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
 	sm::vec3 ray_dir = vp.TransPos3ScreenToDir(sm::vec2(screen_x, screen_y), cam);
 	pt3::Ray ray(cam.GetPos(), ray_dir);
 
+	ee0::VariantSet vars;
+	ee0::Variant var;
+	var.m_type = ee0::VT_LONG;
+	var.m_val.l = ee0::WxStagePage::TRAV_QUERY;
+	vars.SetVariant("type", var);
+
 	n0::SceneNodePtr ret = nullptr;
 	m_stage.Traverse([&](const n0::SceneNodePtr& node)->bool
 	{
@@ -80,7 +86,7 @@ n0::SceneNodePtr NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
 		} else {
 			return true;
 		}
-	});
+	}, vars);
 
 	return ret;
 }
