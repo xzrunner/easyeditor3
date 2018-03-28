@@ -13,6 +13,16 @@
 #include <painting3/WindowContext.h>
 #include <node3/DrawNode.h>
 
+namespace
+{
+
+const uint32_t MESSAGES[] =
+{
+	ee0::MSG_SET_CANVAS_DIRTY,
+};
+
+}
+
 namespace ee3
 {
 
@@ -23,7 +33,16 @@ WxStageCanvas::WxStageCanvas(ee0::WxStagePage* stage, const ee0::RenderContext* 
 	, m_has2d(has2d)
 	, m_camera(sm::vec3(0, 2, -2), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0))
 {
-	stage->GetSubjectMgr()->RegisterObserver(ee0::MSG_SET_CANVAS_DIRTY, this);
+	for (auto& msg : MESSAGES) {
+		stage->GetSubjectMgr()->RegisterObserver(msg, this);
+	}
+}
+
+WxStageCanvas::~WxStageCanvas()
+{
+	for (auto& msg : MESSAGES) {
+		m_stage->GetSubjectMgr()->UnregisterObserver(msg, this);
+	}
 }
 
 void WxStageCanvas::OnNotify(uint32_t msg, const ee0::VariantSet& variants)
