@@ -3,8 +3,8 @@
 #include <ee0/WxLibraryList.h>
 #include <ee0/WxLibraryItem.h>
 
-#include <sprite2/ModelSymbol.h>
-#include <sprite2/SymType.h>
+//#include <sprite2/ModelSymbol.h>
+//#include <sprite2/SymType.h>
 
 namespace ee3
 {

@@ -9,11 +9,11 @@
 #include <ee0/MsgHelper.h>
 #include <ee0/WxStagePage.h>
 #include <ee0/SubjectMgr.h>
+#include <ee0/StringHelper.h>
 
 #include <guard/check.h>
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
-#include <gum/StringHelper.h>
 #include <ns/NodeFactory.h>
 
 namespace ee3
@@ -27,8 +27,8 @@ WxStageDropTarget::WxStageDropTarget(ee0::WxLibraryPanel* library, ee0::WxStageP
 
 void WxStageDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& text)
 {
-	CU_VEC<CU_STR> keys;
-	gum::StringHelper::Split(text.ToStdString().c_str(), ",", keys);
+	std::vector<std::string> keys;
+	ee0::StringHelper::Split(text.ToStdString().c_str(), ",", keys);
 
 	if (keys.size() <= 1) {
 		return;
