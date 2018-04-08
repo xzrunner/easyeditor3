@@ -15,9 +15,9 @@ public:
 	virtual bool OnDraw() const override;
 
 private:
-	virtual n0::SceneNodePtr QueryByPos(int screen_x, int screen_y) const override;
+	virtual ee0::GameObj QueryByPos(int screen_x, int screen_y) const override;
 	virtual void QueryByRect(const sm::ivec2& p0, const sm::ivec2& p1,
-		bool contain, std::vector<n0::SceneNodePtr>& result) const {}
+		bool contain, std::vector<ee0::GameObj>& result) const {}
 
 }; // NodeSelectOP
 

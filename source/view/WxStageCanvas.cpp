@@ -140,8 +140,8 @@ void WxStageCanvas::DrawNodes() const
 	vars.SetVariant("type", var);
 
 	auto mt = m_camera.GetModelViewMat();
-	m_stage->Traverse([&](const n0::SceneNodePtr& node)->bool {
-		n3::DrawNode::Draw(node, mt);
+	m_stage->Traverse([&](const ee0::GameObj& obj)->bool {
+		n3::DrawNode::Draw(obj, mt);
 		return true;
 	}, vars);
 }

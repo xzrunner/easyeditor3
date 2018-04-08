@@ -18,13 +18,13 @@ NodeFactory::NodeFactory()
 {
 }
 
-//n0::SceneNodePtr NodeFactory::Create(const s2::SymPtr& sym)
+//ee0::GameObj NodeFactory::Create(const s2::SymPtr& sym)
 //{
 //	if (!sym) {
 //		return nullptr;
 //	}
 //
-//	n0::SceneNodePtr node = nullptr;
+//	ee0::GameObj obj = nullptr;
 //
 //	switch (sym->Type())
 //	{
@@ -34,18 +34,18 @@ NodeFactory::NodeFactory()
 //			auto& model = model_sym->GetModel();
 //			if (model)
 //			{
-//				node = std::make_shared<n0::SceneNode>();
+//				obj = std::make_shared<n0::SceneNode>();
 //
 //				// model
-//				auto& cmodel = node->AddSharedComp<n3::CompModel>();
+//				auto& cmodel = obj->AddSharedComp<n3::CompModel>();
 //				cmodel.SetModel(model);
 //
 //				// aabb
-//				auto& caabb = node->AddUniqueComp<n3::CompAABB>();
+//				auto& caabb = obj->AddUniqueComp<n3::CompAABB>();
 //				caabb.SetAABB(model_sym->GetAABB());
 //
 //				// editor
-//				node->AddUniqueComp<ee0::CompNodeEditor>();
+//				obj->AddUniqueComp<ee0::CompNodeEditor>();
 //			}
 //		}
 //		break;
@@ -55,26 +55,26 @@ NodeFactory::NodeFactory()
 //			auto& src_node = snode_sym->GetNode();
 //			if (src_node)
 //			{
-//				node = std::make_shared<n0::SceneNode>();
+//				obj = std::make_shared<n0::SceneNode>();
 //
 //				// model
-//				auto& cmodel = node->AddSharedComp<n3::CompModel>();
+//				auto& cmodel = obj->AddSharedComp<n3::CompModel>();
 //				auto& src_model = src_node->GetSharedComp<n3::CompModel>();
 //				cmodel.SetModel(src_model.GetModel());
 //
 //				// aabb
-//				auto& caabb = node->AddUniqueComp<n3::CompAABB>();
+//				auto& caabb = obj->AddUniqueComp<n3::CompAABB>();
 //				auto& src_aabb = src_node->GetUniqueComp<n3::CompAABB>();
 //				caabb.SetAABB(src_aabb.GetAABB());
 //
 //				// editor
-//				node->AddUniqueComp<ee0::CompNodeEditor>();
+//				obj->AddUniqueComp<ee0::CompNodeEditor>();
 //			}
 //		}
 //		break;
 //	}
 //
-//	return node;
+//	return obj;
 //}
 
 }

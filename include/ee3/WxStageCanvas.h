@@ -2,10 +2,10 @@
 
 #include <ee0/WxStageCanvas.h>
 #include <ee0/Observer.h>
+#include <ee0/GameObj.h>
 
 #include <painting3/Camera.h>
 #include <painting3/Viewport.h>
-#include <node0/typedef.h>
 
 namespace ee0 { class WxLibraryPanel; class RenderContext; class WxStagePage; }
 

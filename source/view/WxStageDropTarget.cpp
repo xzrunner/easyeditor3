@@ -42,18 +42,18 @@ void WxStageDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& text)
 			continue;
 		}
 
-		auto node = ns::NodeFactory::Create(item->GetFilepath());
-		if (!node) {
+		auto obj = ns::NodeFactory::Create(item->GetFilepath());
+		if (!obj) {
 			continue;
 		}
 
-		InsertNode(node);
+		InsertNode(obj);
 
 		// transform
 		sm::vec3 pos = TransPosScrToProj3d(x, y);
-		auto& ctrans = node->AddUniqueComp<n3::CompTransform>();
+		auto& ctrans = obj->AddUniqueComp<n3::CompTransform>();
 		// todo
-		//auto parent = node->GetParent();
+		//auto parent = obj->GetParent();
 		//if (parent) {
 		//	auto p_pos = parent->GetUniqueComp<n3::CompTransform>().GetTransformMat() * sm::vec3(0, 0, 0);
 		//	pos -= p_pos;
@@ -68,9 +68,9 @@ void WxStageDropTarget::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& f
 {
 }
 
-void WxStageDropTarget::InsertNode(n0::SceneNodePtr& node)
+void WxStageDropTarget::InsertNode(ee0::GameObj& obj)
 {
-	bool succ = ee0::MsgHelper::InsertNode(*m_stage->GetSubjectMgr(), node);
+	bool succ = ee0::MsgHelper::InsertNode(*m_stage->GetSubjectMgr(), obj);
 	GD_ASSERT(succ, "no MSG_INSERT_SCENE_NODE");
 }
 

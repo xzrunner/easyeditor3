@@ -36,7 +36,7 @@ bool NodeSelectOP::OnDraw() const
 
 		sm::mat4 prev_mt;
 		// todo
-		//auto parent = node->GetParent();
+		//auto parent = obj->GetParent();
 		//while (parent)
 		//{
 		//	auto& pctrans = parent->GetUniqueComp<n3::CompTransform>();
@@ -53,7 +53,7 @@ bool NodeSelectOP::OnDraw() const
 }
 
 // AABB not changed, transform ray from Camera and spr's mat
-n0::SceneNodePtr NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
+ee0::GameObj NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
 {
 	auto canvas = std::dynamic_pointer_cast<WxStageCanvas>(m_stage.GetImpl().GetCanvas());
 	auto& vp = canvas->GetViewport();
@@ -67,11 +67,11 @@ n0::SceneNodePtr NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
 	var.m_val.l = ee0::WxStagePage::TRAV_QUERY;
 	vars.SetVariant("type", var);
 
-	n0::SceneNodePtr ret = nullptr;
-	m_stage.Traverse([&](const n0::SceneNodePtr& node)->bool
+	ee0::GameObj ret = nullptr;
+	m_stage.Traverse([&](const ee0::GameObj& obj)->bool
 	{
-		auto& caabb = node->GetUniqueComp<n3::CompAABB>();
-		auto& ctrans = node->GetUniqueComp<n3::CompTransform>();
+		auto& caabb = obj->GetUniqueComp<n3::CompAABB>();
+		auto& ctrans = obj->GetUniqueComp<n3::CompTransform>();
 
 		sm::vec3 cross;
 		bool intersect = n3::Math::RayOBBIntersection(
@@ -81,7 +81,7 @@ n0::SceneNodePtr NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
 			ray,
 			&cross);
 		if (intersect) {
-			ret = node;
+			ret = obj;
 			return false;
 		} else {
 			return true;

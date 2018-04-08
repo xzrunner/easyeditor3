@@ -26,10 +26,10 @@ void Serializer::StoreToJson(const std::string& filepath, const ee0::WxStagePage
 	auto dir = boost::filesystem::path(filepath).parent_path().string();
 
 	auto& alloc = doc.GetAllocator();
-	stage->Traverse([&](const n0::SceneNodePtr& node)->bool
+	stage->Traverse([&](const ee0::GameObj& obj)->bool
 	{
 		rapidjson::Value val_node;
-		ns::NodeSerializer::StoreNodeToJson(node, dir, val_node, alloc);
+		ns::NodeSerializer::StoreNodeToJson(obj, dir, val_node, alloc);
 		val_nodes.PushBack(val_node, alloc);
 		return true;
 	});
@@ -53,11 +53,11 @@ void Serializer::LoadFroimJson(const std::string& filepath, ee0::WxStagePage* st
 	auto& nodes_val = doc["nodes"];
 	for (auto& node_val : nodes_val.GetArray()) 
 	{
-		auto node = std::make_shared<n0::SceneNode>();
-		n0::SceneNodePtr n3_node = node;
+		auto obj = std::make_shared<n0::SceneNode>();
+		ee0::GameObj n3_node = obj;
 		ns::NodeSerializer::LoadNodeFromJson(n3_node, dir, node_val);
 
-		bool succ = ee0::MsgHelper::InsertNode(*stage->GetSubjectMgr(), node);
+		bool succ = ee0::MsgHelper::InsertNode(*stage->GetSubjectMgr(), obj);
 		GD_ASSERT(succ, "no MSG_INSERT_SCENE_NODE");
 	}
 
