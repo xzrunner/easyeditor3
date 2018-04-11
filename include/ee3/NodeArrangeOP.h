@@ -34,7 +34,7 @@ private:
 private:
 	ee0::SubjectMgrPtr m_sub_mgr;
 
-	ee0::SelectionSet<n0::NodeWithPos>& m_node_selection;
+	ee0::SelectionSet<n0::NodeWithPos>& m_selection;
 
 	std::shared_ptr<WxStageCanvas> m_canvas = nullptr;
 

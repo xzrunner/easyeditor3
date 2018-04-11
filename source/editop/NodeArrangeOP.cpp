@@ -18,7 +18,7 @@ namespace ee3
 NodeArrangeOP::NodeArrangeOP(ee0::WxStagePage& stage)
 	: NodeSelectOP(stage)
 	, m_sub_mgr(stage.GetSubjectMgr())
-	, m_node_selection(stage.GetNodeSelection())
+	, m_selection(stage.GetSelection())
 	, m_canvas(std::dynamic_pointer_cast<WxStageCanvas>(stage.GetImpl().GetCanvas()))
 {
 	auto& cam = m_canvas->GetCamera();
@@ -28,8 +28,8 @@ NodeArrangeOP::NodeArrangeOP(ee0::WxStagePage& stage)
 	m_cam_translate_state = std::make_shared<CamTranslateState>(cam, m_sub_mgr);
 	m_cam_zoom_state      = std::make_shared<CamZoomState>(cam, vp, m_sub_mgr);
 
-	m_node_rotate_state    = std::make_shared<NodeRotateState>(cam, vp, m_sub_mgr, m_node_selection);
-	m_node_translate_state = std::make_shared<NodeTranslateState>(cam, vp, m_sub_mgr, m_node_selection);
+	m_node_rotate_state    = std::make_shared<NodeRotateState>(cam, vp, m_sub_mgr, m_selection);
+	m_node_translate_state = std::make_shared<NodeTranslateState>(cam, vp, m_sub_mgr, m_selection);
 
 	m_op_state = m_cam_rotate_state;
 }
@@ -47,7 +47,7 @@ bool NodeArrangeOP::OnKeyDown(int key_code)
 		break;
 	case WXK_SPACE:
 		{
-			m_node_selection.Traverse([](const n0::NodeWithPos& nwp)->bool
+			m_selection.Traverse([](const n0::NodeWithPos& nwp)->bool
 			{
 				auto& ctrans = nwp.GetNode()->GetUniqueComp<n3::CompTransform>();
 				ctrans.SetPosition(sm::vec3(0, 0, 0));
@@ -69,7 +69,7 @@ bool NodeArrangeOP::OnMouseLeftDown(int x, int y)
 		return true;
 	}
 
-	auto& selection = m_stage.GetNodeSelection();
+	auto& selection = m_stage.GetSelection();
 	if (selection.IsEmpty()) {
 		ChangeEditOpState(m_cam_rotate_state);
 	} else {
@@ -98,7 +98,7 @@ bool NodeArrangeOP::OnMouseRightDown(int x, int y)
 		return true;
 	}
 
-	auto& selection = m_stage.GetNodeSelection();
+	auto& selection = m_stage.GetSelection();
 	if (selection.IsEmpty()) {
 		ChangeEditOpState(m_cam_translate_state);
 	} else if (selection.Size() == 1) {

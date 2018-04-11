@@ -27,7 +27,7 @@ bool NodeSelectOP::OnDraw() const
 		return true;
 	}
 
-	m_stage.GetNodeSelection().Traverse([](const n0::NodeWithPos& nwp)->bool
+	m_stage.GetSelection().Traverse([](const n0::NodeWithPos& nwp)->bool
 	{
 		pt3::PrimitiveDraw::SetColor(ee0::MID_RED.ToABGR());
 
