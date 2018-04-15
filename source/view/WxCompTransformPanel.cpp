@@ -1,9 +1,16 @@
 #include "ee3/WxCompTransformPanel.h"
 
-#include <node3/CompTransform.h>
-
 #include <ee0/SubjectMgr.h>
 #include <ee0/MessageID.h>
+
+#ifndef GAME_OBJ_ECS
+#include <node0/SceneNode.h>
+#include <node3/CompTransform.h>
+#else
+#include <ecsx/World.h>
+#include <entity3/CompTransform.h>
+#include <entity3/SysTransform.h>
+#endif // GAME_OBJ_ECS
 
 #include <wx/sizer.h>
 #include <wx/stattext.h>
@@ -13,11 +20,17 @@ namespace ee3
 {
 
 WxCompTransformPanel::WxCompTransformPanel(wxWindow* parent, 
-	                                       n3::CompTransform& trans,
-	                                       const ee0::SubjectMgrPtr& sub_mgr)
+	                                       const ee0::SubjectMgrPtr& sub_mgr,
+#ifdef GAME_OBJ_ECS
+	                                       ecsx::World& world,
+#endif // GAME_OBJ_ECS
+	                                       const ee0::GameObj& obj)
 	: ee0::WxCompPanel(parent, "Transform")
-	, m_ctrans(trans)
 	, m_sub_mgr(sub_mgr)
+#ifdef GAME_OBJ_ECS
+	, m_world(world)
+#endif // GAME_OBJ_ECS
+	, m_obj(obj)
 {
 	InitLayout();
 	Expand();
@@ -25,18 +38,31 @@ WxCompTransformPanel::WxCompTransformPanel(wxWindow* parent,
 
 void WxCompTransformPanel::RefreshNodeComp()
 {
-	auto& pos = m_ctrans.GetPosition();
+#ifndef GAME_OBJ_ECS
+	auto& pos = m_obj->GetUniqueComp<n3::CompTransform>().GetPosition();
+#else
+	auto pos = e3::SysTransform::GetPosition(m_world, m_obj);
+#endif // GAME_OBJ_ECS
 	m_pos_x->SetValue(std::to_string(pos.x));
 	m_pos_y->SetValue(std::to_string(pos.y));
 	m_pos_z->SetValue(std::to_string(pos.z));
 
+#ifndef GAME_OBJ_ECS
+	auto& angle = m_obj->GetUniqueComp<n3::CompTransform>().GetAngle();
+#else
+	auto angle = e3::SysTransform::GetAngle(m_world, m_obj);
+#endif // GAME_OBJ_ECS
 	float roll, pitch, yaw;
-	sm::Quaternion::TransToEulerAngle(m_ctrans.GetAngle(), roll, pitch, yaw);
+	sm::Quaternion::TransToEulerAngle(angle, roll, pitch, yaw);
 	m_angle_x->SetValue(std::to_string(pitch));
 	m_angle_y->SetValue(std::to_string(yaw));
 	m_angle_z->SetValue(std::to_string(roll));
 
-	auto& scale = m_ctrans.GetScale();
+#ifndef GAME_OBJ_ECS
+	auto& scale = m_obj->GetUniqueComp<n3::CompTransform>().GetScale();
+#else
+	auto scale = e3::SysTransform::GetScale(m_world, m_obj);
+#endif // GAME_OBJ_ECS
 	m_scale_x->SetValue(std::to_string(scale.x));
 	m_scale_y->SetValue(std::to_string(scale.y));
 	m_scale_z->SetValue(std::to_string(scale.z));
@@ -56,7 +82,11 @@ void WxCompTransformPanel::InitLayout()
 
 		sizer->Add(new wxStaticText(win, wxID_ANY, wxT("Position  ")));
 
-		auto& pos = m_ctrans.GetPosition();
+#ifndef GAME_OBJ_ECS
+		auto& pos = m_obj->GetUniqueComp<n3::CompTransform>().GetPosition();
+#else
+		auto pos = e3::SysTransform::GetPosition(m_world, m_obj);
+#endif // GAME_OBJ_ECS		
 		sizer->Add(new wxStaticText(win, wxID_ANY, wxT("X ")));
 		sizer->Add(m_pos_x = new wxTextCtrl(win, wxID_ANY, std::to_string(pos.x), 
 			wxDefaultPosition, INPUT_SIZE, wxEVT_COMMAND_TEXT_ENTER));
@@ -82,8 +112,13 @@ void WxCompTransformPanel::InitLayout()
 
 		sizer->Add(new wxStaticText(win, wxID_ANY, wxT("Angle     ")));
 
+#ifndef GAME_OBJ_ECS
+		auto& angle = m_obj->GetUniqueComp<n3::CompTransform>().GetAngle();
+#else
+		auto angle = e3::SysTransform::GetAngle(m_world, m_obj);
+#endif // GAME_OBJ_ECS
 		float roll, pitch, yaw;
-		sm::Quaternion::TransToEulerAngle(m_ctrans.GetAngle(), roll, pitch, yaw);
+		sm::Quaternion::TransToEulerAngle(angle, roll, pitch, yaw);
 		sizer->Add(new wxStaticText(win, wxID_ANY, wxT("X ")));
 		sizer->Add(m_angle_x = new wxTextCtrl(win, wxID_ANY, std::to_string(pitch), 
 			wxDefaultPosition, INPUT_SIZE, wxTE_PROCESS_ENTER));
@@ -109,7 +144,11 @@ void WxCompTransformPanel::InitLayout()
 
 		sizer->Add(new wxStaticText(win, wxID_ANY, wxT("Scale     ")));
 
-		auto& scale = m_ctrans.GetScale();
+#ifndef GAME_OBJ_ECS
+		auto& scale = m_obj->GetUniqueComp<n3::CompTransform>().GetScale();
+#else
+		auto scale = e3::SysTransform::GetScale(m_world, m_obj);
+#endif // GAME_OBJ_ECS
 		sizer->Add(new wxStaticText(win, wxID_ANY, wxT("X ")));
 		sizer->Add(m_scale_x = new wxTextCtrl(win, wxID_ANY, std::to_string(scale.x), 
 			wxDefaultPosition, INPUT_SIZE, wxTE_PROCESS_ENTER));
@@ -141,75 +180,123 @@ void WxCompTransformPanel::EnterTextValue(wxCommandEvent& event)
 	{
 		double x;
 		m_pos_x->GetValue().ToDouble(&x);
+#ifndef GAME_OBJ_ECS
 		auto& pos = m_ctrans.GetPosition();
 		m_ctrans.SetPosition(sm::vec3(x, pos.y, pos.z));
+#else
+		auto pos = e3::SysTransform::GetPosition(m_world, m_obj);
+		e3::SysTransform::SetPosition(m_world, m_obj, sm::vec3(x, pos.y, pos.z));
+#endif // GAME_OBJ_ECS
 	}
 	else if (event.GetId() == m_pos_y->GetId()) 
 	{
 		double y;
 		m_pos_y->GetValue().ToDouble(&y);
+#ifndef GAME_OBJ_ECS
 		auto& pos = m_ctrans.GetPosition();
 		m_ctrans.SetPosition(sm::vec3(pos.x, y, pos.z));
+#else
+		auto pos = e3::SysTransform::GetPosition(m_world, m_obj);
+		e3::SysTransform::SetPosition(m_world, m_obj, sm::vec3(pos.x, y, pos.z));
+#endif // GAME_OBJ_ECS
 	}
 	else if (event.GetId() == m_pos_z->GetId()) 
 	{
 		double z;
 		m_pos_z->GetValue().ToDouble(&z);
+#ifndef GAME_OBJ_ECS
 		auto& pos = m_ctrans.GetPosition();
 		m_ctrans.SetPosition(sm::vec3(pos.x, pos.y, z));
+#else
+		auto pos = e3::SysTransform::GetPosition(m_world, m_obj);
+		e3::SysTransform::SetPosition(m_world, m_obj, sm::vec3(pos.x, pos.y, z));
+#endif // GAME_OBJ_ECS
 	}
 	// angle
 	else if (event.GetId() == m_angle_x->GetId())
 	{
-		float roll, pitch, yaw;
-		sm::Quaternion::TransToEulerAngle(m_ctrans.GetAngle(), roll, pitch, yaw);
-
 		double x;
 		m_angle_x->GetValue().ToDouble(&x);
 
+		float roll, pitch, yaw;
+#ifndef GAME_OBJ_ECS
+		sm::Quaternion::TransToEulerAngle(m_ctrans.GetAngle(), roll, pitch, yaw);
 		m_ctrans.SetAngle(sm::Quaternion::CreateFromEulerAngle(roll, x, yaw));
+#else
+		auto angle = e3::SysTransform::GetAngle(m_world, m_obj);
+		sm::Quaternion::TransToEulerAngle(angle, roll, pitch, yaw);
+		e3::SysTransform::SetAngle(m_world, m_obj, 
+			sm::Quaternion::CreateFromEulerAngle(roll, x, yaw));
+#endif // GAME_OBJ_ECS
 	}
 	else if (event.GetId() == m_angle_y->GetId())
 	{
-		float roll, pitch, yaw;
-		sm::Quaternion::TransToEulerAngle(m_ctrans.GetAngle(), roll, pitch, yaw);
-
 		double y;
 		m_angle_y->GetValue().ToDouble(&y);
 
+		float roll, pitch, yaw;
+#ifndef GAME_OBJ_ECS
+		sm::Quaternion::TransToEulerAngle(m_ctrans.GetAngle(), roll, pitch, yaw);
 		m_ctrans.SetAngle(sm::Quaternion::CreateFromEulerAngle(roll, pitch, y));
+#else
+		auto angle = e3::SysTransform::GetAngle(m_world, m_obj);
+		sm::Quaternion::TransToEulerAngle(angle, roll, pitch, yaw);
+		e3::SysTransform::SetAngle(m_world, m_obj, 
+			sm::Quaternion::CreateFromEulerAngle(roll, pitch, y));
+#endif // GAME_OBJ_ECS
 	}
 	else if (event.GetId() == m_angle_z->GetId())
 	{
-		float roll, pitch, yaw;
-		sm::Quaternion::TransToEulerAngle(m_ctrans.GetAngle(), roll, pitch, yaw);
-
 		double z;
 		m_angle_z->GetValue().ToDouble(&z);
 
+		float roll, pitch, yaw;
+#ifndef GAME_OBJ_ECS
+		sm::Quaternion::TransToEulerAngle(m_ctrans.GetAngle(), roll, pitch, yaw);
 		m_ctrans.SetAngle(sm::Quaternion::CreateFromEulerAngle(z, pitch, yaw));
+#else
+		auto angle = e3::SysTransform::GetAngle(m_world, m_obj);
+		sm::Quaternion::TransToEulerAngle(angle, roll, pitch, yaw);
+		e3::SysTransform::SetAngle(m_world, m_obj,
+			sm::Quaternion::CreateFromEulerAngle(z, pitch, yaw));
+#endif // GAME_OBJ_ECS
 	}
 	// scale
 	else if (event.GetId() == m_scale_x->GetId())
 	{
 		double x;
 		m_scale_x->GetValue().ToDouble(&x);
+#ifndef GAME_OBJ_ECS
 		auto& scale = m_ctrans.GetScale();
 		m_ctrans.SetScale(sm::vec3(x, scale.y, scale.z));
+#else
+		auto scale = e3::SysTransform::GetScale(m_world, m_obj);
+		e3::SysTransform::SetScale(m_world, m_obj, sm::vec3(x, scale.y, scale.z));
+#endif // GAME_OBJ_ECS
 	}
 	else if (event.GetId() == m_scale_y->GetId())
 	{
 		double y;
 		m_scale_y->GetValue().ToDouble(&y);
+#ifndef GAME_OBJ_ECS
 		auto& scale = m_ctrans.GetScale();
 		m_ctrans.SetScale(sm::vec3(scale.x, y, scale.z));
+#else
+		auto scale = e3::SysTransform::GetScale(m_world, m_obj);
+		e3::SysTransform::SetScale(m_world, m_obj, sm::vec3(scale.x, y, scale.z));
+#endif // GAME_OBJ_ECS
 	}
 	else if (event.GetId() == m_scale_z->GetId())
 	{
 		double z;
 		m_scale_z->GetValue().ToDouble(&z);
+#ifndef GAME_OBJ_ECS
 		auto& scale = m_ctrans.GetScale();
 		m_ctrans.SetScale(sm::vec3(scale.x, scale.y, z));
+#else
+		auto scale = e3::SysTransform::GetScale(m_world, m_obj);
+		e3::SysTransform::SetScale(m_world, m_obj, sm::vec3(scale.x, scale.y, z));
+#endif // GAME_OBJ_ECS
 	}
 
 	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);

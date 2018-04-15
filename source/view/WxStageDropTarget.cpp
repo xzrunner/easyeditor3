@@ -11,17 +11,29 @@
 #include <ee0/SubjectMgr.h>
 
 #include <guard/check.h>
+#ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
 #include <ns/NodeFactory.h>
+#else
+#include <es/EntityFactory.h>
+#endif // GAME_OBJ_ECS
 #include <sx/StringHelper.h>
 
 namespace ee3
 {
 
-WxStageDropTarget::WxStageDropTarget(ee0::WxLibraryPanel* library, ee0::WxStagePage* stage)
+WxStageDropTarget::WxStageDropTarget(
+#ifdef GAME_OBJ_ECS
+	ecsx::World& world,
+#endif // GAME_OBJ_ECS
+	ee0::WxLibraryPanel* library, 
+	ee0::WxStagePage* stage)
 	: m_library(library)
 	, m_stage(stage)
+#ifdef GAME_OBJ_ECS
+	, m_world(world)
+#endif // GAME_OBJ_ECS
 {
 }
 
@@ -42,13 +54,18 @@ void WxStageDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& text)
 			continue;
 		}
 
+#ifndef GAME_OBJ_ECS
 		auto obj = ns::NodeFactory::Create(item->GetFilepath());
 		if (!obj) {
 			continue;
 		}
+#else
+		auto obj = es::EntityFactory::Create(m_world, item->GetFilepath());
+#endif // GAME_OBJ_ECS
 
 		InsertNode(obj);
 
+#ifndef GAME_OBJ_ECS
 		// transform
 		sm::vec3 pos = TransPosScrToProj3d(x, y);
 		auto& ctrans = obj->AddUniqueComp<n3::CompTransform>();
@@ -59,6 +76,9 @@ void WxStageDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& text)
 		//	pos -= p_pos;
 		//}
 		ctrans.SetPosition(pos);
+#else
+		
+#endif // GAME_OBJ_ECS
 	}
 
 	m_stage->GetSubjectMgr()->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);

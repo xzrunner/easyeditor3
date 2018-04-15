@@ -11,7 +11,9 @@
 #include <painting3/PrimitiveDraw.h>
 #include <painting3/Blackboard.h>
 #include <painting3/WindowContext.h>
+#ifndef GAME_OBJ_ECS
 #include <node3/DrawNode.h>
+#endif // GAME_OBJ_ECS
 
 namespace
 {
@@ -141,7 +143,9 @@ void WxStageCanvas::DrawNodes() const
 
 	auto mt = m_camera.GetModelViewMat();
 	m_stage->Traverse([&](const ee0::GameObj& obj)->bool {
+#ifndef GAME_OBJ_ECS
 		n3::DrawNode::Draw(obj, mt);
+#endif // GAME_OBJ_ECS
 		return true;
 	}, vars);
 }

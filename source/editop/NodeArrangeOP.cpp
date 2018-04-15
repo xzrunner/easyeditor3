@@ -9,8 +9,10 @@
 #include <ee0/WxStagePage.h>
 #include <ee0/SubjectMgr.h>
 
+#ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
+#endif // GAME_OBJ_ECS
 
 namespace ee3
 {
@@ -47,12 +49,14 @@ bool NodeArrangeOP::OnKeyDown(int key_code)
 		break;
 	case WXK_SPACE:
 		{
-			m_selection.Traverse([](const n0::NodeWithPos& nwp)->bool
+			m_selection.Traverse([](const ee0::GameObjWithPos& nwp)->bool
 			{
+#ifndef GAME_OBJ_ECS
 				auto& ctrans = nwp.GetNode()->GetUniqueComp<n3::CompTransform>();
 				ctrans.SetPosition(sm::vec3(0, 0, 0));
 				ctrans.SetAngle(sm::Quaternion());
 				ctrans.SetScale(sm::vec3(1, 1, 1));
+#endif // GAME_OBJ_ECS
 				return true;
 			});
 			m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);

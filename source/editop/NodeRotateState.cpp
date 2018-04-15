@@ -5,15 +5,17 @@
 
 #include <painting3/Camera.h>
 #include <painting3/Viewport.h>
+#ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
+#endif // GAME_OBJ_ECS
 
 namespace ee3
 {
 
 NodeRotateState::NodeRotateState(const pt3::Camera& cam, const pt3::Viewport& vp, 
 	                             const ee0::SubjectMgrPtr& sub_mgr,
-	                             const ee0::SelectionSet<n0::NodeWithPos>& selection)
+	                             const ee0::SelectionSet<ee0::GameObjWithPos>& selection)
 	: m_cam(cam)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
@@ -48,8 +50,9 @@ bool NodeRotateState::OnMouseDrag(int x, int y)
 
 void NodeRotateState::Rotate(const sm::ivec2& start, const sm::ivec2& end)
 {
-	m_selection.Traverse([&](const n0::NodeWithPos& nwp)->bool
+	m_selection.Traverse([&](const ee0::GameObjWithPos& nwp)->bool
 	{
+#ifndef GAME_OBJ_ECS
 		auto& ctrans = nwp.GetNode()->GetUniqueComp<n3::CompTransform>();
 
 		sm::vec2 center = TransPos3ProjectToScreen(ctrans.GetPosition());
@@ -66,6 +69,7 @@ void NodeRotateState::Rotate(const sm::ivec2& start, const sm::ivec2& end)
 		
    		sm::Quaternion delta = sm::Quaternion::CreateFromVectors(start3, end3);
 		ctrans.Rotate(-delta);
+#endif // GAME_OBJ_ECS
 
 		return true;
 	});

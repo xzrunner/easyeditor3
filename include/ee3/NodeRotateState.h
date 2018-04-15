@@ -3,8 +3,8 @@
 #include <ee0/EditOpState.h>
 #include <ee0/SelectionSet.h>
 #include <ee0/typedef.h>
+#include <ee0/GameObj.h>
 
-#include <node0/NodeWithPos.h>
 #include <SM_Vector.h>
 
 namespace pt3 { class Camera; class Viewport; }
@@ -16,7 +16,7 @@ class NodeRotateState : public ee0::EditOpState
 {
 public:
 	NodeRotateState(const pt3::Camera& cam, const pt3::Viewport& vp, 
-		const ee0::SubjectMgrPtr& sub_mgr, const ee0::SelectionSet<n0::NodeWithPos>& selection);
+		const ee0::SubjectMgrPtr& sub_mgr, const ee0::SelectionSet<ee0::GameObjWithPos>& selection);
 
 	virtual bool OnMousePress(int x, int y) override;
 	virtual bool OnMouseRelease(int x, int y) override;
@@ -33,7 +33,7 @@ private:
 
 	ee0::SubjectMgrPtr m_sub_mgr;
 
-	const ee0::SelectionSet<n0::NodeWithPos>& m_selection;
+	const ee0::SelectionSet<ee0::GameObjWithPos>& m_selection;
 
 	sm::ivec2 m_last_pos;
 

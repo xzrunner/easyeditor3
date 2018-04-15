@@ -8,10 +8,12 @@
 #include <guard/check.h>
 #include <painting3/Ray.h>
 #include <painting3/PrimitiveDraw.h>
+#ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
 #include <node3/Math.h>
 #include <node3/CompAABB.h>
 #include <node3/CompTransform.h>
+#endif // GAME_OBJ_ECS
 
 namespace ee3
 {
@@ -27,10 +29,11 @@ bool NodeSelectOP::OnDraw() const
 		return true;
 	}
 
-	m_stage.GetSelection().Traverse([](const n0::NodeWithPos& nwp)->bool
+	m_stage.GetSelection().Traverse([](const ee0::GameObjWithPos& nwp)->bool
 	{
 		pt3::PrimitiveDraw::SetColor(ee0::MID_RED.ToABGR());
 
+#ifndef GAME_OBJ_ECS
 		auto& caabb = nwp.GetNode()->GetUniqueComp<n3::CompAABB>();
 		auto& ctrans = nwp.GetNode()->GetUniqueComp<n3::CompTransform>();
 
@@ -45,6 +48,7 @@ bool NodeSelectOP::OnDraw() const
 		//}
 
 		pt3::PrimitiveDraw::Cube(prev_mt * ctrans.GetTransformMat(), caabb.GetAABB());
+#endif // GAME_OBJ_ECS
 
 		return true;
 	});
@@ -67,6 +71,7 @@ ee0::GameObj NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
 	var.m_val.l = ee0::WxStagePage::TRAV_QUERY;
 	vars.SetVariant("type", var);
 
+#ifndef GAME_OBJ_ECS
 	ee0::GameObj ret = nullptr;
 	m_stage.Traverse([&](const ee0::GameObj& obj)->bool
 	{
@@ -89,6 +94,9 @@ ee0::GameObj NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
 	}, vars);
 
 	return ret;
+#else
+	return ee0::GameObj();
+#endif // GAME_OBJ_ECS
 }
 
 }

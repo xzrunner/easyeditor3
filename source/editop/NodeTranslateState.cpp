@@ -5,15 +5,17 @@
 
 #include <painting3/Camera.h>
 #include <painting3/Viewport.h>
+#ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
+#endif // GAME_OBJ_ECS
 
 namespace ee3
 {
 
 NodeTranslateState::NodeTranslateState(const pt3::Camera& cam, const pt3::Viewport& vp, 
 	                                   const ee0::SubjectMgrPtr& sub_mgr, 
-	                                   const ee0::SelectionSet<n0::NodeWithPos>& selection)
+	                                   const ee0::SelectionSet<ee0::GameObjWithPos>& selection)
 	: m_cam(cam)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
@@ -50,8 +52,9 @@ bool NodeTranslateState::OnMouseDrag(int x, int y)
 
 void NodeTranslateState::Translate(const sm::ivec2& first, const sm::ivec2& curr)
 {
-	m_selection.Traverse([&](const n0::NodeWithPos& nwp)->bool
+	m_selection.Traverse([&](const ee0::GameObjWithPos& nwp)->bool
 	{
+#ifndef GAME_OBJ_ECS
 		auto& ctrans = nwp.GetNode()->GetUniqueComp<n3::CompTransform>();
 
 		float dist = m_cam.GetToward().Dot(ctrans.GetPosition() - m_cam.GetPos());
@@ -61,6 +64,7 @@ void NodeTranslateState::Translate(const sm::ivec2& first, const sm::ivec2& curr
 		sm::vec3 curr = m_vp.TransPos3ScreenToDir(
 			sm::vec2(static_cast<float>(curr.x), static_cast<float>(curr.y)), m_cam).Normalized() * dist;
 		ctrans.Translate(curr - last);
+#endif // GAME_OBJ_ECS
 
 		return true;
 	});

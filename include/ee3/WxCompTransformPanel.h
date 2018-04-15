@@ -2,9 +2,11 @@
 
 #include <ee0/WxCompPanel.h>
 #include <ee0/typedef.h>
+#include <ee0/GameObj.h>
 
-#include <node3/CompTransform.h>
-
+#ifdef GAME_OBJ_ECS
+namespace ecsx { class World; }
+#endif // GAME_OBJ_ECS
 class wxTextCtrl;
 
 namespace ee3
@@ -13,8 +15,14 @@ namespace ee3
 class WxCompTransformPanel : public ee0::WxCompPanel
 {
 public:
-	WxCompTransformPanel(wxWindow* parent, n3::CompTransform& trans,
-		const ee0::SubjectMgrPtr& sub_mgr);
+	WxCompTransformPanel(
+		wxWindow* parent, 
+		const ee0::SubjectMgrPtr& sub_mgr,
+#ifdef GAME_OBJ_ECS
+		ecsx::World& world,
+#endif // GAME_OBJ_ECS
+		const ee0::GameObj& obj
+	);
 
 	virtual void RefreshNodeComp() override;
 
@@ -24,8 +32,11 @@ private:
 	void EnterTextValue(wxCommandEvent& event);
 
 private:
-	n3::CompTransform& m_ctrans;
 	ee0::SubjectMgrPtr m_sub_mgr;
+#ifdef GAME_OBJ_ECS
+	ecsx::World&       m_world;
+#endif // GAME_OBJ_ECS
+	ee0::GameObj       m_obj;
 
 	wxTextCtrl *m_pos_x, *m_pos_y, *m_pos_z;
 	wxTextCtrl *m_angle_x, *m_angle_y, *m_angle_z;
