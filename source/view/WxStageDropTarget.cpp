@@ -23,17 +23,10 @@
 namespace ee3
 {
 
-WxStageDropTarget::WxStageDropTarget(
-#ifdef GAME_OBJ_ECS
-	ecsx::World& world,
-#endif // GAME_OBJ_ECS
-	ee0::WxLibraryPanel* library, 
-	ee0::WxStagePage* stage)
+WxStageDropTarget::WxStageDropTarget(ECS_WORLD_PARAM ee0::WxLibraryPanel* library, ee0::WxStagePage* stage)
 	: m_library(library)
 	, m_stage(stage)
-#ifdef GAME_OBJ_ECS
-	, m_world(world)
-#endif // GAME_OBJ_ECS
+	ECS_WORLD_SELF_ASSIGN
 {
 }
 
