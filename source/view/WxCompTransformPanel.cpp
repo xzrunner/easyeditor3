@@ -7,7 +7,7 @@
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
 #else
-#include <ecsx/World.h>
+#include <entity0/World.h>
 #include <entity3/CompTransform.h>
 #include <entity3/SysTransform.h>
 #endif // GAME_OBJ_ECS
