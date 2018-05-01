@@ -59,11 +59,11 @@ void NodeTranslateState::Translate(const sm::ivec2& first, const sm::ivec2& curr
 
 		float dist = m_cam.GetToward().Dot(ctrans.GetPosition() - m_cam.GetPos());
 
-		sm::vec3 last = m_vp.TransPos3ScreenToDir(
+		sm::vec3 _first = m_vp.TransPos3ScreenToDir(
 			sm::vec2(static_cast<float>(first.x), static_cast<float>(first.y)), m_cam).Normalized() * dist;
-		sm::vec3 curr = m_vp.TransPos3ScreenToDir(
+		sm::vec3 _curr = m_vp.TransPos3ScreenToDir(
 			sm::vec2(static_cast<float>(curr.x), static_cast<float>(curr.y)), m_cam).Normalized() * dist;
-		ctrans.Translate(curr - last);
+		ctrans.Translate(_curr - _first);
 #endif // GAME_OBJ_ECS
 
 		return true;
