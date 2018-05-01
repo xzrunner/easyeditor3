@@ -99,20 +99,6 @@ void WxStageDropTarget::InitNodeComp(const ee0::GameObj& obj,
 #else
 	e2::SysTransform::SetPosition(m_world, obj, pos);
 #endif // GAME_OBJ_ECS
-
-	// editor
-#ifndef GAME_OBJ_ECS
-	auto& ceditor = obj->GetUniqueComp<ee0::CompNodeEditor>();
-	ceditor.SetFilepath(filepath);
-
-	auto id = m_stage->FetchObjID();
-	ceditor.SetID(id);
-	ceditor.SetName("_obj" + std::to_string(id));
-#else
-	// editor
-	auto& ceditor = m_world.GetComponent<ee0::CompEntityEditor>(obj);
-	//ceditor.filepath = filepath;
-#endif // GAME_OBJ_ECS
 }
 
 sm::vec3 WxStageDropTarget::TransPosScrToProj3d(int x, int y) const
