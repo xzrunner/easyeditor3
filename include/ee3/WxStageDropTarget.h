@@ -20,6 +20,9 @@ public:
 private:
 	void InsertNode(ee0::GameObj& obj);
 
+	void InitNodeComp(const ee0::GameObj& obj, const sm::vec3& pos,
+		const std::string& filepath);
+
 	sm::vec3 TransPosScrToProj3d(int x, int y) const;
 	
 private:

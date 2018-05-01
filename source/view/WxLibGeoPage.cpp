@@ -8,7 +8,6 @@
 #include <node3/CompModel.h>
 #include <node3/CompAABB.h>
 #include <model/SurfaceFactory.h>
-#include <model/ModelParametric.h>
 #include <model/ParametricEquations.h>
 
 namespace ee3
