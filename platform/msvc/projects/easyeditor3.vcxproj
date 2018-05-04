@@ -18,7 +18,6 @@
     <ClInclude Include="..\..\..\include\ee3\WxCompTransformPanel.h" />
     <ClInclude Include="..\..\..\include\ee3\EditOpState.h" />
     <ClInclude Include="..\..\..\include\ee3\WxLibGeoPage.h" />
-    <ClInclude Include="..\..\..\include\ee3\WxLibObjPage.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeArrangeOP.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeFactory.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeRotateState.h" />
@@ -29,7 +28,6 @@
     <ClInclude Include="..\..\..\include\ee3\WxStageDropTarget.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\include\ee3\WxLibObjPage.cpp" />
     <ClCompile Include="..\..\..\source\data\NodeFactory.cpp" />
     <ClCompile Include="..\..\..\source\editop\CamControlOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\CamRotateState.cpp" />

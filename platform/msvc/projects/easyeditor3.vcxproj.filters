@@ -78,9 +78,6 @@
     <ClInclude Include="..\..\..\include\ee3\WxLibGeoPage.h">
       <Filter>view\library</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\WxLibObjPage.h">
-      <Filter>view\library</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\WxStageCanvas.h">
       <Filter>view\stage</Filter>
     </ClInclude>
@@ -123,9 +120,6 @@
       <Filter>view\detail\comp</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\view\WxLibGeoPage.cpp">
-      <Filter>view\library</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\include\ee3\WxLibObjPage.cpp">
       <Filter>view\library</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\view\WxStageCanvas.cpp">
