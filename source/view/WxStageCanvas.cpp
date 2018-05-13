@@ -144,7 +144,7 @@ void WxStageCanvas::DrawNodes() const
 	auto mt = m_camera.GetModelViewMat();
 	m_stage->Traverse([&](const ee0::GameObj& obj)->bool {
 #ifndef GAME_OBJ_ECS
-		n3::RenderSystem::Draw(obj, mt);
+		n3::RenderSystem::Instance()->Draw(obj, mt);
 #endif // GAME_OBJ_ECS
 		return true;
 	}, vars);
