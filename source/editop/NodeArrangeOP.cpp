@@ -34,6 +34,8 @@ NodeArrangeOP::NodeArrangeOP(ee0::WxStagePage& stage)
 	m_node_translate_state = std::make_shared<NodeTranslateState>(cam, vp, m_sub_mgr, m_selection);
 
 	m_op_state = m_cam_rotate_state;
+
+	m_last_left_press.MakeInvalid();
 }
 
 bool NodeArrangeOP::OnKeyDown(int key_code)
@@ -69,6 +71,8 @@ bool NodeArrangeOP::OnKeyDown(int key_code)
 
 bool NodeArrangeOP::OnMouseLeftDown(int x, int y)
 {
+	m_last_left_press.Set(x, y);
+
 	if (NodeSelectOP::OnMouseLeftDown(x, y)) {
 		return true;
 	}
@@ -85,6 +89,10 @@ bool NodeArrangeOP::OnMouseLeftDown(int x, int y)
 
 bool NodeArrangeOP::OnMouseLeftUp(int x, int y)
 {
+	if (!m_last_left_press.IsValid()) {
+		return false;
+	}
+
 	if (NodeSelectOP::OnMouseLeftUp(x, y)) {
 		return true;
 	}
@@ -92,6 +100,8 @@ bool NodeArrangeOP::OnMouseLeftUp(int x, int y)
 	m_op_state->OnMouseRelease(x, y);
 
 	ChangeEditOpState(m_cam_zoom_state);
+
+	m_last_left_press.MakeInvalid();
 
 	return false;
 }
@@ -138,6 +148,10 @@ bool NodeArrangeOP::OnMouseMove(int x, int y)
 
 bool NodeArrangeOP::OnMouseDrag(int x, int y)
 {
+	if (!m_last_left_press.IsValid()) {
+		return false;
+	}
+
 	if (NodeSelectOP::OnMouseDrag(x, y)) {
 		return true;
 	}
