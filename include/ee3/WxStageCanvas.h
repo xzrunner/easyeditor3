@@ -15,7 +15,7 @@ namespace ee3
 class WxStageCanvas : public ee0::WxStageCanvas, public ee0::Observer
 {
 public:
-	WxStageCanvas(ee0::WxStagePage* stage, const ee0::RenderContext* rc = nullptr, 
+	WxStageCanvas(ee0::WxStagePage* stage, const ee0::RenderContext* rc = nullptr,
 		const ee0::WindowContext* wc = nullptr, bool has2d = false);
 	virtual ~WxStageCanvas();
 
@@ -38,9 +38,10 @@ protected:
 private:
 	void DrawNodes() const;
 
-private:
+protected:
 	ee0::WxStagePage* m_stage;
 
+private:
 	bool m_has2d;
 
 	pt3::Camera   m_camera;
