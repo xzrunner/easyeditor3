@@ -60,9 +60,6 @@
     <ClInclude Include="..\..\..\include\ee3\CamTranslateState.h">
       <Filter>editop\camera\state</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\EditOpState.h">
-      <Filter>editop</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\Serializer.h">
       <Filter>tools</Filter>
     </ClInclude>

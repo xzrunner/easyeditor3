@@ -16,7 +16,6 @@
     <ClInclude Include="..\..\..\include\ee3\CamTranslateState.h" />
     <ClInclude Include="..\..\..\include\ee3\CamZoomState.h" />
     <ClInclude Include="..\..\..\include\ee3\WxCompTransformPanel.h" />
-    <ClInclude Include="..\..\..\include\ee3\EditOpState.h" />
     <ClInclude Include="..\..\..\include\ee3\WxLibGeoPage.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeArrangeOP.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeRotateState.h" />
