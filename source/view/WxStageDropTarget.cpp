@@ -1,5 +1,4 @@
 #include "ee3/WxStageDropTarget.h"
-#include "ee3/NodeFactory.h"
 #include "ee3/WxStageCanvas.h"
 
 #include <ee0/WxLibraryPanel.h>
@@ -9,7 +8,6 @@
 #include <ee0/MsgHelper.h>
 #include <ee0/WxStagePage.h>
 #include <ee0/SubjectMgr.h>
-#include <ee0/CompNodeEditor.h>
 
 #include <guard/check.h>
 #ifndef GAME_OBJ_ECS
@@ -80,7 +78,7 @@ void WxStageDropTarget::InsertNode(ee0::GameObj& obj)
 	ee0::MsgHelper::SetEditorDirty(sub_mgr, true);
 }
 
-void WxStageDropTarget::InitNodeComp(const ee0::GameObj& obj, 
+void WxStageDropTarget::InitNodeComp(const ee0::GameObj& obj,
 	                                 const sm::vec3& pos,
 	                                 const std::string& filepath)
 {

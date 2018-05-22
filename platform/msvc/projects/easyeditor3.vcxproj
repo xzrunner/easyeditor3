@@ -19,7 +19,6 @@
     <ClInclude Include="..\..\..\include\ee3\EditOpState.h" />
     <ClInclude Include="..\..\..\include\ee3\WxLibGeoPage.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeArrangeOP.h" />
-    <ClInclude Include="..\..\..\include\ee3\NodeFactory.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeRotateState.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeSelectOP.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeTranslateState.h" />
@@ -28,7 +27,6 @@
     <ClInclude Include="..\..\..\include\ee3\WxStageDropTarget.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\source\data\NodeFactory.cpp" />
     <ClCompile Include="..\..\..\source\editop\CamControlOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\CamRotateState.cpp" />
     <ClCompile Include="..\..\..\source\editop\CamTranslateState.cpp" />

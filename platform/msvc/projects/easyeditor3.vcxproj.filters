@@ -22,9 +22,6 @@
     <Filter Include="view\stage">
       <UniqueIdentifier>{985d60bc-484f-4c31-a6cb-95711b8cd200}</UniqueIdentifier>
     </Filter>
-    <Filter Include="data">
-      <UniqueIdentifier>{19b21d25-b091-4c33-a263-cf8835d46566}</UniqueIdentifier>
-    </Filter>
     <Filter Include="view\library">
       <UniqueIdentifier>{b92201bb-129c-4515-af1d-a2c85aad7930}</UniqueIdentifier>
     </Filter>
@@ -66,9 +63,6 @@
     <ClInclude Include="..\..\..\include\ee3\EditOpState.h">
       <Filter>editop</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\NodeFactory.h">
-      <Filter>data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\Serializer.h">
       <Filter>tools</Filter>
     </ClInclude>
@@ -109,9 +103,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\CamRotateState.cpp">
       <Filter>editop\camera\state</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\data\NodeFactory.cpp">
-      <Filter>data</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\tools\Serializer.cpp">
       <Filter>tools</Filter>
