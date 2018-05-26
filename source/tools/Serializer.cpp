@@ -32,7 +32,7 @@ void Serializer::StoreToJson(const std::string& filepath, const ee0::WxStagePage
 	{
 		rapidjson::Value val_node;
 #ifndef GAME_OBJ_ECS
-		ns::NodeSerializer::StoreNodeToJson(obj, dir, val_node, alloc);
+		ns::NodeSerializer::StoreToJson(obj, dir, val_node, alloc);
 #endif // GAME_OBJ_ECS
 		val_nodes.PushBack(val_node, alloc);
 		return true;
@@ -55,11 +55,11 @@ void Serializer::LoadFroimJson(const std::string& filepath, ee0::WxStagePage* st
 	auto dir = boost::filesystem::path(filepath).parent_path().string();
 
 	auto& nodes_val = doc["nodes"];
-	for (auto& node_val : nodes_val.GetArray()) 
+	for (auto& node_val : nodes_val.GetArray())
 	{
 #ifndef GAME_OBJ_ECS
 		auto obj = std::make_shared<n0::SceneNode>();
-		ns::NodeSerializer::LoadNodeFromJson(obj, dir, node_val);
+		ns::NodeSerializer::LoadFromJson(obj, dir, node_val);
 
 		bool succ = ee0::MsgHelper::InsertNode(*stage->GetSubjectMgr(), obj);
 		GD_ASSERT(succ, "no MSG_INSERT_SCENE_NODE");
