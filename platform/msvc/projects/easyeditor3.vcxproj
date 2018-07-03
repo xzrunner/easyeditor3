@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\include\ee3\CamControlOP.h" />
+    <ClInclude Include="..\..\..\include\ee3\WorldTravelOP.h" />
     <ClInclude Include="..\..\..\include\ee3\CamRotateState.h" />
     <ClInclude Include="..\..\..\include\ee3\CamTranslateState.h" />
     <ClInclude Include="..\..\..\include\ee3\CamZoomState.h" />
@@ -26,7 +26,7 @@
     <ClInclude Include="..\..\..\include\ee3\WxStageDropTarget.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\source\editop\CamControlOP.cpp" />
+    <ClCompile Include="..\..\..\source\editop\WorldTravelOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\CamRotateState.cpp" />
     <ClCompile Include="..\..\..\source\editop\CamTranslateState.cpp" />
     <ClCompile Include="..\..\..\source\editop\CamZoomState.cpp" />

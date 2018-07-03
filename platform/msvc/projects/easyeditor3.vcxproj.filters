@@ -48,9 +48,6 @@
     <ClInclude Include="..\..\..\include\ee3\NodeSelectOP.h">
       <Filter>editop\node</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\CamControlOP.h">
-      <Filter>editop\camera</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\CamRotateState.h">
       <Filter>editop\camera\state</Filter>
     </ClInclude>
@@ -75,6 +72,9 @@
     <ClInclude Include="..\..\..\include\ee3\WxStageDropTarget.h">
       <Filter>view\stage</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\WorldTravelOP.h">
+      <Filter>editop\camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\editop\NodeRotateState.cpp">
@@ -88,9 +88,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\NodeSelectOP.cpp">
       <Filter>editop\node</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\editop\CamControlOP.cpp">
-      <Filter>editop\camera</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\CamZoomState.cpp">
       <Filter>editop\camera\state</Filter>
@@ -115,6 +112,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\view\WxStageDropTarget.cpp">
       <Filter>view\stage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\WorldTravelOP.cpp">
+      <Filter>editop\camera</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

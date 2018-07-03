@@ -10,10 +10,10 @@ namespace ee3
 
 class Camera;
 
-class CamControlOP : public ee0::EditOP
+class WorldTravelOP : public ee0::EditOP
 {
 public:
-	CamControlOP(pt3::Camera& cam, const pt3::Viewport& vp, 
+	WorldTravelOP(pt3::Camera& cam, const pt3::Viewport& vp, 
 		const ee0::SubjectMgrPtr& sub_mgr);
 
 	virtual bool OnKeyDown(int key_code) override;
@@ -38,6 +38,6 @@ private:
 	ee0::EditOpStatePtr m_translate_state = nullptr;
 	ee0::EditOpStatePtr m_zoom_state = nullptr;
 
-}; // CamControlOP
+}; // WorldTravelOP
 
 }
