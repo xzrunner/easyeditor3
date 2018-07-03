@@ -19,6 +19,8 @@
 #endif // GAME_OBJ_ECS
 #include <sx/StringHelper.h>
 
+#include <boost/filesystem.hpp>
+
 namespace ee3
 {
 
@@ -84,16 +86,27 @@ void WxStageDropTarget::InitNodeComp(const ee0::GameObj& obj,
 {
 	// transform
 #ifndef GAME_OBJ_ECS
-	auto& ctrans = obj->GetUniqueComp<n3::CompTransform>();
-	// todo
-	//auto parent = obj->GetParent();
-	//if (parent) {
-	//	auto p_pos = parent->GetUniqueComp<n2::CompTransform>().GetTrans().GetMatrix() * sm::vec2(0, 0);
-	//	ctrans.SetPosition(obj, pos - p_pos);
-	//} else {
-	//	ctrans.SetPosition(obj, pos);
-	//}
-	ctrans.SetPosition(pos);
+	auto ext = boost::filesystem::extension(filepath);
+	std::transform(ext.begin(), ext.end(), ext.begin(), tolower);
+	if (ext == ".bsp")
+	{
+		auto& ctrans = obj->GetUniqueComp<n3::CompTransform>();
+		ctrans.Rotate(sm::Quaternion::CreateFromEulerAngle(0, - SM_PI * 0.5f, 0));
+		ctrans.Translate(sm::vec3(0, 10, 0));
+	}
+	else
+	{
+		auto& ctrans = obj->GetUniqueComp<n3::CompTransform>();
+		// todo
+		//auto parent = obj->GetParent();
+		//if (parent) {
+		//	auto p_pos = parent->GetUniqueComp<n2::CompTransform>().GetTrans().GetMatrix() * sm::vec2(0, 0);
+		//	ctrans.SetPosition(obj, pos - p_pos);
+		//} else {
+		//	ctrans.SetPosition(obj, pos);
+		//}
+		ctrans.SetPosition(pos);
+	}
 #else
 	e2::SysTransform::SetPosition(m_world, obj, pos);
 #endif // GAME_OBJ_ECS
