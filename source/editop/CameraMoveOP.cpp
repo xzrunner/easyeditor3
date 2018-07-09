@@ -7,6 +7,7 @@
 #include <painting3/Viewport.h>
 
 #include <wx/defs.h>
+#include <wx/utils.h>
 
 namespace ee3
 {
@@ -25,8 +26,6 @@ bool CameraMoveOP::OnKeyDown(int key_code)
 {
 	if (ee0::EditOP::OnKeyDown(key_code)) { return true; }
 
-	static const float OFFSET = 0.1f;
-
 	switch (key_code)
 	{
 	case WXK_ESCAPE:
@@ -34,21 +33,33 @@ bool CameraMoveOP::OnKeyDown(int key_code)
 		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 		break;
 	case 'w': case 'W':
-		m_cam.MoveToward(OFFSET);
-		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+		m_move_dir = MOVE_UP;
 		break;
 	case 's': case 'S':
-		m_cam.MoveToward(-OFFSET);
-		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+		m_move_dir = MOVE_DOWN;
 		break;
 	case 'a': case 'A':
-		m_cam.Translate(OFFSET, 0);
-		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+		m_move_dir = MOVE_LEFT;
 		break;
 	case 'd': case 'D':
-		m_cam.Translate(-OFFSET, 0);
-		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+		m_move_dir = MOVE_RIGHT;
 		break;
+	}
+
+	return false;
+}
+
+bool CameraMoveOP::OnKeyUp(int key_code)
+{
+	if (ee0::EditOP::OnKeyUp(key_code)) { return true; }
+
+	switch (key_code)
+	{
+		case 'W':
+		case 'S':
+		case 'A':
+		case 'D':
+			m_move_dir = MOVE_NONE;
 	}
 
 	return false;
@@ -118,6 +129,37 @@ bool CameraMoveOP::OnMouseWheelRotation(int x, int y, int direction)
 	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 
 	return false;
+}
+
+bool CameraMoveOP::Update(float dt)
+{
+	if (m_move_dir == MOVE_NONE) {
+		return false;
+	}
+
+	static const float SPEED = 5.0f;
+	float offset = SPEED * dt;
+	if (wxGetKeyState(WXK_SHIFT)) {
+		offset *= 0.1f;
+	}
+	switch (m_move_dir)
+	{
+	case MOVE_LEFT:
+		m_cam.Translate(offset, 0);
+		break;
+	case MOVE_RIGHT:
+		m_cam.Translate(-offset, 0);
+		break;
+	case MOVE_UP:
+		m_cam.MoveToward(offset);
+		break;
+	case MOVE_DOWN:
+		m_cam.MoveToward(-offset);
+		break;
+	}
+	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+
+	return true;
 }
 
 }
