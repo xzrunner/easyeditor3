@@ -34,8 +34,8 @@ protected:
 	virtual void OnDrawSprites() const override;
 
 	virtual void DrawBackground() const;
+	virtual void DrawForeground() const;
 
-private:
 	void DrawNodes() const;
 
 protected:

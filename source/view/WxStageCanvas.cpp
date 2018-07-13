@@ -115,7 +115,7 @@ void WxStageCanvas::OnDrawSprites() const
 	}
 
 	DrawBackground();
-	DrawNodes();
+	DrawForeground();
 
 	m_stage->GetImpl().GetEditOP()->OnDraw();
 }
@@ -139,6 +139,11 @@ void WxStageCanvas::DrawBackground() const
 				sm::vec3(x + GRID_EDGE, 0, z + GRID_EDGE));
 		}
 	}
+}
+
+void WxStageCanvas::DrawForeground() const
+{
+	DrawNodes();
 }
 
 void WxStageCanvas::DrawNodes() const
