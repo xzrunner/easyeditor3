@@ -47,6 +47,7 @@ private:
 	ee0::EditOpStatePtr m_node_translate_state = nullptr;
 
 	sm::ivec2 m_last_left_press;
+	sm::ivec2 m_last_right_press;
 
 }; // NodeArrangeOP
 
