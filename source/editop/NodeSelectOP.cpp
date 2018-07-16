@@ -83,6 +83,7 @@ ee0::GameObj NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
 			caabb.GetAABB(),
 			ctrans.GetPosition(),
 			ctrans.GetAngle(),
+			ctrans.GetScale(),
 			ray,
 			&cross);
 		if (intersect) {
