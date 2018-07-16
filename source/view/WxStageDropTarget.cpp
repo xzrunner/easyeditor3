@@ -122,7 +122,7 @@ sm::vec3 WxStageDropTarget::TransPosScrToProj3d(int x, int y) const
 	auto& vp = canvas->GetViewport();
 	auto& cam = canvas->GetCamera();
 	auto dir = vp.TransPos3ScreenToDir(sm::vec2(x, y), cam);
-	sm::vec3 ret = dir.Normalized() * cam.GetDistance();
+	sm::vec3 ret = dir * cam.GetDistance();
 	ret.y = 0;
 	return ret;
 }

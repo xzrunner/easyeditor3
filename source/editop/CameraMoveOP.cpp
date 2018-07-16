@@ -121,8 +121,7 @@ bool CameraMoveOP::OnMouseWheelRotation(int x, int y, int direction)
 	static const float OFFSET = 0.05f;
 	if (direction > 0) {
 		m_cam.Move(dir, m_cam.GetDistance() * OFFSET);
-	}
-	else {
+	} else {
 		m_cam.Move(dir, -m_cam.GetDistance() * OFFSET);
 	}
 
