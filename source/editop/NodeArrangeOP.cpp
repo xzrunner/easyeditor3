@@ -17,15 +17,13 @@
 namespace ee3
 {
 
-NodeArrangeOP::NodeArrangeOP(ee0::WxStagePage& stage)
+NodeArrangeOP::NodeArrangeOP(ee0::WxStagePage& stage, pt3::Camera& cam,
+	                         const pt3::Viewport& vp)
 	: NodeSelectOP(stage)
 	, m_sub_mgr(stage.GetSubjectMgr())
 	, m_selection(stage.GetSelection())
 	, m_canvas(std::dynamic_pointer_cast<WxStageCanvas>(stage.GetImpl().GetCanvas()))
 {
-	auto& cam = m_canvas->GetCamera();
-	auto& vp = m_canvas->GetViewport();
-
 	m_cam_rotate_state    = std::make_shared<CamRotateState>(cam, m_sub_mgr);
 	m_cam_translate_state = std::make_shared<CamTranslateState>(cam, m_sub_mgr);
 	m_cam_zoom_state      = std::make_shared<CamZoomState>(cam, vp, m_sub_mgr);
