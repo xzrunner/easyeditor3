@@ -81,6 +81,9 @@
     <ClInclude Include="..\..\..\include\ee3\NodeRotateOP.h">
       <Filter>editop\node</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\NodeRotate3State.h">
+      <Filter>editop\node\state</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\editop\NodeRotateState.cpp">
@@ -127,6 +130,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\NodeRotateOP.cpp">
       <Filter>editop\node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\NodeRotate3State.cpp">
+      <Filter>editop\node\state</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

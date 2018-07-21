@@ -1,11 +1,7 @@
 #pragma once
 
 #include <ee0/EditOP.h>
-#include <ee0/GameObj.h>
-#include <ee0/SelectionSet.h>
 #include <ee0/typedef.h>
-
-#include <painting2/OrthoCamera.h>
 
 namespace ee0 { class WxStagePage; }
 namespace pt3 { class Camera; class Viewport; }
@@ -21,6 +17,8 @@ public:
 
 	virtual bool OnMouseLeftDown(int x, int y) override;
 	virtual bool OnMouseLeftUp(int x, int y) override;
+	virtual bool OnMouseRightDown(int x, int y);
+	virtual bool OnMouseRightUp(int x, int y);
 	virtual bool OnMouseDrag(int x, int y);
 	virtual bool OnMouseWheelRotation(int x, int y, int direction) override;
 
@@ -28,39 +26,18 @@ public:
 	virtual bool OnDraw() const override;
 
 private:
-	enum PointQueryType
-	{
-		POINT_QUERY_NULL = 0,
-		POINT_QUERY_X,
-		POINT_QUERY_Y,
-		POINT_QUERY_Z,
-	};
-	PointQueryType PointQuery(int x, int y) const;
-
-	void InitSelectionCenter();
-
-	void Rotate(const sm::vec2& start, const sm::vec2& end);
-
-	void DrawEdges() const;
-	void DrawNodes() const;
+	void ChangeEditOpState(const ee0::EditOpStatePtr& state);
 
 private:
-	ee0::SelectionSet<ee0::GameObjWithPos>& m_selection;
 	ee0::SubjectMgrPtr m_sub_mgr;
 
-	pt3::Camera& m_cam;
-	const pt3::Viewport& m_vp;
+	ee0::EditOpStatePtr m_op_state = nullptr;
 
-	pt2::OrthoCamera m_cam2d;
+	ee0::EditOpStatePtr m_cam_rotate_state    = nullptr;
+	ee0::EditOpStatePtr m_cam_translate_state = nullptr;
+	ee0::EditOpStatePtr m_cam_zoom_state      = nullptr;
 
-	std::shared_ptr<ee0::EditOpState> m_cam_zoom_state;
-
-	PointQueryType m_op_type;
-
-	sm::vec2 m_last_pos;
-
-	sm::vec3 m_center;
-	sm::vec2 m_center2d;
+	ee0::EditOpStatePtr m_node_rotate_state   = nullptr;
 
 }; // NodeRotateOP
 
