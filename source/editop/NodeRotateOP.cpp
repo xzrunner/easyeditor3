@@ -7,6 +7,12 @@
 
 #include <SM_Cube.h>
 #include <SM_Calc.h>
+#include <unirender/Blackboard.h>
+#include <unirender/RenderContext.h>
+#include <shaderlab/Blackboard.h>
+#include <shaderlab/RenderContext.h>
+#include <shaderlab/ShaderMgr.h>
+#include <shaderlab/Shader.h>
 #include <node0/SceneNode.h>
 #include <node3/CompAABB.h>
 #include <node3/CompTransform.h>
@@ -117,36 +123,14 @@ bool NodeRotateOP::OnDraw() const
 		return false;
 	}
 
-	// axis
-	pt3::PrimitiveDraw::SetColor(0xff0000ff);
-	pt3::PrimitiveDraw::Line(m_center, sm::vec3(m_center.x + ARC_RADIUS, m_center.y, m_center.z));
-	pt3::PrimitiveDraw::SetColor(0xff00ff00);
-	pt3::PrimitiveDraw::Line(m_center, sm::vec3(m_center.x, m_center.y + ARC_RADIUS, m_center.z));
-	pt3::PrimitiveDraw::SetColor(0xffff0000);
-	pt3::PrimitiveDraw::Line(m_center, sm::vec3(m_center.x, m_center.y, m_center.z - ARC_RADIUS));
+	// 3d
+	DrawEdges();
 
-	// arc
-	pt3::PrimitiveDraw::SetColor(0xff0000ff);
-	pt3::PrimitiveDraw::Arc(m_center, ARC_RADIUS, sm::vec3(0, 0,-1), sm::vec3(1, 0, 0), 0, SM_PI * 0.5f);
-	pt3::PrimitiveDraw::SetColor(0xff00ff00);
-	pt3::PrimitiveDraw::Arc(m_center, ARC_RADIUS, sm::vec3(1, 0, 0), sm::vec3(0, 1, 0), 0, SM_PI * 0.5f);
-	pt3::PrimitiveDraw::SetColor(0xffff0000);
-	pt3::PrimitiveDraw::Arc(m_center, ARC_RADIUS, sm::vec3(1, 0, 0), sm::vec3(0, 0, 1), 0, SM_PI * 0.5f);
-
-	// nodes
-	auto cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
-	// x, green
-	auto pos2d = m_vp.TransPosProj3ToProj2(sm::vec3(m_center.x + ARC_RADIUS, m_center.y, m_center.z), cam_mat);
-	pt2::PrimitiveDraw::SetColor(0xff00ff00);
-	pt2::PrimitiveDraw::Circle(nullptr, pos2d, NODE_RADIUS, true);
-	// y, blue
-	pos2d = m_vp.TransPosProj3ToProj2(sm::vec3(m_center.x, m_center.y + ARC_RADIUS, m_center.z), cam_mat);
-	pt2::PrimitiveDraw::SetColor(0xffff0000);
-	pt2::PrimitiveDraw::Circle(nullptr, pos2d, NODE_RADIUS, true);
-	// z, red
-	pos2d = m_vp.TransPosProj3ToProj2(sm::vec3(m_center.x, m_center.y, m_center.z - ARC_RADIUS), cam_mat);
-	pt2::PrimitiveDraw::SetColor(0xff0000ff);
-	pt2::PrimitiveDraw::Circle(nullptr, pos2d, NODE_RADIUS, true);
+	// 2d
+	auto& ur_rc = ur::Blackboard::Instance()->GetRenderContext();
+	ur_rc.SetCull(ur::CULL_DISABLE);
+	DrawNodes();
+	sl::Blackboard::Instance()->GetRenderContext().GetShaderMgr().FlushShader();
 
 	return true;
 }
@@ -236,6 +220,43 @@ void NodeRotateOP::Rotate(const sm::vec2& start, const sm::vec2& end)
 
 		return true;
 	});
+}
+
+void NodeRotateOP::DrawEdges() const
+{
+	// axis
+	pt3::PrimitiveDraw::SetColor(0xff0000ff);
+	pt3::PrimitiveDraw::Line(m_center, sm::vec3(m_center.x + ARC_RADIUS, m_center.y, m_center.z));
+	pt3::PrimitiveDraw::SetColor(0xff00ff00);
+	pt3::PrimitiveDraw::Line(m_center, sm::vec3(m_center.x, m_center.y + ARC_RADIUS, m_center.z));
+	pt3::PrimitiveDraw::SetColor(0xffff0000);
+	pt3::PrimitiveDraw::Line(m_center, sm::vec3(m_center.x, m_center.y, m_center.z - ARC_RADIUS));
+
+	// arc
+	pt3::PrimitiveDraw::SetColor(0xff0000ff);
+	pt3::PrimitiveDraw::Arc(m_center, ARC_RADIUS, sm::vec3(0, 0, -1), sm::vec3(1, 0, 0), 0, SM_PI * 0.5f);
+	pt3::PrimitiveDraw::SetColor(0xff00ff00);
+	pt3::PrimitiveDraw::Arc(m_center, ARC_RADIUS, sm::vec3(1, 0, 0), sm::vec3(0, 1, 0), 0, SM_PI * 0.5f);
+	pt3::PrimitiveDraw::SetColor(0xffff0000);
+	pt3::PrimitiveDraw::Arc(m_center, ARC_RADIUS, sm::vec3(1, 0, 0), sm::vec3(0, 0, 1), 0, SM_PI * 0.5f);
+
+}
+
+void NodeRotateOP::DrawNodes() const
+{
+	auto cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
+	// x, green
+	auto pos2d = m_vp.TransPosProj3ToProj2(sm::vec3(m_center.x + ARC_RADIUS, m_center.y, m_center.z), cam_mat);
+	pt2::PrimitiveDraw::SetColor(0xff00ff00);
+	pt2::PrimitiveDraw::Circle(nullptr, pos2d, NODE_RADIUS, true);
+	// y, blue
+	pos2d = m_vp.TransPosProj3ToProj2(sm::vec3(m_center.x, m_center.y + ARC_RADIUS, m_center.z), cam_mat);
+	pt2::PrimitiveDraw::SetColor(0xffff0000);
+	pt2::PrimitiveDraw::Circle(nullptr, pos2d, NODE_RADIUS, true);
+	// z, red
+	pos2d = m_vp.TransPosProj3ToProj2(sm::vec3(m_center.x, m_center.y, m_center.z - ARC_RADIUS), cam_mat);
+	pt2::PrimitiveDraw::SetColor(0xff0000ff);
+	pt2::PrimitiveDraw::Circle(nullptr, pos2d, NODE_RADIUS, true);
 }
 
 }

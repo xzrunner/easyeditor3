@@ -41,6 +41,9 @@ private:
 
 	void Rotate(const sm::vec2& start, const sm::vec2& end);
 
+	void DrawEdges() const;
+	void DrawNodes() const;
+
 private:
 	ee0::SelectionSet<ee0::GameObjWithPos>& m_selection;
 	ee0::SubjectMgrPtr m_sub_mgr;
