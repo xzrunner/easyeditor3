@@ -14,6 +14,8 @@
     <ClInclude Include="..\..\..\include\ee3\CameraMoveOP.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeRotate3State.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeRotateOP.h" />
+    <ClInclude Include="..\..\..\include\ee3\NodeTranslate3State.h" />
+    <ClInclude Include="..\..\..\include\ee3\NodeTranslateOP.h" />
     <ClInclude Include="..\..\..\include\ee3\WorldTravelOP.h" />
     <ClInclude Include="..\..\..\include\ee3\CamRotateState.h" />
     <ClInclude Include="..\..\..\include\ee3\CamTranslateState.h" />
@@ -32,6 +34,8 @@
     <ClCompile Include="..\..\..\source\editop\CameraMoveOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\NodeRotate3State.cpp" />
     <ClCompile Include="..\..\..\source\editop\NodeRotateOP.cpp" />
+    <ClCompile Include="..\..\..\source\editop\NodeTranslate3State.cpp" />
+    <ClCompile Include="..\..\..\source\editop\NodeTranslateOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\WorldTravelOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\CamRotateState.cpp" />
     <ClCompile Include="..\..\..\source\editop\CamTranslateState.cpp" />
