@@ -78,6 +78,9 @@
     <ClInclude Include="..\..\..\include\ee3\CameraMoveOP.h">
       <Filter>editop\camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\NodeRotateOP.h">
+      <Filter>editop\node</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\editop\NodeRotateState.cpp">
@@ -121,6 +124,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\CameraMoveOP.cpp">
       <Filter>editop\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\NodeRotateOP.cpp">
+      <Filter>editop\node</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
