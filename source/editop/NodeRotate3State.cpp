@@ -80,7 +80,7 @@ bool NodeRotate3State::OnMouseDrag(int x, int y)
 
 bool NodeRotate3State::OnActive()
 {
-	InitSelectionCenter();
+	UpdateSelectionSetInfo();
 
 	return false;
 }
@@ -128,7 +128,7 @@ NodeRotate3State::PointQueryType NodeRotate3State::PointQuery(int x, int y) cons
 	return POINT_QUERY_NULL;
 }
 
-void NodeRotate3State::InitSelectionCenter()
+void NodeRotate3State::UpdateSelectionSetInfo()
 {
 	//sm::cube tot_aabb;
 	//m_selection.Traverse([&](const ee0::GameObjWithPos& opw)->bool

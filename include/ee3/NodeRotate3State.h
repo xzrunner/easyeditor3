@@ -36,7 +36,7 @@ private:
 	};
 	PointQueryType PointQuery(int x, int y) const;
 
-	void InitSelectionCenter();
+	void UpdateSelectionSetInfo();
 
 	void Rotate(const sm::vec2& start, const sm::vec2& end);
 
