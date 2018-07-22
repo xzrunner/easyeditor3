@@ -143,6 +143,7 @@ void NodeRotate3State::UpdateSelectionSetInfo()
 	//m_center = tot_aabb.Center();
 
 	int count = 0;
+	m_center.Set(0, 0, 0);
 	m_selection.Traverse([&](const ee0::GameObjWithPos& opw)->bool
 	{
 		++count;
