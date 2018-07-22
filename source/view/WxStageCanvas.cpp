@@ -117,7 +117,10 @@ void WxStageCanvas::OnDrawSprites() const
 	DrawBackground();
 	DrawForeground();
 
-	m_stage->GetImpl().GetEditOP()->OnDraw();
+	auto edit_op = m_stage->GetImpl().GetEditOP();
+	if (edit_op) {
+		edit_op->OnDraw();
+	}
 }
 
 void WxStageCanvas::DrawBackground() const
