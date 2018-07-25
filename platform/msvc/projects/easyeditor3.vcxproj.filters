@@ -34,6 +34,9 @@
     <Filter Include="view\detail\comp">
       <UniqueIdentifier>{99416825-d9bc-44bc-b3f3-ff663287c2c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="editop\mesh">
+      <UniqueIdentifier>{6fbaf418-2ac0-4e7c-aece-d72dec0d427b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\ee3\NodeRotateState.h">
@@ -75,9 +78,6 @@
     <ClInclude Include="..\..\..\include\ee3\WorldTravelOP.h">
       <Filter>editop\camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\CameraMoveOP.h">
-      <Filter>editop\camera</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\NodeRotateOP.h">
       <Filter>editop\node</Filter>
     </ClInclude>
@@ -89,6 +89,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\NodeTranslate3State.h">
       <Filter>editop\node\state</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\MeshFaceOP.h">
+      <Filter>editop\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\MeshEdgeOP.h">
+      <Filter>editop\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\MeshVertexOP.h">
+      <Filter>editop\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\CameraDriveOP.h">
+      <Filter>editop\camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -131,9 +143,6 @@
     <ClCompile Include="..\..\..\source\editop\WorldTravelOP.cpp">
       <Filter>editop\camera</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\editop\CameraMoveOP.cpp">
-      <Filter>editop\camera</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\editop\NodeRotateOP.cpp">
       <Filter>editop\node</Filter>
     </ClCompile>
@@ -145,6 +154,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\NodeTranslate3State.cpp">
       <Filter>editop\node\state</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\MeshFaceOP.cpp">
+      <Filter>editop\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\MeshEdgeOP.cpp">
+      <Filter>editop\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\MeshVertexOP.cpp">
+      <Filter>editop\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\CameraDriveOP.cpp">
+      <Filter>editop\camera</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

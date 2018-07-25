@@ -13,7 +13,7 @@ class Camera;
 class WorldTravelOP : public ee0::EditOP
 {
 public:
-	WorldTravelOP(pt3::Camera& cam, const pt3::Viewport& vp, 
+	WorldTravelOP(pt3::Camera& cam, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr);
 
 	virtual bool OnKeyDown(int key_code) override;
@@ -28,7 +28,7 @@ public:
 private:
 	void ChangeEditOpState(const ee0::EditOpStatePtr& state);
 
-private:
+protected:
 	pt3::Camera&        m_cam;
 	ee0::SubjectMgrPtr  m_sub_mgr;
 
