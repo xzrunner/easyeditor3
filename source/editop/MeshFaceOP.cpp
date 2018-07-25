@@ -3,6 +3,8 @@
 #include <ee0/WxStagePage.h>
 #include <ee0/SubjectMgr.h>
 
+#include <SM_Ray.h>
+#include <SM_RayIntersect.h>
 #include <model/Model.h>
 #include <model/HalfEdgeMesh.h>
 #include <painting3/PrimitiveDraw.h>
@@ -13,8 +15,6 @@
 #include <node3/CompModel.h>
 #include <node3/CompModelInst.h>
 #include <node3/CompTransform.h>
-#include <node3/Math.h>
-#include <painting3/Ray.h>
 
 namespace ee3
 {
@@ -63,8 +63,8 @@ bool MeshFaceOP::OnDraw() const
 	for (int i = 0, n = polyline.size(); i < n; ++i) {
 		polyline[i] = m_selected_mat * polyline[i];
 	}
-	pt3::PrimitiveDraw::Polyline(polyline, true);
-//	pt3::PrimitiveDraw::Polygon(polyline);
+//	pt3::PrimitiveDraw::Polyline(polyline, true);
+	pt3::PrimitiveDraw::Polygon(polyline);
 
 	return false;
 }
@@ -77,7 +77,7 @@ void MeshFaceOP::PointQuery(int x, int y)
 	auto cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
 
 	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(sm::vec2(x, y), m_cam);
-	pt3::Ray ray(m_cam.GetPos(), ray_dir);
+	sm::Ray ray(m_cam.GetPos(), ray_dir);
 	m_selection.Traverse([&](const ee0::GameObjWithPos& opw)->bool
 	{
 		auto& node = opw.GetNode();
@@ -90,7 +90,7 @@ void MeshFaceOP::PointQuery(int x, int y)
 
 		sm::vec3 cross;
 		auto& ctrans = node->GetUniqueComp<n3::CompTransform>();
-		if (!n3::Math::RayOBBIntersection(model->GetModel()->aabb, ctrans.GetPosition(),
+		if (!sm::ray_obb_intersect(model->GetModel()->aabb, ctrans.GetPosition(),
 			ctrans.GetAngle(), ctrans.GetScale(), ray, &cross)) {
 			return false;
 		}
@@ -102,20 +102,21 @@ void MeshFaceOP::PointQuery(int x, int y)
 		auto he_mesh = static_cast<model::HalfEdgeMesh*>(ext.get());
 		for (auto& mesh : he_mesh->meshes)
 		{
-			if (n3::Math::RayOBBIntersection(mesh->GetAABB(), ctrans.GetPosition(),
+			if (sm::ray_obb_intersect(mesh->GetAABB(), ctrans.GetPosition(),
 				ctrans.GetAngle(), ctrans.GetScale(), ray, &cross))
 			{
 				m_selected_poly = mesh;
 				m_selected_mat = ctrans.GetTransformMat();
 
 				auto& faces = mesh->GetFaces();
-				for (auto& face : faces) {
+				for (auto& face : faces)
+				{
 					std::vector<sm::vec3> border;
 					face->GetBorder(border);
+					assert(border.size() > 2);
 					sm::vec3 cross_face;
-					if (n3::Math::RayPolygonIntersection(
-						m_selected_mat, border, ray, &cross_face))
-					{
+					if (sm::ray_polygon_intersect(
+						m_selected_mat, border, ray, &cross_face)) {
 						m_selected_face = face;
 						break;
 					}

@@ -6,11 +6,11 @@
 #include <ee0/WxStagePage.h>
 
 #include <guard/check.h>
-#include <painting3/Ray.h>
+#include <SM_Ray.h>
+#include <SM_RayIntersect.h>
 #include <painting3/PrimitiveDraw.h>
 #ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
-#include <node3/Math.h>
 #include <node3/CompAABB.h>
 #include <node3/CompTransform.h>
 #endif // GAME_OBJ_ECS
@@ -63,7 +63,7 @@ ee0::GameObj NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
 	auto& vp = canvas->GetViewport();
 	auto& cam = canvas->GetCamera();
 	sm::vec3 ray_dir = vp.TransPos3ScreenToDir(sm::vec2(screen_x, screen_y), cam);
-	pt3::Ray ray(cam.GetPos(), ray_dir);
+	sm::Ray ray(cam.GetPos(), ray_dir);
 
 	ee0::VariantSet vars;
 	ee0::Variant var;
@@ -79,7 +79,7 @@ ee0::GameObj NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
 		auto& ctrans = obj->GetUniqueComp<n3::CompTransform>();
 
 		sm::vec3 cross;
-		bool intersect = n3::Math::RayOBBIntersection(
+		bool intersect = sm::ray_obb_intersect(
 			caabb.GetAABB().Cube(),
 			ctrans.GetPosition(),
 			ctrans.GetAngle(),
