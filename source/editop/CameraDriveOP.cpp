@@ -1,4 +1,4 @@
-#include "ee3/CameraMoveOP.h"
+#include "ee3/CameraDriveOP.h"
 
 #include <ee0/MessageID.h>
 #include <ee0/SubjectMgr.h>
@@ -12,7 +12,7 @@
 namespace ee3
 {
 
-CameraMoveOP::CameraMoveOP(pt3::Camera& cam, const pt3::Viewport& vp,
+CameraDriveOP::CameraDriveOP(pt3::Camera& cam, const pt3::Viewport& vp,
 	                       const ee0::SubjectMgrPtr& sub_mgr)
 	: ee0::EditOP()
 	, m_cam(cam)
@@ -22,7 +22,7 @@ CameraMoveOP::CameraMoveOP(pt3::Camera& cam, const pt3::Viewport& vp,
 	m_last_pos.MakeInvalid();
 }
 
-bool CameraMoveOP::OnKeyDown(int key_code)
+bool CameraDriveOP::OnKeyDown(int key_code)
 {
 	if (ee0::EditOP::OnKeyDown(key_code)) { return true; }
 
@@ -49,7 +49,7 @@ bool CameraMoveOP::OnKeyDown(int key_code)
 	return false;
 }
 
-bool CameraMoveOP::OnKeyUp(int key_code)
+bool CameraDriveOP::OnKeyUp(int key_code)
 {
 	if (ee0::EditOP::OnKeyUp(key_code)) { return true; }
 
@@ -65,7 +65,7 @@ bool CameraMoveOP::OnKeyUp(int key_code)
 	return false;
 }
 
-bool CameraMoveOP::OnMouseRightDown(int x, int y)
+bool CameraDriveOP::OnMouseRightDown(int x, int y)
 {
 	if (ee0::EditOP::OnMouseRightDown(x, y)) {
 		return true;
@@ -75,7 +75,7 @@ bool CameraMoveOP::OnMouseRightDown(int x, int y)
 	return false;
 }
 
-bool CameraMoveOP::OnMouseRightUp(int x, int y)
+bool CameraDriveOP::OnMouseRightUp(int x, int y)
 {
 	if (ee0::EditOP::OnMouseRightUp(x, y)) {
 		return true;
@@ -85,7 +85,7 @@ bool CameraMoveOP::OnMouseRightUp(int x, int y)
 	return false;
 }
 
-bool CameraMoveOP::OnMouseDrag(int x, int y)
+bool CameraDriveOP::OnMouseDrag(int x, int y)
 {
 	if (ee0::EditOP::OnMouseDrag(x, y)) {
 		return true;
@@ -110,7 +110,7 @@ bool CameraMoveOP::OnMouseDrag(int x, int y)
 	return false;
 }
 
-bool CameraMoveOP::OnMouseWheelRotation(int x, int y, int direction)
+bool CameraDriveOP::OnMouseWheelRotation(int x, int y, int direction)
 {
 	if (ee0::EditOP::OnMouseWheelRotation(x, y, direction)) {
 		return true;
@@ -130,7 +130,7 @@ bool CameraMoveOP::OnMouseWheelRotation(int x, int y, int direction)
 	return false;
 }
 
-bool CameraMoveOP::Update(float dt)
+bool CameraDriveOP::Update(float dt)
 {
 	if (m_move_dir == MOVE_NONE) {
 		return false;

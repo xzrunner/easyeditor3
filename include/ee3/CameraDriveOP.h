@@ -10,10 +10,10 @@ namespace pt3 { class Camera; class Viewport; }
 namespace ee3
 {
 
-class CameraMoveOP : public ee0::EditOP
+class CameraDriveOP : public ee0::EditOP
 {
 public:
-	CameraMoveOP(pt3::Camera& cam, const pt3::Viewport& vp,
+	CameraDriveOP(pt3::Camera& cam, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr);
 
 	virtual bool OnKeyDown(int key_code) override;
@@ -44,6 +44,6 @@ private:
 
 	MoveDir m_move_dir = MOVE_NONE;
 
-}; // CameraMoveOP
+}; // CameraDriveOP
 
 }
