@@ -80,7 +80,7 @@ ee0::GameObj NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
 
 		sm::vec3 cross;
 		bool intersect = n3::Math::RayOBBIntersection(
-			caabb.GetAABB(),
+			caabb.GetAABB().Cube(),
 			ctrans.GetPosition(),
 			ctrans.GetAngle(),
 			ctrans.GetScale(),
