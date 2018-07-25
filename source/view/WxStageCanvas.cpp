@@ -149,7 +149,7 @@ void WxStageCanvas::DrawForeground() const
 	DrawNodes();
 }
 
-void WxStageCanvas::DrawNodes() const
+void WxStageCanvas::DrawNodes(n3::RenderParams::DrawType type) const
 {
 	ee0::VariantSet vars;
 	ee0::Variant var;
@@ -157,10 +157,13 @@ void WxStageCanvas::DrawNodes() const
 	var.m_val.l = ee0::WxStagePage::TRAV_DRAW;
 	vars.SetVariant("type", var);
 
-	auto mt = m_camera.GetModelViewMat();
+	n3::RenderParams params;
+	params.mt = m_camera.GetModelViewMat();
+	params.type = type;
+
 	m_stage->Traverse([&](const ee0::GameObj& obj)->bool {
 #ifndef GAME_OBJ_ECS
-		n3::RenderSystem::Draw(obj, mt);
+		n3::RenderSystem::Draw(obj, params);
 #endif // GAME_OBJ_ECS
 		return true;
 	}, vars);
