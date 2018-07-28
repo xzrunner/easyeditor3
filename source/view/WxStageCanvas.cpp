@@ -97,7 +97,8 @@ void WxStageCanvas::OnDrawSprites() const
 	auto& ur_rc = const_cast<ee0::RenderContext&>(GetRenderContext()).facade_rc->GetUrRc();
 	ur_rc.SetClearFlag(ur::MASKC | ur::MASKD);
 	ur_rc.Clear(0x88888888);
-	ur_rc.EnableDepth(true);
+	ur_rc.SetDepthTest(ur::DEPTH_LESS_EQUAL);
+	ur_rc.EnableDepthMask(true);
 	ur_rc.SetCull(ur::CULL_BACK);
 
 	auto& wc = pt3::Blackboard::Instance()->GetWindowContext();
