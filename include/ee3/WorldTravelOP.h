@@ -25,7 +25,7 @@ public:
 	virtual bool OnMouseMove(int x, int y) override;
 	virtual bool OnMouseWheelRotation(int x, int y, int direction) override;
 
-private:
+protected:
 	void ChangeEditOpState(const ee0::EditOpStatePtr& state);
 
 protected:
