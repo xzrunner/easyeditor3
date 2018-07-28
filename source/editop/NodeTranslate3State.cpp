@@ -5,11 +5,6 @@
 
 #include <SM_Cube.h>
 #include <SM_Calc.h>
-#include <unirender/Blackboard.h>
-#include <unirender/RenderContext.h>
-#include <shaderlab/Blackboard.h>
-#include <shaderlab/RenderContext.h>
-#include <shaderlab/ShaderMgr.h>
 #include <painting2/PrimitiveDraw.h>
 #include <painting3/Camera.h>
 #include <painting3/Viewport.h>
@@ -95,10 +90,7 @@ bool NodeTranslate3State::OnDraw() const
 	DrawEdges();
 
 	// 2d
-	auto& ur_rc = ur::Blackboard::Instance()->GetRenderContext();
-	ur_rc.SetCull(ur::CULL_DISABLE);
 	DrawNodes();
-	sl::Blackboard::Instance()->GetRenderContext().GetShaderMgr().FlushShader();
 
 	return false;
 }
