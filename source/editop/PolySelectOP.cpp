@@ -6,6 +6,8 @@
 #include <ee0/SubjectMgr.h>
 #include <ee0/color_config.h>
 
+#include <node0/SceneNode.h>
+#include <node3/CompTransform.h>
 #include <unirender/Blackboard.h>
 #include <unirender/RenderContext.h>
 #include <painting3/Camera.h>
@@ -24,8 +26,41 @@ PolySelectOP::PolySelectOP(ee0::WxStagePage& stage, pt3::Camera& cam,
 {
 }
 
+bool PolySelectOP::OnKeyDown(int key_code)
+{
+	if (WorldTravelOP::OnKeyDown(key_code)) {
+		return true;
+	}
+
+	if (key_code == WXK_SHIFT && m_selected.poly) {
+		m_move_select = true;
+	}
+
+	return false;
+}
+
+bool PolySelectOP::OnKeyUp(int key_code)
+{
+	if (WorldTravelOP::OnKeyUp(key_code)) {
+		return true;
+	}
+
+	if (key_code == WXK_SHIFT)
+	{
+		m_move_select = false;
+		m_selected_face.clear();
+
+		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+	}
+
+	return false;
+}
+
 bool PolySelectOP::OnMouseLeftDown(int x, int y)
 {
+	m_selected.Reset();
+	m_selected_poly.clear();
+
 	bool intersect = false;
 	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(
 		sm::vec2(static_cast<float>(x), static_cast<float>(y)), m_cam);
@@ -41,15 +76,10 @@ bool PolySelectOP::OnMouseLeftDown(int x, int y)
 
 	if (intersect)
 	{
-		CachePolyBorderPos();
+		UpdatePolyBorderPos();
 	}
-	else
-	{
-		m_selected.Reset();
-		m_selected_poly.clear();
-		if (WorldTravelOP::OnMouseLeftDown(x, y)) {
-			return true;
-		}
+	else if (WorldTravelOP::OnMouseLeftDown(x, y)) {
+		return true;
 	}
 
 	if (m_op_state->OnMousePress(x, y)) {
@@ -57,6 +87,49 @@ bool PolySelectOP::OnMouseLeftDown(int x, int y)
 	}
 
 	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+
+	return false;
+}
+
+bool PolySelectOP::OnMouseMove(int x, int y)
+{
+	if (WorldTravelOP::OnMouseMove(x, y)) {
+		return true;
+	}
+
+	if (!m_move_select || !m_selected.poly) {
+		return false;
+	}
+
+	assert(m_selected.node);
+	auto& ctrans = m_selected.node->GetUniqueComp<n3::CompTransform>();
+
+	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(
+		sm::vec2(static_cast<float>(x), static_cast<float>(y)), m_cam);
+	sm::Ray ray(m_cam.GetPos(), ray_dir);
+
+	m_selected.min_dist = std::numeric_limits<float>::max();
+	MeshPointQuery::Query(m_selected.poly, ctrans, ray, m_cam.GetPos(), m_selected);
+
+	if (m_selected.face) {
+		m_selected_face.clear();
+		m_selected.face->GetBorder(m_selected_face);
+	}
+
+	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+
+	return false;
+}
+
+bool PolySelectOP::OnMouseDrag(int x, int y)
+{
+	if (m_selected.poly) {
+		return false;
+	}
+
+	if (WorldTravelOP::OnMouseDrag(x, y)) {
+		return true;
+	}
 
 	return false;
 }
@@ -74,17 +147,26 @@ bool PolySelectOP::OnDraw() const
 	auto& ur_rc = ur::Blackboard::Instance()->GetRenderContext();
 	ur_rc.SetDepthTest(ur::DEPTH_DISABLE);
 	ur_rc.EnableDepthMask(false);
+
+	// poly
 	pt3::PrimitiveDraw::SetColor(ee0::LIGHT_RED.ToABGR());
 	for (auto& face : m_selected_poly) {
 		pt3::PrimitiveDraw::Polyline(face, true);
 	}
+
+	// face
+	pt3::PrimitiveDraw::SetColor(ee0::LIGHT_RED.ToABGR());
+	if (m_move_select && m_selected.face && !m_selected_face.empty()) {
+		pt3::PrimitiveDraw::Polygon(m_selected_face);
+	}
+
 	ur_rc.SetDepthTest(ur::DEPTH_LESS_EQUAL);
 	ur_rc.EnableDepthMask(true);
 
 	return false;
 }
 
-void PolySelectOP::CachePolyBorderPos()
+void PolySelectOP::UpdatePolyBorderPos()
 {
 	if (!m_selected.poly) {
 		return;

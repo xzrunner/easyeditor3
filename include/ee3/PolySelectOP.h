@@ -20,13 +20,20 @@ public:
 	PolySelectOP(ee0::WxStagePage& stage, pt3::Camera& cam,
 		const pt3::Viewport& vp);
 
+	virtual bool OnKeyDown(int key_code) override;
+	virtual bool OnKeyUp(int key_code) override;
+
 	virtual bool OnMouseLeftDown(int x, int y) override;
+	virtual bool OnMouseMove(int x, int y) override;
+	virtual bool OnMouseDrag(int x, int y) override;
 
 	virtual bool OnDraw() const override;
 
-private:
+protected:
+	const MeshPointQuery::Selected& GetSelected() const { return m_selected; }
+
 	// for draw
-	void CachePolyBorderPos();
+	void UpdatePolyBorderPos();
 
 private:
 	ee0::WxStagePage&    m_stage;
@@ -36,7 +43,11 @@ private:
 
 	MeshPointQuery::Selected m_selected;
 
+	// cache for draw
 	std::vector<std::vector<sm::vec3>> m_selected_poly;
+	std::vector<sm::vec3>              m_selected_face;
+
+	bool m_move_select = false;
 
 }; // PolySelectOP
 
