@@ -10,6 +10,7 @@
 
 namespace pt3 { class Camera; }
 namespace n3 { class CompTransform; }
+namespace model { struct Model; }
 
 namespace ee3
 {
@@ -27,7 +28,10 @@ public:
 			poly = nullptr;
 			face = nullptr;
 			pos.MakeInvalid();
-			min_dist = std::numeric_limits<float>::max();
+			min_dist  = std::numeric_limits<float>::max();
+			model     = nullptr;
+			brush_idx = -1;
+			node      = nullptr;
 		}
 
 		sm::mat4          mat;
@@ -39,6 +43,10 @@ public:
 
 		float             min_dist = std::numeric_limits<float>::max();
 
+		std::shared_ptr<model::Model> model = nullptr;
+		int               brush_idx = -1;
+
+		n0::SceneNodePtr  node = nullptr;
 	};
 
 public:

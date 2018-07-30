@@ -4,7 +4,7 @@
 #include <SM_Ray.h>
 #include <SM_RayIntersect.h>
 #include <model/Model.h>
-#include <model/HalfEdgeMesh.h>
+#include <model/QuakeMapEntity.h>
 #include <painting3/Camera.h>
 #include <node0/SceneNode.h>
 #include <node3/CompModel.h>
@@ -14,7 +14,8 @@
 namespace ee3
 {
 
-bool MeshPointQuery::Query(const ee0::GameObj& obj, const sm::Ray& ray, const sm::vec3& cam_pos, Selected& ret)
+bool MeshPointQuery::Query(const ee0::GameObj& obj, const sm::Ray& ray,
+	                       const sm::vec3& cam_pos, Selected& ret)
 {
 	auto& node = obj;
 
@@ -32,16 +33,27 @@ bool MeshPointQuery::Query(const ee0::GameObj& obj, const sm::Ray& ray, const sm
 	}
 
 	auto& ext = model->GetModel()->ext;
-	if (!ext || ext->Type() != model::EXT_HALFEDGE_MESH) {
+	if (!ext || ext->Type() != model::EXT_QUAKE_MAP) {
 		return false;
 	}
 
 	bool find = false;
-	auto he_mesh = static_cast<model::HalfEdgeMesh*>(ext.get());
-	for (auto& mesh : he_mesh->meshes) {
-		if (Query(mesh, ctrans, ray, cam_pos, ret)) {
-			find = true;
+	auto map_entity = static_cast<model::QuakeMapEntity*>(ext.get());
+	auto& brushes = map_entity->GetMapEntity()->brushes;
+	assert(brushes.size() == model->GetModel()->meshes.size());
+	for (int i = 0, n = brushes.size(); i < n; ++i)
+	{
+		auto& brush = brushes[i];
+		if (!Query(brush.geometry, ctrans, ray, cam_pos, ret)) {
+			continue;
 		}
+
+		ret.model = model->GetModel();
+		ret.brush_idx = i;
+
+		ret.node = node;
+
+		find = true;
 	}
 	return find;
 }
