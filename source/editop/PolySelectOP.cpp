@@ -19,16 +19,17 @@ namespace ee3
 
 PolySelectOP::PolySelectOP(ee0::WxStagePage& stage, pt3::Camera& cam,
 	                       const pt3::Viewport& vp)
-	: ee3::WorldTravelOP(cam, vp, stage.GetSubjectMgr())
-	, m_stage(stage)
+	: m_stage(stage)
+	, m_cam(cam)
 	, m_vp(vp)
+	, m_sub_mgr(stage.GetSubjectMgr())
 	, m_selection(stage.GetSelection())
 {
 }
 
 bool PolySelectOP::OnKeyDown(int key_code)
 {
-	if (WorldTravelOP::OnKeyDown(key_code)) {
+	if (ee0::EditOP::OnKeyDown(key_code)) {
 		return true;
 	}
 
@@ -41,7 +42,7 @@ bool PolySelectOP::OnKeyDown(int key_code)
 
 bool PolySelectOP::OnKeyUp(int key_code)
 {
-	if (WorldTravelOP::OnKeyUp(key_code)) {
+	if (ee0::EditOP::OnKeyUp(key_code)) {
 		return true;
 	}
 
@@ -78,11 +79,7 @@ bool PolySelectOP::OnMouseLeftDown(int x, int y)
 	{
 		UpdatePolyBorderPos();
 	}
-	else if (WorldTravelOP::OnMouseLeftDown(x, y)) {
-		return true;
-	}
-
-	if (m_op_state->OnMousePress(x, y)) {
+	else if (ee0::EditOP::OnMouseLeftDown(x, y)) {
 		return true;
 	}
 
@@ -93,7 +90,7 @@ bool PolySelectOP::OnMouseLeftDown(int x, int y)
 
 bool PolySelectOP::OnMouseMove(int x, int y)
 {
-	if (WorldTravelOP::OnMouseMove(x, y)) {
+	if (ee0::EditOP::OnMouseMove(x, y)) {
 		return true;
 	}
 
@@ -127,7 +124,7 @@ bool PolySelectOP::OnMouseDrag(int x, int y)
 		return false;
 	}
 
-	if (WorldTravelOP::OnMouseDrag(x, y)) {
+	if (ee0::EditOP::OnMouseDrag(x, y)) {
 		return true;
 	}
 
@@ -136,7 +133,7 @@ bool PolySelectOP::OnMouseDrag(int x, int y)
 
 bool PolySelectOP::OnDraw() const
 {
-	if (WorldTravelOP::OnDraw()) {
+	if (ee0::EditOP::OnDraw()) {
 		return true;
 	}
 

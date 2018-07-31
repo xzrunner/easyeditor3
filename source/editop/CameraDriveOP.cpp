@@ -13,9 +13,8 @@ namespace ee3
 {
 
 CameraDriveOP::CameraDriveOP(pt3::Camera& cam, const pt3::Viewport& vp,
-	                       const ee0::SubjectMgrPtr& sub_mgr)
-	: ee0::EditOP()
-	, m_cam(cam)
+	                         const ee0::SubjectMgrPtr& sub_mgr)
+	: m_cam(cam)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 {

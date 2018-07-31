@@ -1,8 +1,8 @@
 #include "ee3/PolyArrangeOP.h"
 #include "ee3/FacePushPullState.h"
 
-#include <ee0/SubjectMgr.h>
 #include <ee0/MessageID.h>
+#include <ee0/SubjectMgr.h>
 
 #include <SM_RayIntersect.h>
 #include <painting3/Camera.h>
@@ -16,26 +16,28 @@
 namespace ee3
 {
 
-PolyArrangeOP::PolyArrangeOP(ee0::WxStagePage& stage, pt3::Camera& cam,
-	                         const pt3::Viewport& vp)
-	: PolySelectOP(stage, cam, vp)
-	, m_cam(cam)
+PolyArrangeOP::PolyArrangeOP(pt3::Camera& cam,
+	                         const pt3::Viewport& vp,
+	                         const ee0::SubjectMgrPtr& sub_mgr,
+	                         const MeshPointQuery::Selected& m_selected)
+	: m_cam(cam)
 	, m_vp(vp)
+	, m_sub_mgr(sub_mgr)
+	, m_selected(m_selected)
 {
 	m_last_pos.MakeInvalid();
 }
 
 bool PolyArrangeOP::OnKeyDown(int key_code)
 {
-	if (PolySelectOP::OnKeyDown(key_code)) {
+	if (ee0::EditOP::OnKeyDown(key_code)) {
 		return true;
 	}
 
 	if (!m_face_pp_state)
 	{
-		auto& selected = GetSelected();
-		if (key_code == WXK_SHIFT && selected.poly) {
-			m_face_pp_state = std::make_shared<FacePushPullState>(m_cam, m_vp, m_sub_mgr, selected);
+		if (key_code == WXK_SHIFT && m_selected.poly) {
+			m_face_pp_state = std::make_shared<FacePushPullState>(m_cam, m_vp, m_sub_mgr, m_selected);
 		}
 	}
 
@@ -44,7 +46,7 @@ bool PolyArrangeOP::OnKeyDown(int key_code)
 
 bool PolyArrangeOP::OnKeyUp(int key_code)
 {
-	if (PolySelectOP::OnKeyUp(key_code)) {
+	if (ee0::EditOP::OnKeyUp(key_code)) {
 		return true;
 	}
 
@@ -61,21 +63,21 @@ bool PolyArrangeOP::OnKeyUp(int key_code)
 
 bool PolyArrangeOP::OnMouseLeftDown(int x, int y)
 {
-	if (PolySelectOP::OnMouseLeftDown(x, y)) {
+	if (ee0::EditOP::OnMouseLeftDown(x, y)) {
 		return true;
 	}
 	if (m_face_pp_state && m_face_pp_state->OnMousePress(x, y)) {
 		return true;
 	}
 
-	m_last_pos = GetSelected().pos;
+	m_last_pos = m_selected.pos;
 
 	return false;
 }
 
 bool PolyArrangeOP::OnMouseLeftUp(int x, int y)
 {
-	if (PolySelectOP::OnMouseLeftUp(x, y)) {
+	if (ee0::EditOP::OnMouseLeftUp(x, y)) {
 		return true;
 	}
 
@@ -86,7 +88,7 @@ bool PolyArrangeOP::OnMouseLeftUp(int x, int y)
 
 bool PolyArrangeOP::OnMouseDrag(int x, int y)
 {
-	if (PolySelectOP::OnMouseDrag(x, y)) {
+	if (ee0::EditOP::OnMouseDrag(x, y)) {
 		return true;
 	}
 	if (m_face_pp_state && m_face_pp_state->OnMouseDrag(x, y)) {
@@ -121,7 +123,7 @@ bool PolyArrangeOP::OnMouseDrag(int x, int y)
 
 bool PolyArrangeOP::OnDraw() const
 {
-	if (PolySelectOP::OnDraw()) {
+	if (ee0::EditOP::OnDraw()) {
 		return true;
 	}
 	if (m_face_pp_state && m_face_pp_state->OnDraw()) {
@@ -169,40 +171,39 @@ void PolyArrangeOP::CalcTranslatePlane(const sm::Ray& ray, sm::Plane& plane) con
 
 void PolyArrangeOP::TranslateSelected(const sm::vec3& offset)
 {
-	auto& selected = GetSelected();
-	if (!selected.poly) {
+	if (!m_selected.poly) {
 		return;
 	}
 
 	// update quake map brush
-	assert(selected.model->ext && selected.model->ext->Type() == model::EXT_QUAKE_MAP);
-	auto map_entity = static_cast<model::QuakeMapEntity*>(selected.model->ext.get());
+	assert(m_selected.model->ext && m_selected.model->ext->Type() == model::EXT_QUAKE_MAP);
+	auto map_entity = static_cast<model::QuakeMapEntity*>(m_selected.model->ext.get());
 	auto& brushes = map_entity->GetMapEntity()->brushes;
-	assert(selected.brush_idx >= 0 && selected.brush_idx < brushes.size());
-	auto& brush = brushes[selected.brush_idx];
+	assert(m_selected.brush_idx >= 0 && m_selected.brush_idx < brushes.size());
+	auto& brush = brushes[m_selected.brush_idx];
 	for (auto& vert : brush.vertices) {
 		vert->pos += offset / model::MapLoader::VERTEX_SCALE;
 	}
 
 	// update helfedge geo
-	auto& vertices = selected.poly->GetVertices();
+	auto& vertices = m_selected.poly->GetVertices();
 	for (auto& vert : vertices) {
 		vert->position += offset;
 	}
-	selected.poly->UpdateAABB();
+	m_selected.poly->UpdateAABB();
 
 	// update model aabb
 	sm::cube model_aabb;
 	for (auto& brush : brushes) {
 		model_aabb.Combine(brush.geometry->GetAABB());
 	}
-	selected.model->aabb = model_aabb;
+	m_selected.model->aabb = model_aabb;
 
-	// update selected border
-	UpdatePolyBorderPos();
+	//// update m_selected border
+	//UpdatePolyBorderPos();
 
 	// update vbo
-	model::MapLoader::UpdateVBO(*selected.model, selected.brush_idx);
+	model::MapLoader::UpdateVBO(*m_selected.model, m_selected.brush_idx);
 }
 
 }

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ee3/WorldTravelOP.h"
 #include "ee3/MeshPointQuery.h"
 
 #include <ee0/EditOP.h>
@@ -14,7 +13,7 @@ namespace pt3 { class Camera; class Viewport; }
 namespace ee3
 {
 
-class PolySelectOP : public ee3::WorldTravelOP
+class PolySelectOP : public ee0::EditOP
 {
 public:
 	PolySelectOP(ee0::WxStagePage& stage, pt3::Camera& cam,
@@ -29,15 +28,18 @@ public:
 
 	virtual bool OnDraw() const override;
 
-protected:
-	const MeshPointQuery::Selected& GetSelected() const { return m_selected; }
+	auto& GetSelected() const { return m_selected; }
 
+private:
 	// for draw
 	void UpdatePolyBorderPos();
 
 private:
 	ee0::WxStagePage&    m_stage;
+
+	pt3::Camera&         m_cam;
 	const pt3::Viewport& m_vp;
+	ee0::SubjectMgrPtr   m_sub_mgr;
 
 	const ee0::SelectionSet<ee0::GameObjWithPos>& m_selection;
 
