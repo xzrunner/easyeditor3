@@ -12,13 +12,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\ee3\CameraDriveOP.h" />
+    <ClInclude Include="..\..\..\include\ee3\FacePushPullState.h" />
     <ClInclude Include="..\..\..\include\ee3\MeshEdgeOP.h" />
     <ClInclude Include="..\..\..\include\ee3\MeshFaceOP.h" />
+    <ClInclude Include="..\..\..\include\ee3\MeshPointQuery.h" />
     <ClInclude Include="..\..\..\include\ee3\MeshVertexOP.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeRotate3State.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeRotateOP.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeTranslate3State.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeTranslateOP.h" />
+    <ClInclude Include="..\..\..\include\ee3\PolyArrangeOP.h" />
+    <ClInclude Include="..\..\..\include\ee3\PolySelectOP.h" />
     <ClInclude Include="..\..\..\include\ee3\WorldTravelOP.h" />
     <ClInclude Include="..\..\..\include\ee3\CamRotateState.h" />
     <ClInclude Include="..\..\..\include\ee3\CamTranslateState.h" />
@@ -35,13 +39,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\editop\CameraDriveOP.cpp" />
+    <ClCompile Include="..\..\..\source\editop\FacePushPullState.cpp" />
     <ClCompile Include="..\..\..\source\editop\MeshEdgeOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\MeshFaceOP.cpp" />
+    <ClCompile Include="..\..\..\source\editop\MeshPointQuery.cpp" />
     <ClCompile Include="..\..\..\source\editop\MeshVertexOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\NodeRotate3State.cpp" />
     <ClCompile Include="..\..\..\source\editop\NodeRotateOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\NodeTranslate3State.cpp" />
     <ClCompile Include="..\..\..\source\editop\NodeTranslateOP.cpp" />
+    <ClCompile Include="..\..\..\source\editop\PolyArrangeOP.cpp" />
+    <ClCompile Include="..\..\..\source\editop\PolySelectOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\WorldTravelOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\CamRotateState.cpp" />
     <ClCompile Include="..\..\..\source\editop\CamTranslateState.cpp" />
@@ -99,7 +107,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\..\easyeditor0\include;..\..\..\..\cu\src;..\..\..\..\ds\src\ds;..\..\..\..\sm\src\sm;..\..\..\..\bs\include;..\..\..\..\js\include;..\..\..\..\guard\include;..\..\..\..\model\include;..\..\..\..\halfedge\include;..\..\..\..\painting2\include;..\..\..\..\painting3\include;..\..\..\..\node0\include;..\..\..\..\node3\include;..\..\..\..\entity0\include;..\..\..\..\entity3\include;..\..\..\..\memmgr\include;..\..\..\..\nserializer\include;..\..\..\..\eserializer\include;..\..\..\..\moon\include;..\..\..\..\serializerx\include;..\..\..\..\unirender\include;..\..\..\..\shaderlab\include;..\..\..\..\facade\include;..\..\..\..\external-editor\wx\include;..\..\..\..\external\rapidjson\include;..\..\..\..\external\json\include;..\..\..\..\external\boost\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\..\easyeditor0\include;..\..\..\..\cu\src;..\..\..\..\ds\src\ds;..\..\..\..\sm\src\sm;..\..\..\..\bs\include;..\..\..\..\js\include;..\..\..\..\guard\include;..\..\..\..\model\include;..\..\..\..\halfedge\include;..\..\..\..\painting2\include;..\..\..\..\painting3\include;..\..\..\..\node0\include;..\..\..\..\node3\include;..\..\..\..\entity0\include;..\..\..\..\entity3\include;..\..\..\..\quake\include;..\..\..\..\memmgr\include;..\..\..\..\nserializer\include;..\..\..\..\eserializer\include;..\..\..\..\moon\include;..\..\..\..\serializerx\include;..\..\..\..\unirender\include;..\..\..\..\shaderlab\include;..\..\..\..\facade\include;..\..\..\..\external-editor\wx\include;..\..\..\..\external\rapidjson\include;..\..\..\..\external\json\include;..\..\..\..\external\boost\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -113,7 +121,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\..\easyeditor0\include;..\..\..\..\cu\src;..\..\..\..\ds\src\ds;..\..\..\..\sm\src\sm;..\..\..\..\bs\include;..\..\..\..\js\include;..\..\..\..\guard\include;..\..\..\..\model\include;..\..\..\..\halfedge\include;..\..\..\..\painting2\include;..\..\..\..\painting3\include;..\..\..\..\node0\include;..\..\..\..\node3\include;..\..\..\..\entity0\include;..\..\..\..\entity3\include;..\..\..\..\memmgr\include;..\..\..\..\nserializer\include;..\..\..\..\eserializer\include;..\..\..\..\moon\include;..\..\..\..\serializerx\include;..\..\..\..\unirender\include;..\..\..\..\shaderlab\include;..\..\..\..\facade\include;..\..\..\..\external-editor\wx\include;..\..\..\..\external\rapidjson\include;..\..\..\..\external\json\include;..\..\..\..\external\boost\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\..\easyeditor0\include;..\..\..\..\cu\src;..\..\..\..\ds\src\ds;..\..\..\..\sm\src\sm;..\..\..\..\bs\include;..\..\..\..\js\include;..\..\..\..\guard\include;..\..\..\..\model\include;..\..\..\..\halfedge\include;..\..\..\..\painting2\include;..\..\..\..\painting3\include;..\..\..\..\node0\include;..\..\..\..\node3\include;..\..\..\..\entity0\include;..\..\..\..\entity3\include;..\..\..\..\quake\include;..\..\..\..\memmgr\include;..\..\..\..\nserializer\include;..\..\..\..\eserializer\include;..\..\..\..\moon\include;..\..\..\..\serializerx\include;..\..\..\..\unirender\include;..\..\..\..\shaderlab\include;..\..\..\..\facade\include;..\..\..\..\external-editor\wx\include;..\..\..\..\external\rapidjson\include;..\..\..\..\external\json\include;..\..\..\..\external\boost\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>

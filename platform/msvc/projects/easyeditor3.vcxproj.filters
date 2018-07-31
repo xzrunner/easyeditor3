@@ -37,6 +37,21 @@
     <Filter Include="editop\mesh">
       <UniqueIdentifier>{6fbaf418-2ac0-4e7c-aece-d72dec0d427b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="editop\mesh\utility">
+      <UniqueIdentifier>{c08c2687-3930-4018-acfa-c35386f0b51a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="editop\mesh\0.vertex">
+      <UniqueIdentifier>{f2600038-2350-49b5-ae2b-1ddd4d48bd82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="editop\mesh\1.edge">
+      <UniqueIdentifier>{7159fb18-67f8-4872-b376-caa18d690fbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="editop\mesh\2.face">
+      <UniqueIdentifier>{aee9ce34-ee5d-41db-a43d-3c7f0523f3a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="editop\mesh\3.polyhedron">
+      <UniqueIdentifier>{f9138247-2e68-4f55-a932-2dcf9620bb43}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\ee3\NodeRotateState.h">
@@ -90,9 +105,6 @@
     <ClInclude Include="..\..\..\include\ee3\NodeTranslate3State.h">
       <Filter>editop\node\state</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\MeshFaceOP.h">
-      <Filter>editop\mesh</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\MeshEdgeOP.h">
       <Filter>editop\mesh</Filter>
     </ClInclude>
@@ -101,6 +113,21 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\CameraDriveOP.h">
       <Filter>editop\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\MeshFaceOP.h">
+      <Filter>editop\mesh\2.face</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\FacePushPullState.h">
+      <Filter>editop\mesh\2.face</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\MeshPointQuery.h">
+      <Filter>editop\mesh\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\PolyArrangeOP.h">
+      <Filter>editop\mesh\3.polyhedron</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\PolySelectOP.h">
+      <Filter>editop\mesh\3.polyhedron</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -155,9 +182,6 @@
     <ClCompile Include="..\..\..\source\editop\NodeTranslate3State.cpp">
       <Filter>editop\node\state</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\editop\MeshFaceOP.cpp">
-      <Filter>editop\mesh</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\editop\MeshEdgeOP.cpp">
       <Filter>editop\mesh</Filter>
     </ClCompile>
@@ -166,6 +190,21 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\CameraDriveOP.cpp">
       <Filter>editop\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\MeshFaceOP.cpp">
+      <Filter>editop\mesh\2.face</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\FacePushPullState.cpp">
+      <Filter>editop\mesh\2.face</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\MeshPointQuery.cpp">
+      <Filter>editop\mesh\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\PolyArrangeOP.cpp">
+      <Filter>editop\mesh\3.polyhedron</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\PolySelectOP.cpp">
+      <Filter>editop\mesh\3.polyhedron</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

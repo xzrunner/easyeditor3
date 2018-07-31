@@ -1,20 +1,15 @@
 #include "ee3/MeshFaceOP.h"
+#include "ee3/FacePushPullState.h"
 
 #include <ee0/WxStagePage.h>
 #include <ee0/SubjectMgr.h>
+#include <ee0/color_config.h>
+#include <ee0/EditOpState.h>
 
-#include <SM_Ray.h>
-#include <SM_RayIntersect.h>
-#include <model/Model.h>
-#include <model/HalfEdgeMesh.h>
+#include <painting2/Color.h>
 #include <painting3/PrimitiveDraw.h>
 #include <painting3/Camera.h>
 #include <painting3/Viewport.h>
-#include <halfedge/HalfEdge.h>
-#include <node0/SceneNode.h>
-#include <node3/CompModel.h>
-#include <node3/CompModelInst.h>
-#include <node3/CompTransform.h>
 
 namespace ee3
 {
@@ -27,13 +22,48 @@ MeshFaceOP::MeshFaceOP(ee0::WxStagePage& stage, pt3::Camera& cam,
 {
 }
 
-bool MeshFaceOP::OnMouseLeftDown(int x, int y)
+bool MeshFaceOP::OnKeyDown(int key_code)
 {
-	if (WorldTravelOP::OnMouseLeftDown(x, y)) {
-		return true;
+	if (ee0::EditOP::OnKeyDown(key_code)) { return true; }
+
+	//if (key_code == WXK_SHIFT && m_selected.face)
+	//{
+	//	m_last_st = m_op_state;
+	//	auto pushpull = std::make_shared<FacePushPullState>(
+	//		m_cam, m_vp, m_sub_mgr, m_selected.face, m_selected.mat);
+	//	ChangeEditOpState(pushpull);
+
+	//	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+	//}
+
+	return false;
+}
+
+bool MeshFaceOP::OnKeyUp(int key_code)
+{
+	if (ee0::EditOP::OnKeyUp(key_code)) { return true; }
+
+	if (key_code == WXK_SHIFT) {
+		ChangeEditOpState(m_last_st);
 	}
 
-	PointQuery(x, y);
+	return false;
+}
+
+bool MeshFaceOP::OnMouseLeftDown(int x, int y)
+{
+	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(
+		sm::vec2(static_cast<float>(x), static_cast<float>(y)), m_cam);
+	sm::Ray ray(m_cam.GetPos(), ray_dir);
+
+	//bool find = MeshPointQuery::Query(m_selection, ray, m_cam.GetPos(), m_selected);
+	//if (!find && WorldTravelOP::OnMouseLeftDown(x, y)) {
+	//	return true;
+	//}
+
+	if (m_op_state->OnMousePress(x, y)) {
+		return true;
+	}
 
 	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 
@@ -46,88 +76,28 @@ bool MeshFaceOP::OnDraw() const
 		return true;
 	}
 
-	if (!m_selected_poly) {
+	if (!m_selected.poly || !m_selected.face) {
 		return false;
 	}
 
-	//pt3::PrimitiveDraw::SetColor(0xff0000ff);
-	//pt3::PrimitiveDraw::Cube(m_selected_mat, m_selected_poly->GetAABB());
-
-	if (!m_selected_face) {
-		return false;
-	}
-
-	pt3::PrimitiveDraw::SetColor(0xff0000ff);
+	pt3::PrimitiveDraw::SetColor(ee0::LIGHT_RED.ToABGR());
 	std::vector<sm::vec3> polyline;
-	m_selected_face->GetBorder(polyline);
+	m_selected.face->GetBorder(polyline);
 	for (int i = 0, n = polyline.size(); i < n; ++i) {
-		polyline[i] = m_selected_mat * polyline[i];
+		polyline[i] = m_selected.mat * polyline[i];
 	}
-//	pt3::PrimitiveDraw::Polyline(polyline, true);
 	pt3::PrimitiveDraw::Polygon(polyline);
 
-	return false;
-}
-
-void MeshFaceOP::PointQuery(int x, int y)
-{
-	m_selected_poly = nullptr;
-	m_selected_face = nullptr;
-
-	auto cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
-
-	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(sm::vec2(x, y), m_cam);
-	sm::Ray ray(m_cam.GetPos(), ray_dir);
-	m_selection.Traverse([&](const ee0::GameObjWithPos& opw)->bool
+	if (m_selected.pos.IsValid())
 	{
-		auto& node = opw.GetNode();
+		pt3::PrimitiveDraw::SetColor(ee0::LIGHT_GREEN.ToABGR());
+		pt3::PrimitiveDraw::Line(m_selected.pos, m_selected.pos + m_selected.mat * m_selected.normal * 100000);
+	}
 
-		auto& cmodel = node->GetUniqueComp<n3::CompModelInst>();
-		auto& model = cmodel.GetModel();
-		if (!model || !model->GetModel()) {
-			return false;
-		}
+	// todo
+	m_op_state->OnDraw();
 
-		sm::vec3 cross;
-		auto& ctrans = node->GetUniqueComp<n3::CompTransform>();
-		if (!sm::ray_obb_intersect(model->GetModel()->aabb, ctrans.GetPosition(),
-			ctrans.GetAngle(), ctrans.GetScale(), ray, &cross)) {
-			return false;
-		}
-
-		auto& ext = model->GetModel()->ext;
-		if (!ext || ext->Type() != model::EXT_HALFEDGE_MESH) {
-			return false;
-		}
-		auto he_mesh = static_cast<model::HalfEdgeMesh*>(ext.get());
-		for (auto& mesh : he_mesh->meshes)
-		{
-			if (sm::ray_obb_intersect(mesh->GetAABB(), ctrans.GetPosition(),
-				ctrans.GetAngle(), ctrans.GetScale(), ray, &cross))
-			{
-				m_selected_poly = mesh;
-				m_selected_mat = ctrans.GetTransformMat();
-
-				auto& faces = mesh->GetFaces();
-				for (auto& face : faces)
-				{
-					std::vector<sm::vec3> border;
-					face->GetBorder(border);
-					assert(border.size() > 2);
-					sm::vec3 cross_face;
-					if (sm::ray_polygon_intersect(
-						m_selected_mat, border, ray, &cross_face)) {
-						m_selected_face = face;
-						break;
-					}
-				}
-
-				return true;
-			}
-		}
-
-		return false;
-	});
+	return false;
 }
 
 }
