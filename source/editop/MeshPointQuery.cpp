@@ -77,8 +77,10 @@ bool MeshPointQuery::Query(const he::PolyhedronPtr& poly, const n3::CompTransfor
 
 	bool find = false;
 	auto& faces = poly->GetFaces();
-	for (auto& face : faces)
+	for (int i = 0, n = faces.size(); i < n; ++i)
 	{
+		auto& face = faces[i];
+
 		std::vector<sm::vec3> border;
 		face->GetBorder(border);
 		assert(border.size() > 2);
@@ -96,6 +98,7 @@ bool MeshPointQuery::Query(const he::PolyhedronPtr& poly, const n3::CompTransfor
 		ret.min_dist = dist;
 
 		ret.face = face;
+		ret.face_idx = i;
 
 		sm::vec3 intersect;
 		sm::Plane face_plane(

@@ -44,7 +44,8 @@ public:
 		float             min_dist = std::numeric_limits<float>::max();
 
 		std::shared_ptr<model::Model> model = nullptr;
-		int               brush_idx = -1;
+		int               brush_idx         = -1;
+		int               face_idx          = -1;
 
 		n0::SceneNodePtr  node = nullptr;
 	};
