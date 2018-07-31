@@ -5,6 +5,7 @@
 #include <ee0/EditOpState.h>
 #include <ee0/SubjectMgr.h>
 #include <ee0/color_config.h>
+#include <ee0/MsgHelper.h>
 
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
@@ -62,7 +63,7 @@ bool PolySelectOP::OnMouseLeftDown(int x, int y)
 	m_selected.Reset();
 	m_selected_poly.clear();
 
-	bool intersect = false;
+	ee0::GameObj selected = GAME_OBJ_NULL;
 	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(
 		sm::vec2(static_cast<float>(x), static_cast<float>(y)), m_cam);
 	sm::Ray ray(m_cam.GetPos(), ray_dir);
@@ -70,13 +71,18 @@ bool PolySelectOP::OnMouseLeftDown(int x, int y)
 	{
 		bool find = MeshPointQuery::Query(obj, ray, m_cam.GetPos(), m_selected);
 		if (find) {
-			intersect = true;
+			selected = obj;
 		}
 		return !find;
 	});
 
-	if (intersect)
+	if (GAME_OBJ_VALID(selected))
 	{
+		// insert to selection set
+		std::vector<n0::NodeWithPos> nwps;
+		nwps.push_back(n0::NodeWithPos(selected, selected, 0));
+		ee0::MsgHelper::InsertSelection(*m_sub_mgr, nwps);
+
 		UpdatePolyBorderPos();
 	}
 	else if (ee0::EditOP::OnMouseLeftDown(x, y)) {
