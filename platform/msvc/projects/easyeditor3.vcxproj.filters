@@ -105,12 +105,6 @@
     <ClInclude Include="..\..\..\include\ee3\NodeTranslate3State.h">
       <Filter>editop\node\state</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\MeshEdgeOP.h">
-      <Filter>editop\mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\MeshVertexOP.h">
-      <Filter>editop\mesh</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\CameraDriveOP.h">
       <Filter>editop\camera</Filter>
     </ClInclude>
@@ -128,6 +122,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\PolySelectOP.h">
       <Filter>editop\mesh\3.polyhedron</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\MeshVertexOP.h">
+      <Filter>editop\mesh\0.vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\MeshEdgeOP.h">
+      <Filter>editop\mesh\1.edge</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -182,12 +182,6 @@
     <ClCompile Include="..\..\..\source\editop\NodeTranslate3State.cpp">
       <Filter>editop\node\state</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\editop\MeshEdgeOP.cpp">
-      <Filter>editop\mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\editop\MeshVertexOP.cpp">
-      <Filter>editop\mesh</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\editop\CameraDriveOP.cpp">
       <Filter>editop\camera</Filter>
     </ClCompile>
@@ -205,6 +199,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\PolySelectOP.cpp">
       <Filter>editop\mesh\3.polyhedron</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\MeshVertexOP.cpp">
+      <Filter>editop\mesh\0.vertex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\MeshEdgeOP.cpp">
+      <Filter>editop\mesh\1.edge</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

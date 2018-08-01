@@ -115,4 +115,21 @@ bool MeshPointQuery::Query(const he::PolyhedronPtr& poly, const n3::CompTransfor
 	return find;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// class MeshPointQuery::Selected
+//////////////////////////////////////////////////////////////////////////
+
+const quake::MapBrush* MeshPointQuery::Selected::GetBrush() const
+{
+	if (!poly || brush_idx < 0) {
+		return nullptr;
+	}
+
+	assert(model->ext && model->ext->Type() == model::EXT_QUAKE_MAP);
+	auto map_entity = static_cast<model::QuakeMapEntity*>(model->ext.get());
+	auto& brushes = map_entity->GetMapEntity()->brushes;
+	assert(brush_idx >= 0 && brush_idx < brushes.size());
+	return &brushes[brush_idx];
+}
+
 }

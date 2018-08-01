@@ -11,6 +11,7 @@
 namespace pt3 { class Camera; }
 namespace n3 { class CompTransform; }
 namespace model { struct Model; }
+namespace quake { struct MapBrush; }
 
 namespace ee3
 {
@@ -23,6 +24,7 @@ public:
 		Selected() {
 			pos.MakeInvalid();
 		}
+
 		void Reset()
 		{
 			poly = nullptr;
@@ -33,6 +35,8 @@ public:
 			brush_idx = -1;
 			node      = nullptr;
 		}
+
+		const quake::MapBrush* GetBrush() const;
 
 		sm::mat4          mat;
 		sm::vec3          normal;
