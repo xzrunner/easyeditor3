@@ -7,6 +7,7 @@
 
 #include <SM_Vector.h>
 #include <SM_Matrix.h>
+#include <SM_Ray.h>
 #include <painting2/OrthoCamera.h>
 
 namespace pt3 { class ICamera; class Viewport; }
@@ -52,7 +53,8 @@ private:
 		AXIS_Z,
 	};
 
-	sm::vec2 GetCtrlPos(const sm::mat4& cam_mat, AxisNodeType type) const;
+	sm::vec2 GetCtrlPos2D(const sm::mat4& cam_mat, AxisNodeType type) const;
+	sm::vec3 GetCtrlPos3D(AxisNodeType type) const;
 
 private:
 	const pt3::ICamera&   m_cam;
@@ -64,7 +66,14 @@ private:
 
 	pt2::OrthoCamera m_cam2d;
 
-	sm::vec2 m_last_pos;
+	// move path 2d
+	sm::vec2 m_first_pos2;
+	sm::vec2 m_first_dir2;
+
+	sm::Ray m_move_path3d;
+
+	sm::vec2 m_last_pos2;
+	sm::vec3 m_last_pos3;
 
 	PointQueryType m_op_type;
 
