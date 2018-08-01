@@ -11,14 +11,14 @@
 #include <node3/CompTransform.h>
 #include <unirender/Blackboard.h>
 #include <unirender/RenderContext.h>
-#include <painting3/Camera.h>
+#include <painting3/PerspCam.h>
 #include <painting3/Viewport.h>
 #include <painting3/PrimitiveDraw.h>
 
 namespace ee3
 {
 
-PolySelectOP::PolySelectOP(ee0::WxStagePage& stage, pt3::Camera& cam,
+PolySelectOP::PolySelectOP(ee0::WxStagePage& stage, pt3::PerspCam& cam,
 	                       const pt3::Viewport& vp)
 	: m_stage(stage)
 	, m_cam(cam)

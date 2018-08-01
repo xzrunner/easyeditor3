@@ -3,13 +3,13 @@
 #include <ee0/SubjectMgr.h>
 #include <ee0/MessageID.h>
 
-#include <painting3/Camera.h>
+#include <painting3/PerspCam.h>
 #include <painting3/Viewport.h>
 
 namespace ee3
 {
 
-CamZoomState::CamZoomState(pt3::Camera& cam, const pt3::Viewport& vp,
+CamZoomState::CamZoomState(pt3::PerspCam& cam, const pt3::Viewport& vp,
 	                       const ee0::SubjectMgrPtr& sub_mgr)
 	: m_cam(cam)
 	, m_vp(vp)

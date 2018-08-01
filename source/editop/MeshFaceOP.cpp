@@ -8,13 +8,13 @@
 
 #include <painting2/Color.h>
 #include <painting3/PrimitiveDraw.h>
-#include <painting3/Camera.h>
+#include <painting3/PerspCam.h>
 #include <painting3/Viewport.h>
 
 namespace ee3
 {
 
-MeshFaceOP::MeshFaceOP(ee0::WxStagePage& stage, pt3::Camera& cam,
+MeshFaceOP::MeshFaceOP(ee0::WxStagePage& stage, pt3::PerspCam& cam,
 	                   const pt3::Viewport& vp)
 	: WorldTravelOP(cam, vp, stage.GetSubjectMgr())
 	, m_vp(vp)

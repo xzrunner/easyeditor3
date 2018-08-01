@@ -1,11 +1,12 @@
 #pragma once
 
+#include <painting3/ICamera.h>
+
 #include <rapidjson/document.h>
 
 #include <string>
 
 namespace ee0 { class WxStagePage; }
-namespace pt3 { class Camera; }
 
 namespace ee3
 {
@@ -17,8 +18,8 @@ public:
 	static void LoadFroimJson(const std::string& filepath, ee0::WxStagePage* stage);
 
 private:
-	static rapidjson::Value StoreCamera(const pt3::Camera& cam, rapidjson::MemoryPoolAllocator<>& alloc);
-	static void LoadCamera(const rapidjson::Value& val, pt3::Camera& cam);
+	static rapidjson::Value StoreCamera(const pt3::ICameraPtr& cam, rapidjson::MemoryPoolAllocator<>& alloc);
+	static pt3::ICameraPtr LoadCamera(const rapidjson::Value& val);
 
 }; // Serializer
 

@@ -7,7 +7,7 @@
 #include <SM_RayIntersect.h>
 #include <painting3/Viewport.h>
 #include <painting3/PrimitiveDraw.h>
-#include <painting3/Camera.h>
+#include <painting3/PerspCam.h>
 #include <model/QuakeMapEntity.h>
 #include <model/Model.h>
 #include <model/MapLoader.h>
@@ -15,7 +15,7 @@
 namespace ee3
 {
 
-FacePushPullState::FacePushPullState(const pt3::Camera& cam, const pt3::Viewport& vp,
+FacePushPullState::FacePushPullState(const pt3::PerspCam& cam, const pt3::Viewport& vp,
 	                                 const ee0::SubjectMgrPtr& sub_mgr,
 	                                 const MeshPointQuery::Selected& selected)
 	: m_cam(cam)

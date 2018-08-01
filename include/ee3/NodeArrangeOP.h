@@ -7,7 +7,7 @@
 #include <ee0/GameObj.h>
 
 namespace ee0 { class EditOpState; class WxStagePage; }
-namespace pt3 { class Camera; class Viewport; }
+namespace pt3 { class PerspCam; class Viewport; }
 
 namespace ee3
 {
@@ -17,7 +17,7 @@ class WxStageCanvas;
 class NodeArrangeOP : public NodeSelectOP
 {
 public:
-	NodeArrangeOP(ee0::WxStagePage& stage, pt3::Camera& cam,
+	NodeArrangeOP(ee0::WxStagePage& stage, pt3::PerspCam& cam,
 		const pt3::Viewport& vp);
 
 	virtual bool OnKeyDown(int key_code) override;

@@ -10,6 +10,7 @@
 #include <ee0/SubjectMgr.h>
 
 #include <guard/check.h>
+#include <painting3/PerspCam.h>
 #ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
@@ -121,10 +122,19 @@ sm::vec3 WxStageDropTarget::TransPosScrToProj3d(int x, int y) const
 
 	auto& vp = canvas->GetViewport();
 	auto& cam = canvas->GetCamera();
-	auto dir = vp.TransPos3ScreenToDir(sm::vec2(x, y), cam);
-	sm::vec3 ret = dir * cam.GetDistance();
-	ret.y = 0;
-	return ret;
+	if (cam->Type() == pt3::CAM_PERSPECTIVE)
+	{
+		auto persp_cam = std::dynamic_pointer_cast<pt3::PerspCam>(cam);
+		auto dir = vp.TransPos3ScreenToDir(sm::vec2(x, y), *persp_cam);
+		sm::vec3 ret = dir * persp_cam->GetDistance();
+		ret.y = 0;
+		return ret;
+	}
+	else
+	{
+		// todo
+		return sm::vec3();
+	}
 }
 
 }

@@ -5,7 +5,7 @@
 
 #include <SM_Vector.h>
 
-namespace pt3 { class Camera; class Viewport; }
+namespace pt3 { class PerspCam; class Viewport; }
 
 namespace ee3
 {
@@ -13,7 +13,7 @@ namespace ee3
 class CameraDriveOP : public ee0::EditOP
 {
 public:
-	CameraDriveOP(pt3::Camera& cam, const pt3::Viewport& vp,
+	CameraDriveOP(pt3::PerspCam& cam, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr);
 
 	virtual bool OnKeyDown(int key_code) override;
@@ -36,7 +36,7 @@ private:
 	};
 
 private:
-	pt3::Camera&         m_cam;
+	pt3::PerspCam&         m_cam;
 	const pt3::Viewport& m_vp;
 	ee0::SubjectMgrPtr   m_sub_mgr;
 

@@ -4,11 +4,13 @@
 #include <ee0/WxStagePage.h>
 #include <ee0/SubjectMgr.h>
 
+#include <painting3/PerspCam.h>
+
 namespace ee3
 {
 
-NodeTranslateOP::NodeTranslateOP(ee0::WxStagePage& stage, pt3::Camera& cam,
-	                       const pt3::Viewport& vp)
+NodeTranslateOP::NodeTranslateOP(ee0::WxStagePage& stage, pt3::PerspCam& cam,
+	                             const pt3::Viewport& vp)
 	: m_sub_mgr(stage.GetSubjectMgr())
 {
 	m_translate_state = std::make_shared<NodeTranslate3State>(cam, vp, m_sub_mgr, stage.GetSelection());

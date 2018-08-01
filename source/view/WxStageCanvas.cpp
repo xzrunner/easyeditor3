@@ -12,6 +12,7 @@
 #include <painting3/PrimitiveDraw.h>
 #include <painting3/Blackboard.h>
 #include <painting3/WindowContext.h>
+#include <painting3/PerspCam.h>
 #ifndef GAME_OBJ_ECS
 #include <node3/RenderSystem.h>
 #endif // GAME_OBJ_ECS
@@ -35,8 +36,11 @@ WxStageCanvas::WxStageCanvas(ee0::WxStagePage* stage, const ee0::RenderContext* 
 	: ee0::WxStageCanvas(stage, stage->GetImpl(), rc, wc, HAS_2D * has2d | HAS_3D)
 	, m_stage(stage)
 	, m_has2d(has2d)
-	, m_camera(sm::vec3(0, 2, -2), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0))
 {
+	m_camera = std::make_shared<pt3::PerspCam>(
+		sm::vec3(0, 2, -2), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0)
+	);
+
 	for (auto& msg : MESSAGES) {
 		stage->GetSubjectMgr()->RegisterObserver(msg, this);
 	}
@@ -77,8 +81,8 @@ void WxStageCanvas::OnSize(int w, int h)
 		wc->SetScreen(w, h);
 		m_viewport.SetSize(w, h);
 
-		m_camera.SetAspect((float)w / h);
-		wc->SetProjection(m_camera.GetProjectionMat());
+		m_camera->OnSize(static_cast<float>(w), static_cast<float>(h));
+		wc->SetProjection(m_camera->GetProjectionMat());
 	}
 
 	if (m_has2d)
@@ -106,7 +110,7 @@ void WxStageCanvas::OnDrawSprites() const
 	if (!wc) {
 		return;
 	}
-	wc->SetModelView(GetCamera().GetModelViewMat());
+	wc->SetModelView(m_camera->GetModelViewMat());
 
 	if (m_has2d)
 	{
@@ -160,7 +164,7 @@ void WxStageCanvas::DrawNodes(n3::RenderParams::DrawType type) const
 	vars.SetVariant("type", var);
 
 	n3::RenderParams params;
-	params.mt = m_camera.GetModelViewMat();
+	params.mt = m_camera->GetModelViewMat();
 	params.type = type;
 
 	m_stage->Traverse([&](const ee0::GameObj& obj)->bool {

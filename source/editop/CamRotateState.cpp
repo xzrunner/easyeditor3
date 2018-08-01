@@ -4,12 +4,12 @@
 #include <ee0/MessageID.h>
 
 #include <SM_Calc.h>
-#include <painting3/Camera.h>
+#include <painting3/PerspCam.h>
 
 namespace ee3
 {
 
-CamRotateState::CamRotateState(pt3::Camera& cam, const ee0::SubjectMgrPtr& sub_mgr)
+CamRotateState::CamRotateState(pt3::PerspCam& cam, const ee0::SubjectMgrPtr& sub_mgr)
 	: m_cam(cam)
 	, m_sub_mgr(sub_mgr)
 {

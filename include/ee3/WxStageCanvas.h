@@ -4,7 +4,7 @@
 #include <ee0/Observer.h>
 #include <ee0/GameObj.h>
 
-#include <painting3/Camera.h>
+#include <painting3/ICamera.h>
 #include <painting3/Viewport.h>
 #include <node3/RenderSystem.h>
 
@@ -22,8 +22,9 @@ public:
 
 	virtual void OnNotify(uint32_t msg, const ee0::VariantSet& variants) override;
 
-	pt3::Camera& GetCamera() { return m_camera; }
-	const pt3::Camera& GetCamera() const { return m_camera; }
+	pt3::ICameraPtr& GetCamera() { return m_camera; }
+	const pt3::ICameraPtr& GetCamera() const { return m_camera; }
+	void SetCamera(const pt3::ICameraPtr& cam) { m_camera = cam; }
 
 	const pt3::Viewport& GetViewport() const { return m_viewport; }
 
@@ -45,8 +46,8 @@ protected:
 private:
 	bool m_has2d;
 
-	pt3::Camera   m_camera;
-	pt3::Viewport m_viewport;
+	pt3::ICameraPtr m_camera;
+	pt3::Viewport   m_viewport;
 
 	sm::mat4 m_mat_projection;
 

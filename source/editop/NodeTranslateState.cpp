@@ -4,7 +4,7 @@
 #include <ee0/MessageID.h>
 
 #include <SM_Calc.h>
-#include <painting3/Camera.h>
+#include <painting3/PerspCam.h>
 #include <painting3/Viewport.h>
 #ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
@@ -15,7 +15,7 @@
 namespace ee3
 {
 
-NodeTranslateState::NodeTranslateState(const pt3::Camera& cam, const pt3::Viewport& vp,
+NodeTranslateState::NodeTranslateState(const pt3::PerspCam& cam, const pt3::Viewport& vp,
 	                                   const ee0::SubjectMgrPtr& sub_mgr,
 	                                   const ee0::SelectionSet<ee0::GameObjWithPos>& selection)
 	: m_cam(cam)

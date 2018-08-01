@@ -5,7 +5,7 @@
 #include <ee0/SubjectMgr.h>
 
 #include <SM_RayIntersect.h>
-#include <painting3/Camera.h>
+#include <painting3/PerspCam.h>
 #include <painting3/Viewport.h>
 #include <model/MapLoader.h>
 #include <model/QuakeMapEntity.h>
@@ -16,7 +16,7 @@
 namespace ee3
 {
 
-PolyArrangeOP::PolyArrangeOP(pt3::Camera& cam,
+PolyArrangeOP::PolyArrangeOP(pt3::PerspCam& cam,
 	                         const pt3::Viewport& vp,
 	                         const ee0::SubjectMgrPtr& sub_mgr,
 	                         const MeshPointQuery::Selected& m_selected)

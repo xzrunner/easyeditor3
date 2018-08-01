@@ -3,17 +3,17 @@
 #include <ee0/EditOP.h>
 #include <ee0/typedef.h>
 
-namespace pt3 { class Camera; class Viewport; }
+namespace pt3 { class PerspCam; class Viewport; }
 
 namespace ee3
 {
 
-class Camera;
+class PerspCam;
 
 class WorldTravelOP : public ee0::EditOP
 {
 public:
-	WorldTravelOP(pt3::Camera& cam, const pt3::Viewport& vp,
+	WorldTravelOP(pt3::PerspCam& cam, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr);
 
 	virtual bool OnKeyDown(int key_code) override;
@@ -29,7 +29,7 @@ protected:
 	void ChangeEditOpState(const ee0::EditOpStatePtr& state);
 
 protected:
-	pt3::Camera&        m_cam;
+	pt3::PerspCam&        m_cam;
 	ee0::SubjectMgrPtr  m_sub_mgr;
 
 	ee0::EditOpStatePtr m_op_state = nullptr;

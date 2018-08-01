@@ -5,7 +5,6 @@
 #include <SM_RayIntersect.h>
 #include <model/Model.h>
 #include <model/QuakeMapEntity.h>
-#include <painting3/Camera.h>
 #include <node0/SceneNode.h>
 #include <node3/CompModel.h>
 #include <node3/CompModelInst.h>

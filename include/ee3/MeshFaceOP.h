@@ -11,7 +11,7 @@
 #include <halfedge/Polyhedron.h>
 
 namespace ee0 { class WxStagePage; }
-namespace pt3 { class Camera; class Viewport; }
+namespace pt3 { class PerspCam; class Viewport; }
 namespace he { struct Face; }
 
 namespace ee3
@@ -20,7 +20,7 @@ namespace ee3
 class MeshFaceOP : public ee3::WorldTravelOP
 {
 public:
-	MeshFaceOP(ee0::WxStagePage& stage, pt3::Camera& cam,
+	MeshFaceOP(ee0::WxStagePage& stage, pt3::PerspCam& cam,
 		const pt3::Viewport& vp);
 
 	virtual bool OnKeyDown(int key_code) override;

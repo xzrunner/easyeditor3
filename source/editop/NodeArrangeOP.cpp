@@ -9,6 +9,7 @@
 #include <ee0/WxStagePage.h>
 #include <ee0/SubjectMgr.h>
 
+#include <painting3/PerspCam.h>
 #ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
@@ -17,9 +18,9 @@
 namespace ee3
 {
 
-NodeArrangeOP::NodeArrangeOP(ee0::WxStagePage& stage, pt3::Camera& cam,
+NodeArrangeOP::NodeArrangeOP(ee0::WxStagePage& stage, pt3::PerspCam& cam,
 	                         const pt3::Viewport& vp)
-	: NodeSelectOP(stage)
+	: NodeSelectOP(stage, cam, vp)
 	, m_sub_mgr(stage.GetSubjectMgr())
 	, m_selection(stage.GetSelection())
 	, m_canvas(std::dynamic_pointer_cast<WxStageCanvas>(stage.GetImpl().GetCanvas()))
@@ -46,7 +47,7 @@ bool NodeArrangeOP::OnKeyDown(int key_code)
 	switch (key_code)
 	{
 	case WXK_ESCAPE:
-		m_canvas->GetCamera().Reset();
+		m_canvas->GetCamera()->Reset();
 		break;
 	case WXK_SPACE:
 		{

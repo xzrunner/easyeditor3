@@ -7,7 +7,7 @@
 
 #include <SM_Vector.h>
 
-namespace pt3 { class Camera; class Viewport; }
+namespace pt3 { class PerspCam; class Viewport; }
 
 namespace ee3
 {
@@ -15,7 +15,7 @@ namespace ee3
 class NodeRotateState : public ee0::EditOpState
 {
 public:
-	NodeRotateState(const pt3::Camera& cam, const pt3::Viewport& vp, 
+	NodeRotateState(const pt3::PerspCam& cam, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr, const ee0::SelectionSet<ee0::GameObjWithPos>& selection);
 
 	virtual bool OnMousePress(int x, int y) override;
@@ -28,7 +28,7 @@ private:
 	sm::vec2 TransPos3ProjectToScreen(const sm::vec3& proj) const;
 
 private:
-	const pt3::Camera&   m_cam;
+	const pt3::PerspCam& m_cam;
 	const pt3::Viewport& m_vp;
 
 	ee0::SubjectMgrPtr m_sub_mgr;

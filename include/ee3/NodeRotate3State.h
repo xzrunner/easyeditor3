@@ -8,7 +8,7 @@
 #include <SM_Vector.h>
 #include <painting2/OrthoCamera.h>
 
-namespace pt3 { class Camera; class Viewport; }
+namespace pt3 { class ICamera; class Viewport; }
 
 namespace ee3
 {
@@ -16,7 +16,7 @@ namespace ee3
 class NodeRotate3State : public ee0::EditOpState
 {
 public:
-	NodeRotate3State(const pt3::Camera& cam, const pt3::Viewport& vp,
+	NodeRotate3State(const pt3::ICamera& cam, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr, const ee0::SelectionSet<ee0::GameObjWithPos>& selection);
 
 	virtual bool OnMousePress(int x, int y) override;
@@ -44,7 +44,7 @@ private:
 	void DrawNodes() const;
 
 private:
-	const pt3::Camera&   m_cam;
+	const pt3::ICamera&   m_cam;
 	const pt3::Viewport& m_vp;
 
 	ee0::SubjectMgrPtr m_sub_mgr;

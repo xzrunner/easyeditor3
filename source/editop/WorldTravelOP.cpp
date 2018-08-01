@@ -6,7 +6,7 @@
 #include <ee0/MessageID.h>
 #include <ee0/SubjectMgr.h>
 
-#include <painting3/Camera.h>
+#include <painting3/PerspCam.h>
 
 #include <wx/defs.h>
 
@@ -15,8 +15,8 @@ namespace ee3
 
 static const float MOUSE_SENSITIVITY = 0.3f;
 
-WorldTravelOP::WorldTravelOP(pt3::Camera& cam, const pt3::Viewport& vp,
-	                       const ee0::SubjectMgrPtr& sub_mgr)
+WorldTravelOP::WorldTravelOP(pt3::PerspCam& cam, const pt3::Viewport& vp,
+	                         const ee0::SubjectMgrPtr& sub_mgr)
 	: ee0::EditOP()
 	, m_cam(cam)
 	, m_sub_mgr(sub_mgr)

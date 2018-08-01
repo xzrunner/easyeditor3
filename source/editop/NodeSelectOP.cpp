@@ -9,6 +9,7 @@
 #include <SM_Ray.h>
 #include <SM_RayIntersect.h>
 #include <painting3/PrimitiveDraw.h>
+#include <painting3/PerspCam.h>
 #ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
 #include <node3/CompAABB.h>
@@ -18,8 +19,11 @@
 namespace ee3
 {
 
-NodeSelectOP::NodeSelectOP(ee0::WxStagePage& stage)
+NodeSelectOP::NodeSelectOP(ee0::WxStagePage& stage, pt3::PerspCam& cam,
+	                       const pt3::Viewport& vp)
 	: ee0::NodeSelectOP(stage)
+	, m_cam(cam)
+	, m_vp(vp)
 {
 }
 
@@ -59,11 +63,8 @@ bool NodeSelectOP::OnDraw() const
 // AABB not changed, transform ray from Camera and spr's mat
 ee0::GameObj NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
 {
-	auto canvas = std::dynamic_pointer_cast<WxStageCanvas>(m_stage.GetImpl().GetCanvas());
-	auto& vp = canvas->GetViewport();
-	auto& cam = canvas->GetCamera();
-	sm::vec3 ray_dir = vp.TransPos3ScreenToDir(sm::vec2(screen_x, screen_y), cam);
-	sm::Ray ray(cam.GetPos(), ray_dir);
+	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(sm::vec2(screen_x, screen_y), m_cam);
+	sm::Ray ray(m_cam.GetPos(), ray_dir);
 
 	ee0::VariantSet vars;
 	ee0::Variant var;
