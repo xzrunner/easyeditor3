@@ -8,7 +8,7 @@
 #include <quake/MapModel.h>
 #include <painting2/OrthoCamera.h>
 
-namespace pt3 { class Camera; class Viewport; }
+namespace pt3 { class ICamera; class Viewport; }
 
 namespace ee3
 {
@@ -16,7 +16,7 @@ namespace ee3
 class MeshVertexOP : public ee0::EditOP
 {
 public:
-	MeshVertexOP(pt3::Camera& cam, const pt3::Viewport& vp,
+	MeshVertexOP(pt3::ICamera& cam, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr, const MeshPointQuery::Selected& selected);
 
 	virtual bool OnKeyDown(int key_code) override;
@@ -33,7 +33,7 @@ private:
 	quake::BrushVertexPtr QueryByPos(int x, int y) const;
 
 private:
-	const pt3::Camera&   m_cam;
+	const pt3::ICamera&   m_cam;
 	const pt3::Viewport& m_vp;
 	ee0::SubjectMgrPtr   m_sub_mgr;
 

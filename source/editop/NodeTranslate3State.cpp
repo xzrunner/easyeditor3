@@ -8,7 +8,7 @@
 #include <SM_Ray.h>
 #include <SM_RayIntersect.h>
 #include <painting2/PrimitiveDraw.h>
-#include <painting3/ICamera.h>
+#include <painting3/PerspCam.h>
 #include <painting3/Viewport.h>
 #include <painting3/PrimitiveDraw.h>
 #ifndef GAME_OBJ_ECS
@@ -28,7 +28,7 @@ static const float NODE_RADIUS = 5;
 namespace ee3
 {
 
-NodeTranslate3State::NodeTranslate3State(const pt3::ICamera& cam, const pt3::Viewport& vp,
+NodeTranslate3State::NodeTranslate3State(const pt3::PerspCam& cam, const pt3::Viewport& vp,
 	                                     const ee0::SubjectMgrPtr& sub_mgr,
 	                                     const ee0::SelectionSet<ee0::GameObjWithPos>& selection)
 	: m_cam(cam)

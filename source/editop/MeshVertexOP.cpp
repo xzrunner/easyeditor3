@@ -4,7 +4,7 @@
 #include <ee0/MessageID.h>
 
 #include <painting2/PrimitiveDraw.h>
-#include <painting3/Camera.h>
+#include <painting3/ICamera.h>
 #include <painting3/Viewport.h>
 #include <model/QuakeMapEntity.h>
 #include <model/Model.h>
@@ -22,7 +22,7 @@ static const float QUERY_RADIUS = 6;
 namespace ee3
 {
 
-MeshVertexOP::MeshVertexOP(pt3::Camera& cam,
+MeshVertexOP::MeshVertexOP(pt3::ICamera& cam,
 	                       const pt3::Viewport& vp,
 	                       const ee0::SubjectMgrPtr& sub_mgr,
 	                       const MeshPointQuery::Selected& selected)
