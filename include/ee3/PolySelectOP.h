@@ -30,6 +30,10 @@ public:
 
 	auto& GetSelected() const { return m_selected; }
 
+	void SetCanSelectNull(bool select_null) {
+		m_select_null = select_null;
+	}
+
 private:
 	// for draw
 	void UpdatePolyBorderPos();
@@ -50,6 +54,8 @@ private:
 	std::vector<sm::vec3>              m_selected_face;
 
 	bool m_move_select = false;
+
+	bool m_select_null = true;
 
 }; // PolySelectOP
 

@@ -60,32 +60,43 @@ bool PolySelectOP::OnKeyUp(int key_code)
 
 bool PolySelectOP::OnMouseLeftDown(int x, int y)
 {
-	m_selected.Reset();
-	m_selected_poly.clear();
+	MeshPointQuery::Selected selected;
 
-	ee0::GameObj selected = GAME_OBJ_NULL;
+	ee0::GameObj selected_obj = GAME_OBJ_NULL;
 	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(
 		sm::vec2(static_cast<float>(x), static_cast<float>(y)), m_cam);
 	sm::Ray ray(m_cam.GetPos(), ray_dir);
 	m_stage.Traverse([&](const ee0::GameObj& obj)->bool
 	{
-		bool find = MeshPointQuery::Query(obj, ray, m_cam.GetPos(), m_selected);
+		bool find = MeshPointQuery::Query(obj, ray, m_cam.GetPos(), selected);
 		if (find) {
-			selected = obj;
+			selected_obj = obj;
 		}
 		return !find;
 	});
 
-	if (GAME_OBJ_VALID(selected))
+	if (GAME_OBJ_VALID(selected_obj))
 	{
+		m_selected = selected;
+
 		// insert to selection set
 		std::vector<n0::NodeWithPos> nwps;
-		nwps.push_back(n0::NodeWithPos(selected, selected, 0));
+		nwps.push_back(n0::NodeWithPos(selected_obj, selected_obj, 0));
 		ee0::MsgHelper::InsertSelection(*m_sub_mgr, nwps);
 
 		UpdatePolyBorderPos();
 	}
-	else if (ee0::EditOP::OnMouseLeftDown(x, y)) {
+	else
+	{
+		if (m_select_null) {
+			m_selected.Reset();
+			m_selected_poly.clear();
+			m_selected_face.clear();
+		}
+	}
+
+	if (ee0::EditOP::OnMouseLeftDown(x, y))
+	{
 		return true;
 	}
 
