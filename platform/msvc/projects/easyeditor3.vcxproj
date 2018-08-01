@@ -16,6 +16,7 @@
     <ClInclude Include="..\..\..\include\ee3\MeshEdgeOP.h" />
     <ClInclude Include="..\..\..\include\ee3\MeshFaceOP.h" />
     <ClInclude Include="..\..\..\include\ee3\MeshPointQuery.h" />
+    <ClInclude Include="..\..\..\include\ee3\VertexSelectOP.h" />
     <ClInclude Include="..\..\..\include\ee3\VertexTranslateOP.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeRotate3State.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeRotateOP.h" />
@@ -43,6 +44,7 @@
     <ClCompile Include="..\..\..\source\editop\MeshEdgeOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\MeshFaceOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\MeshPointQuery.cpp" />
+    <ClCompile Include="..\..\..\source\editop\VertexSelectOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\VertexTranslateOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\NodeRotate3State.cpp" />
     <ClCompile Include="..\..\..\source\editop\NodeRotateOP.cpp" />
@@ -107,7 +109,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\..\easyeditor0\include;..\..\..\..\cu\src;..\..\..\..\ds\src\ds;..\..\..\..\sm\src\sm;..\..\..\..\bs\include;..\..\..\..\js\include;..\..\..\..\guard\include;..\..\..\..\model\include;..\..\..\..\halfedge\include;..\..\..\..\painting2\include;..\..\..\..\painting3\include;..\..\..\..\node0\include;..\..\..\..\node3\include;..\..\..\..\entity0\include;..\..\..\..\entity3\include;..\..\..\..\quake\include;..\..\..\..\memmgr\include;..\..\..\..\nserializer\include;..\..\..\..\eserializer\include;..\..\..\..\moon\include;..\..\..\..\serializerx\include;..\..\..\..\unirender\include;..\..\..\..\shaderlab\include;..\..\..\..\facade\include;..\..\..\..\external-editor\wx\include;..\..\..\..\external\rapidjson\include;..\..\..\..\external\json\include;..\..\..\..\external\boost\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\..\easyeditor0\include;..\..\..\..\easyeditor2\include;..\..\..\..\cu\src;..\..\..\..\ds\src\ds;..\..\..\..\sm\src\sm;..\..\..\..\bs\include;..\..\..\..\js\include;..\..\..\..\guard\include;..\..\..\..\model\include;..\..\..\..\halfedge\include;..\..\..\..\painting2\include;..\..\..\..\painting3\include;..\..\..\..\node0\include;..\..\..\..\node3\include;..\..\..\..\entity0\include;..\..\..\..\entity3\include;..\..\..\..\quake\include;..\..\..\..\memmgr\include;..\..\..\..\nserializer\include;..\..\..\..\eserializer\include;..\..\..\..\moon\include;..\..\..\..\serializerx\include;..\..\..\..\unirender\include;..\..\..\..\shaderlab\include;..\..\..\..\facade\include;..\..\..\..\external-editor\wx\include;..\..\..\..\external\rapidjson\include;..\..\..\..\external\json\include;..\..\..\..\external\boost\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -121,7 +123,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\..\easyeditor0\include;..\..\..\..\cu\src;..\..\..\..\ds\src\ds;..\..\..\..\sm\src\sm;..\..\..\..\bs\include;..\..\..\..\js\include;..\..\..\..\guard\include;..\..\..\..\model\include;..\..\..\..\halfedge\include;..\..\..\..\painting2\include;..\..\..\..\painting3\include;..\..\..\..\node0\include;..\..\..\..\node3\include;..\..\..\..\entity0\include;..\..\..\..\entity3\include;..\..\..\..\quake\include;..\..\..\..\memmgr\include;..\..\..\..\nserializer\include;..\..\..\..\eserializer\include;..\..\..\..\moon\include;..\..\..\..\serializerx\include;..\..\..\..\unirender\include;..\..\..\..\shaderlab\include;..\..\..\..\facade\include;..\..\..\..\external-editor\wx\include;..\..\..\..\external\rapidjson\include;..\..\..\..\external\json\include;..\..\..\..\external\boost\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\..\easyeditor0\include;..\..\..\..\easyeditor2\include;..\..\..\..\cu\src;..\..\..\..\ds\src\ds;..\..\..\..\sm\src\sm;..\..\..\..\bs\include;..\..\..\..\js\include;..\..\..\..\guard\include;..\..\..\..\model\include;..\..\..\..\halfedge\include;..\..\..\..\painting2\include;..\..\..\..\painting3\include;..\..\..\..\node0\include;..\..\..\..\node3\include;..\..\..\..\entity0\include;..\..\..\..\entity3\include;..\..\..\..\quake\include;..\..\..\..\memmgr\include;..\..\..\..\nserializer\include;..\..\..\..\eserializer\include;..\..\..\..\moon\include;..\..\..\..\serializerx\include;..\..\..\..\unirender\include;..\..\..\..\shaderlab\include;..\..\..\..\facade\include;..\..\..\..\external-editor\wx\include;..\..\..\..\external\rapidjson\include;..\..\..\..\external\json\include;..\..\..\..\external\boost\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>

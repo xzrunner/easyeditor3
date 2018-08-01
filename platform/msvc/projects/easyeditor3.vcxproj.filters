@@ -129,6 +129,9 @@
     <ClInclude Include="..\..\..\include\ee3\VertexTranslateOP.h">
       <Filter>editop\mesh\0.vertex</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\VertexSelectOP.h">
+      <Filter>editop\mesh\0.vertex</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\editop\NodeRotateState.cpp">
@@ -204,6 +207,9 @@
       <Filter>editop\mesh\1.edge</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\VertexTranslateOP.cpp">
+      <Filter>editop\mesh\0.vertex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\VertexSelectOP.cpp">
       <Filter>editop\mesh\0.vertex</Filter>
     </ClCompile>
   </ItemGroup>
