@@ -123,11 +123,11 @@
     <ClInclude Include="..\..\..\include\ee3\PolySelectOP.h">
       <Filter>editop\mesh\3.polyhedron</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\MeshVertexOP.h">
-      <Filter>editop\mesh\0.vertex</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\MeshEdgeOP.h">
       <Filter>editop\mesh\1.edge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\VertexTranslateOP.h">
+      <Filter>editop\mesh\0.vertex</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -200,11 +200,11 @@
     <ClCompile Include="..\..\..\source\editop\PolySelectOP.cpp">
       <Filter>editop\mesh\3.polyhedron</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\editop\MeshVertexOP.cpp">
-      <Filter>editop\mesh\0.vertex</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\editop\MeshEdgeOP.cpp">
       <Filter>editop\mesh\1.edge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\VertexTranslateOP.cpp">
+      <Filter>editop\mesh\0.vertex</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -13,10 +13,10 @@ namespace pt3 { class ICamera; class Viewport; }
 namespace ee3
 {
 
-class MeshVertexOP : public ee0::EditOP
+class VertexTranslateOP : public ee0::EditOP
 {
 public:
-	MeshVertexOP(pt3::ICamera& cam, const pt3::Viewport& vp,
+	VertexTranslateOP(pt3::ICamera& cam, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr, const MeshPointQuery::Selected& selected);
 
 	virtual bool OnKeyDown(int key_code) override;
@@ -44,6 +44,6 @@ private:
 	quake::BrushVertexPtr m_selecting_vert = nullptr;
 	quake::BrushVertexPtr m_selected_vert  = nullptr;
 
-}; // MeshVertexOP
+}; // VertexTranslateOP
 
 }

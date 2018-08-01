@@ -1,4 +1,4 @@
-#include "ee3/MeshVertexOP.h"
+#include "ee3/VertexTranslateOP.h"
 
 #include <ee0/SubjectMgr.h>
 #include <ee0/MessageID.h>
@@ -22,7 +22,7 @@ static const float QUERY_RADIUS = 6;
 namespace ee3
 {
 
-MeshVertexOP::MeshVertexOP(pt3::ICamera& cam,
+VertexTranslateOP::VertexTranslateOP(pt3::ICamera& cam,
 	                       const pt3::Viewport& vp,
 	                       const ee0::SubjectMgrPtr& sub_mgr,
 	                       const MeshPointQuery::Selected& selected)
@@ -34,7 +34,7 @@ MeshVertexOP::MeshVertexOP(pt3::ICamera& cam,
 	m_cam2d.OnSize(static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 }
 
-bool MeshVertexOP::OnKeyDown(int key_code)
+bool VertexTranslateOP::OnKeyDown(int key_code)
 {
 	if (ee0::EditOP::OnKeyDown(key_code)) {
 		return true;
@@ -43,7 +43,7 @@ bool MeshVertexOP::OnKeyDown(int key_code)
 	return false;
 }
 
-bool MeshVertexOP::OnKeyUp(int key_code)
+bool VertexTranslateOP::OnKeyUp(int key_code)
 {
 	if (ee0::EditOP::OnKeyUp(key_code)) {
 		return true;
@@ -52,7 +52,7 @@ bool MeshVertexOP::OnKeyUp(int key_code)
 	return false;
 }
 
-bool MeshVertexOP::OnMouseLeftDown(int x, int y)
+bool VertexTranslateOP::OnMouseLeftDown(int x, int y)
 {
 	if (ee0::EditOP::OnMouseLeftDown(x, y)) {
 		return true;
@@ -72,7 +72,7 @@ bool MeshVertexOP::OnMouseLeftDown(int x, int y)
 	return false;
 }
 
-bool MeshVertexOP::OnMouseLeftUp(int x, int y)
+bool VertexTranslateOP::OnMouseLeftUp(int x, int y)
 {
 	if (ee0::EditOP::OnMouseLeftUp(x, y)) {
 		return true;
@@ -81,7 +81,7 @@ bool MeshVertexOP::OnMouseLeftUp(int x, int y)
 	return false;
 }
 
-bool MeshVertexOP::OnMouseMove(int x, int y)
+bool VertexTranslateOP::OnMouseMove(int x, int y)
 {
 	if (ee0::EditOP::OnMouseMove(x, y)) {
 		return true;
@@ -101,7 +101,7 @@ bool MeshVertexOP::OnMouseMove(int x, int y)
 	return false;
 }
 
-bool MeshVertexOP::OnMouseDrag(int x, int y)
+bool VertexTranslateOP::OnMouseDrag(int x, int y)
 {
 	if (ee0::EditOP::OnMouseDrag(x, y)) {
 		return true;
@@ -110,7 +110,7 @@ bool MeshVertexOP::OnMouseDrag(int x, int y)
 	return false;
 }
 
-bool MeshVertexOP::OnDraw() const
+bool VertexTranslateOP::OnDraw() const
 {
 	if (ee0::EditOP::OnDraw()) {
 		return true;
@@ -147,7 +147,7 @@ bool MeshVertexOP::OnDraw() const
 	return false;
 }
 
-quake::BrushVertexPtr MeshVertexOP::QueryByPos(int x, int y) const
+quake::BrushVertexPtr VertexTranslateOP::QueryByPos(int x, int y) const
 {
 	auto pos = m_cam2d.TransPosScreenToProject(x, y,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));

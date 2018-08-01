@@ -16,7 +16,7 @@
     <ClInclude Include="..\..\..\include\ee3\MeshEdgeOP.h" />
     <ClInclude Include="..\..\..\include\ee3\MeshFaceOP.h" />
     <ClInclude Include="..\..\..\include\ee3\MeshPointQuery.h" />
-    <ClInclude Include="..\..\..\include\ee3\MeshVertexOP.h" />
+    <ClInclude Include="..\..\..\include\ee3\VertexTranslateOP.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeRotate3State.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeRotateOP.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeTranslate3State.h" />
@@ -43,7 +43,7 @@
     <ClCompile Include="..\..\..\source\editop\MeshEdgeOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\MeshFaceOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\MeshPointQuery.cpp" />
-    <ClCompile Include="..\..\..\source\editop\MeshVertexOP.cpp" />
+    <ClCompile Include="..\..\..\source\editop\VertexTranslateOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\NodeRotate3State.cpp" />
     <ClCompile Include="..\..\..\source\editop\NodeRotateOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\NodeTranslate3State.cpp" />
