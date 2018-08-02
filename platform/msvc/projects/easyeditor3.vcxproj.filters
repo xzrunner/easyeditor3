@@ -55,6 +55,9 @@
     <Filter Include="editop\mesh\4.polyhedron">
       <UniqueIdentifier>{f9138247-2e68-4f55-a932-2dcf9620bb43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="dataset">
+      <UniqueIdentifier>{cac92868-b9be-477e-a95c-ede1254db7b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\ee3\NodeRotateState.h">
@@ -153,6 +156,9 @@
     <ClInclude Include="..\..\..\include\ee3\MeshTranslateBaseOP.h">
       <Filter>editop\mesh\0.base</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\CameraMgr.h">
+      <Filter>dataset</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\editop\NodeRotateState.cpp">
@@ -241,6 +247,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\FaceTranslateOP.cpp">
       <Filter>editop\mesh\3.face</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\dataset\CameraMgr.cpp">
+      <Filter>dataset</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\ee3\BrushEdge.h" />
+    <ClInclude Include="..\..\..\include\ee3\CameraMgr.h" />
     <ClInclude Include="..\..\..\include\ee3\CameraDriveOP.h" />
     <ClInclude Include="..\..\..\include\ee3\EdgeSelectOP.h" />
     <ClInclude Include="..\..\..\include\ee3\FacePushPullState.h" />
@@ -45,6 +46,7 @@
     <ClInclude Include="..\..\..\include\ee3\WxStageDropTarget.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\source\dataset\CameraMgr.cpp" />
     <ClCompile Include="..\..\..\source\editop\BrushEdge.cpp" />
     <ClCompile Include="..\..\..\source\editop\CameraDriveOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\EdgeSelectOP.cpp" />
