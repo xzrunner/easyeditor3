@@ -24,6 +24,7 @@ public:
 		const ee0::SubjectMgrPtr& sub_mgr, const MeshPointQuery::Selected& selected,
 		const ee0::SelectionSet<T>& selection);
 
+	virtual bool OnKeyDown(int key_code) override;
 	virtual bool OnMouseLeftDown(int x, int y) override;
 	virtual bool OnMouseLeftUp(int x, int y) override;
 	virtual bool OnMouseDrag(int x, int y) override;

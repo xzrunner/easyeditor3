@@ -13,6 +13,8 @@
 #include <SM_Ray.h>
 #include <SM_RayIntersect.h>
 
+#include <wx/defs.h>
+
 namespace ee3
 {
 namespace mesh
@@ -33,6 +35,41 @@ MeshTranslateBaseOP<T>::MeshTranslateBaseOP(pt3::PerspCam& cam,
 	m_cam2d.OnSize(static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 
 	m_last_pos.MakeInvalid();
+}
+
+template <typename T>
+bool MeshTranslateBaseOP<T>::OnKeyDown(int key_code)
+{
+	if (ee0::EditOP::OnKeyDown(key_code)) {
+		return true;
+	}
+
+	const float offset = 0.001f;
+	switch (key_code)
+	{
+	case WXK_LEFT:
+		TranslateSelected(sm::vec3(-offset, 0, 0));
+		break;
+	case WXK_RIGHT:
+		TranslateSelected(sm::vec3(offset, 0, 0));
+		break;
+	case WXK_DOWN:
+		TranslateSelected(sm::vec3(0, 0, -offset));
+		break;
+	case WXK_UP:
+		TranslateSelected(sm::vec3(0, 0, offset));
+		break;
+	case WXK_PAGEDOWN:
+		TranslateSelected(sm::vec3(0, -offset, 0));
+		break;
+	case WXK_PAGEUP:
+		TranslateSelected(sm::vec3(0, offset, 0));
+		break;
+	}
+
+	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+
+	return false;
 }
 
 template <typename T>
