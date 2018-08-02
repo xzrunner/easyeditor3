@@ -1,4 +1,4 @@
-#include "ee3/VertexTranslateOP.h"
+#include "ee3/EdgeTranslateOP.h"
 #include "ee3/MeshEditStyle.h"
 
 #include <ee0/MessageID.h>
@@ -16,11 +16,11 @@ namespace ee3
 namespace mesh
 {
 
-VertexTranslateOP::VertexTranslateOP(pt3::PerspCam& cam,
-	                                 const pt3::Viewport& vp,
-	                                 const ee0::SubjectMgrPtr& sub_mgr,
-	                                 const MeshPointQuery::Selected& selected,
-	                                 const ee0::SelectionSet<quake::BrushVertexPtr>& selection)
+EdgeTranslateOP::EdgeTranslateOP(pt3::PerspCam& cam,
+	                             const pt3::Viewport& vp,
+	                             const ee0::SubjectMgrPtr& sub_mgr,
+	                             const MeshPointQuery::Selected& selected,
+	                             const ee0::SelectionSet<BrushEdge>& selection)
 	: m_cam(cam)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
@@ -32,7 +32,7 @@ VertexTranslateOP::VertexTranslateOP(pt3::PerspCam& cam,
 	m_last_pos.MakeInvalid();
 }
 
-bool VertexTranslateOP::OnMouseLeftDown(int x, int y)
+bool EdgeTranslateOP::OnMouseLeftDown(int x, int y)
 {
 	if (ee0::EditOP::OnMouseLeftDown(x, y)) {
 		return true;
@@ -47,12 +47,16 @@ bool VertexTranslateOP::OnMouseLeftDown(int x, int y)
 	auto pos = m_cam2d.TransPosScreenToProject(x, y,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 	auto cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
-	m_selection.Traverse([&](const quake::BrushVertexPtr& vert)->bool 
+	m_selection.Traverse([&](const BrushEdge& edge)->bool 
 	{
-		auto p3 = vert->pos * model::MapLoader::VERTEX_SCALE;
-		auto p2 = m_vp.TransPosProj3ToProj2(p3, cam_mat);
-		if (sm::dis_pos_to_pos(p2, pos) < NODE_QUERY_RADIUS) {
-			m_last_pos = p3;
+		auto b3 = edge.begin->pos * model::MapLoader::VERTEX_SCALE;
+		auto e3 = edge.end->pos * model::MapLoader::VERTEX_SCALE;
+		auto mid3 = (b3 + e3) * 0.5f;
+		auto b2 = m_vp.TransPosProj3ToProj2(b3, cam_mat);
+		auto e2 = m_vp.TransPosProj3ToProj2(e3, cam_mat);
+		auto mid2 = m_vp.TransPosProj3ToProj2(mid3, cam_mat);
+		if (sm::dis_pos_to_pos(mid2, pos) < NODE_QUERY_RADIUS) {
+			m_last_pos = mid3;
 			return false;
 		} else {
 			return true;
@@ -62,7 +66,7 @@ bool VertexTranslateOP::OnMouseLeftDown(int x, int y)
 	return false;
 }
 
-bool VertexTranslateOP::OnMouseLeftUp(int x, int y)
+bool EdgeTranslateOP::OnMouseLeftUp(int x, int y)
 {
 	if (ee0::EditOP::OnMouseLeftUp(x, y)) {
 		return true;
@@ -73,7 +77,7 @@ bool VertexTranslateOP::OnMouseLeftUp(int x, int y)
 	return false;
 }
 
-bool VertexTranslateOP::OnMouseDrag(int x, int y)
+bool EdgeTranslateOP::OnMouseDrag(int x, int y)
 {
 	if (ee0::EditOP::OnMouseDrag(x, y)) {
 		return true;
@@ -101,11 +105,13 @@ bool VertexTranslateOP::OnMouseDrag(int x, int y)
 	return false;
 }
 
-void VertexTranslateOP::TranslateSelected(const sm::vec3& offset)
+void EdgeTranslateOP::TranslateSelected(const sm::vec3& offset)
 {
-	m_selection.Traverse([&](const quake::BrushVertexPtr& vert)->bool
+	auto _offset = offset / model::MapLoader::VERTEX_SCALE;
+	m_selection.Traverse([&](const BrushEdge& edge)->bool
 	{
-		vert->pos += offset / model::MapLoader::VERTEX_SCALE;
+		edge.begin->pos += _offset;
+		edge.end->pos += _offset;
 		return true;
 	});
 

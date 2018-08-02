@@ -12,6 +12,8 @@
 
 namespace ee3
 {
+namespace mesh
+{
 
 bool MeshPointQuery::Query(const ee0::GameObj& obj, const sm::Ray& ray,
 	                       const sm::vec3& cam_pos, Selected& ret)
@@ -132,4 +134,5 @@ const quake::MapBrush* MeshPointQuery::Selected::GetBrush() const
 	return &brushes[brush_idx];
 }
 
+}
 }

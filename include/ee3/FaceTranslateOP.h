@@ -16,12 +16,12 @@ namespace ee3
 namespace mesh
 {
 
-class VertexTranslateOP : public ee0::EditOP
+class FaceTranslateOP : public ee0::EditOP
 {
 public:
-	VertexTranslateOP(pt3::PerspCam& cam, const pt3::Viewport& vp,
+	FaceTranslateOP(pt3::PerspCam& cam, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr, const MeshPointQuery::Selected& selected,
-		const ee0::SelectionSet<quake::BrushVertexPtr>& selection);
+		const ee0::SelectionSet<quake::BrushFacePtr>& selection);
 
 	virtual bool OnMouseLeftDown(int x, int y) override;
 	virtual bool OnMouseLeftUp(int x, int y) override;
@@ -36,14 +36,14 @@ private:
 
 	ee0::SubjectMgrPtr   m_sub_mgr;
 
-	const MeshPointQuery::Selected&                 m_selected;
-	const ee0::SelectionSet<quake::BrushVertexPtr>& m_selection;
+	const MeshPointQuery::Selected&               m_selected;
+	const ee0::SelectionSet<quake::BrushFacePtr>& m_selection;
 
 	pt2::OrthoCamera m_cam2d;
 
 	sm::vec3 m_last_pos;
 
-}; // VertexTranslateOP
+}; // FaceTranslateOP
 
 }
 }

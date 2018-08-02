@@ -14,6 +14,8 @@ namespace pt3 { class PerspCam; class Viewport; }
 
 namespace ee3
 {
+namespace mesh
+{
 
 class FacePushPullState : public ee0::EditOpState
 {
@@ -51,4 +53,5 @@ private:
 
 }; // FacePushPullState
 
+}
 }

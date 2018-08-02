@@ -15,6 +15,8 @@
 
 namespace ee3
 {
+namespace mesh
+{
 
 PolyArrangeOP::PolyArrangeOP(pt3::PerspCam& cam,
 	                         const pt3::Viewport& vp,
@@ -206,4 +208,5 @@ void PolyArrangeOP::TranslateSelected(const sm::vec3& offset)
 	model::MapLoader::UpdateVBO(*m_selected.model, m_selected.brush_idx);
 }
 
+}
 }

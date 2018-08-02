@@ -14,6 +14,8 @@
 
 namespace ee3
 {
+namespace mesh
+{
 
 FacePushPullState::FacePushPullState(const pt3::PerspCam& cam, const pt3::Viewport& vp,
 	                                 const ee0::SubjectMgrPtr& sub_mgr,
@@ -106,7 +108,7 @@ void FacePushPullState::TranslateFace(const sm::vec3& offset)
 	auto& brush = brushes[m_selected.brush_idx];
 	assert(m_selected.face_idx < brush.faces.size());
 	auto& face = brush.faces[m_selected.face_idx];
-	for (auto& vert : face.vertices) {
+	for (auto& vert : face->vertices) {
 		vert->pos += offset / model::MapLoader::VERTEX_SCALE;
 	}
 
@@ -135,4 +137,5 @@ void FacePushPullState::TranslateFace(const sm::vec3& offset)
 	model::MapLoader::UpdateVBO(*m_selected.model, m_selected.brush_idx);
 }
 
+}
 }

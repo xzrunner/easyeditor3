@@ -11,6 +11,8 @@ namespace pt3 { class PerspCam; class Viewport; }
 
 namespace ee3
 {
+namespace mesh
+{
 
 class PolyArrangeOP : public ee0::EditOP
 {
@@ -33,7 +35,7 @@ private:
 	void TranslateSelected(const sm::vec3& offset);
 
 private:
-	const pt3::PerspCam&   m_cam;
+	const pt3::PerspCam& m_cam;
 	const pt3::Viewport& m_vp;
 	ee0::SubjectMgrPtr   m_sub_mgr;
 
@@ -45,4 +47,5 @@ private:
 
 }; // PolyArrangeOP
 
+}
 }

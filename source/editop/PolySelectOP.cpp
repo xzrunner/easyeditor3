@@ -17,6 +17,8 @@
 
 namespace ee3
 {
+namespace mesh
+{
 
 PolySelectOP::PolySelectOP(ee0::WxStagePage& stage, pt3::PerspCam& cam,
 	                       const pt3::Viewport& vp)
@@ -184,4 +186,5 @@ void PolySelectOP::UpdatePolyBorderPos()
 	}
 }
 
+}
 }

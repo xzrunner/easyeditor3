@@ -15,6 +15,8 @@ namespace quake { struct MapBrush; }
 
 namespace ee3
 {
+namespace mesh
+{
 
 class MeshPointQuery
 {
@@ -62,4 +64,5 @@ public:
 
 }; // MeshPointQuery
 
+}
 }
