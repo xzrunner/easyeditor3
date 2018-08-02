@@ -48,10 +48,12 @@ bool VertexSelectOP::OnMouseLeftDown(int x, int y)
 		return false;
 	}
 
+	m_first_pos.Set(x, y);
+
+	m_selected.Clear();
 	auto selected = QueryByPos(x, y);
-	if (m_selected != selected) {
-		m_selected = QueryByPos(x, y);
-		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+	if (selected) {
+		m_selected.Add(selected);
 	}
 
 	return false;
@@ -64,6 +66,19 @@ bool VertexSelectOP::OnMouseLeftUp(int x, int y)
 	}
 
 	m_draw_state->OnMouseRelease(x, y);
+
+	// rect select
+	sm::ivec2 end(x, y);
+	if (end != m_first_pos)
+	{
+		m_selected.Clear();
+		std::vector<quake::BrushVertexPtr> selection;
+		sm::irect r(m_first_pos, end);
+		QueryByRect(r, selection);
+		for (auto& v : selection) {
+			m_selected.Add(v);
+		}
+	}
 
 	return false;
 }
@@ -128,11 +143,12 @@ bool VertexSelectOP::OnDraw() const
 		pt2::PrimitiveDraw::Circle(nullptr, pos, QUERY_RADIUS, false);
 	}
 	// selected
-	if (m_selected) {
-		pt2::PrimitiveDraw::SetColor(0xff0000ff);
-		auto pos = m_vp.TransPosProj3ToProj2(m_selected->pos * model::MapLoader::VERTEX_SCALE, cam_mat);
+	pt2::PrimitiveDraw::SetColor(0xff0000ff);
+	m_selected.Traverse([&](const quake::BrushVertexPtr& vert)->bool {
+		auto pos = m_vp.TransPosProj3ToProj2(vert->pos * model::MapLoader::VERTEX_SCALE, cam_mat);
 		pt2::PrimitiveDraw::Circle(nullptr, pos, NODE_RADIUS, true);
-	}
+		return true;
+	});
 
 	m_draw_state->OnDraw();
 
@@ -156,6 +172,26 @@ quake::BrushVertexPtr VertexSelectOP::QueryByPos(int x, int y) const
 	}
 
 	return nullptr;
+}
+
+void VertexSelectOP::QueryByRect(const sm::irect& rect, std::vector<quake::BrushVertexPtr>& selection) const
+{
+	auto r_min = m_cam2d.TransPosScreenToProject(rect.xmin, rect.ymin,
+		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
+	auto r_max = m_cam2d.TransPosScreenToProject(rect.xmax, rect.ymax,
+		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
+	sm::rect s_rect(r_min, r_max);
+
+	auto cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
+
+	auto brush = m_base_selected.GetBrush();
+	assert(brush);
+	for (auto& v : brush->vertices) {
+		auto p = m_vp.TransPosProj3ToProj2(v->pos * model::MapLoader::VERTEX_SCALE, cam_mat);
+		if (sm::is_point_in_rect(p, s_rect)) {
+			selection.push_back(v);
+		}
+	}
 }
 
 }

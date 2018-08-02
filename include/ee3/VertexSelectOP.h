@@ -5,6 +5,7 @@
 #include <ee0/EditOP.h>
 #include <ee0/typedef.h>
 
+#include <SM_Rect.h>
 #include <quake/MapModel.h>
 #include <painting2/OrthoCamera.h>
 
@@ -30,6 +31,7 @@ public:
 
 private:
 	quake::BrushVertexPtr QueryByPos(int x, int y) const;
+	void QueryByRect(const sm::irect& rect, std::vector<quake::BrushVertexPtr>& selection) const;
 
 private:
 	const pt3::ICamera&  m_cam;
@@ -40,12 +42,10 @@ private:
 
 	pt2::OrthoCamera m_cam2d;
 
-	std::set<quake::BrushVertexPtr> m_selection;
+	ee0::SelectionSet<quake::BrushVertexPtr> m_selected;
+	quake::BrushVertexPtr                    m_selecting = nullptr;
 
-	quake::BrushVertexPtr m_selecting = nullptr;
-	quake::BrushVertexPtr m_selected  = nullptr;
-
-	sm::ivec2 m_last_pos;
+	sm::ivec2 m_first_pos;
 
 	std::unique_ptr<ee0::EditOpState> m_draw_state = nullptr;
 

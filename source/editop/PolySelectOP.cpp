@@ -135,19 +135,6 @@ bool PolySelectOP::OnMouseMove(int x, int y)
 	return false;
 }
 
-bool PolySelectOP::OnMouseDrag(int x, int y)
-{
-	if (m_selected.poly) {
-		return false;
-	}
-
-	if (ee0::EditOP::OnMouseDrag(x, y)) {
-		return true;
-	}
-
-	return false;
-}
-
 bool PolySelectOP::OnDraw() const
 {
 	if (ee0::EditOP::OnDraw()) {

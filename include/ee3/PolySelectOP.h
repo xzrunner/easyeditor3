@@ -24,7 +24,6 @@ public:
 
 	virtual bool OnMouseLeftDown(int x, int y) override;
 	virtual bool OnMouseMove(int x, int y) override;
-	virtual bool OnMouseDrag(int x, int y) override;
 
 	virtual bool OnDraw() const override;
 
