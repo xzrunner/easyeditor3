@@ -21,6 +21,7 @@
     <ClInclude Include="..\..\..\include\ee3\FaceSelectOP.h" />
     <ClInclude Include="..\..\..\include\ee3\MeshPointQuery.h" />
     <ClInclude Include="..\..\..\include\ee3\MeshSelectBaseOP.h" />
+    <ClInclude Include="..\..\..\include\ee3\MeshTranslateBaseOP.h" />
     <ClInclude Include="..\..\..\include\ee3\VertexSelectOP.h" />
     <ClInclude Include="..\..\..\include\ee3\VertexTranslateOP.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeRotate3State.h" />
@@ -76,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\include\ee3\MeshSelectBaseOP.inl" />
+    <None Include="..\..\..\include\ee3\MeshTranslateBaseOP.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>4.easyeditor3</ProjectName>
