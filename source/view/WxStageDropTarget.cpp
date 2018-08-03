@@ -122,7 +122,7 @@ sm::vec3 WxStageDropTarget::TransPosScrToProj3d(int x, int y) const
 
 	auto& vp = canvas->GetViewport();
 	auto& cam = canvas->GetCamera();
-	if (cam->Type() == pt3::CAM_PERSPECTIVE)
+	if (cam->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
 	{
 		auto persp_cam = std::dynamic_pointer_cast<pt3::PerspCam>(cam);
 		auto dir = vp.TransPos3ScreenToDir(sm::vec2(x, y), *persp_cam);

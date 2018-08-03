@@ -6,12 +6,13 @@
 #include <ee0/typedef.h>
 
 #include <SM_Rect.h>
+#include <painting0/Camera.h>
 #include <painting2/OrthoCamera.h>
 #include <quake/MapModel.h>
 
 #include <set>
 
-namespace pt3 { class ICamera; class Viewport; }
+namespace pt3 { class Viewport; }
 
 namespace ee3
 {
@@ -22,7 +23,7 @@ template <typename T>
 class MeshSelectBaseOP : public ee0::EditOP
 {
 public:
-	MeshSelectBaseOP(pt3::ICamera& cam, const pt3::Viewport& vp,
+	MeshSelectBaseOP(const pt0::CameraPtr& cam, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr, const MeshPointQuery::Selected& selected);
 
 	virtual bool OnMouseLeftDown(int x, int y) override;
@@ -34,6 +35,10 @@ public:
 
 	auto& GetSelected() const { return m_selected; }
 
+	void SetCamera(const pt0::CameraPtr& cam) {
+		m_cam = cam;
+	}
+
 protected:
 	virtual void DrawImpl(const quake::MapBrush& brush, const sm::mat4& cam_mat) const = 0;
 
@@ -41,7 +46,7 @@ protected:
 	virtual void QueryByRect(const sm::irect& rect, std::vector<T>& selection) const = 0;
 
 protected:
-	const pt3::ICamera&  m_cam;
+	pt0::CameraPtr       m_cam;
 	const pt3::Viewport& m_vp;
 	ee0::SubjectMgrPtr   m_sub_mgr;
 

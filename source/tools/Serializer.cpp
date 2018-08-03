@@ -72,55 +72,53 @@ void Serializer::LoadFroimJson(const std::string& filepath, ee0::WxStagePage* st
 	std::const_pointer_cast<WxStageCanvas>(canvas)->SetCamera(cam);
 }
 
-rapidjson::Value Serializer::StoreCamera(const pt3::ICameraPtr& cam, rapidjson::MemoryPoolAllocator<>& alloc)
+rapidjson::Value Serializer::StoreCamera(const pt0::CameraPtr& cam, rapidjson::MemoryPoolAllocator<>& alloc)
 {
 	rapidjson::Value val;
 	val.SetObject();
 
-	switch (cam->Type())
+	auto cam_type = cam->TypeID();
+	if (cam_type == pt0::GetCamTypeID<pt3::OrthoCam>())
 	{
-	case pt3::CAM_ORTHO:
 		val.AddMember("type", "ortho", alloc);
-		break;
-	case pt3::CAM_PERSPECTIVE:
-		{
-			val.AddMember("type", "perspective", alloc);
+	}
+	else if (cam_type == pt0::GetCamTypeID<pt3::PerspCam>())
+	{
+		val.AddMember("type", "perspective", alloc);
 
-			auto persp_cam = std::dynamic_pointer_cast<const pt3::PerspCam>(cam);
+		auto persp_cam = std::dynamic_pointer_cast<const pt3::PerspCam>(cam);
 
-			rapidjson::Value pos_val;
-			auto& pos = persp_cam->GetPos();
-			pos_val.SetObject();
-			pos_val.AddMember("x", pos.x, alloc);
-			pos_val.AddMember("y", pos.y, alloc);
-			pos_val.AddMember("z", pos.z, alloc);
-			val.AddMember("pos", pos_val, alloc);
+		rapidjson::Value pos_val;
+		auto& pos = persp_cam->GetPos();
+		pos_val.SetObject();
+		pos_val.AddMember("x", pos.x, alloc);
+		pos_val.AddMember("y", pos.y, alloc);
+		pos_val.AddMember("z", pos.z, alloc);
+		val.AddMember("pos", pos_val, alloc);
 
-			rapidjson::Value target_val;
-			auto& target = persp_cam->GetTarget();
-			target_val.SetObject();
-			target_val.AddMember("x", target.x, alloc);
-			target_val.AddMember("y", target.y, alloc);
-			target_val.AddMember("z", target.z, alloc);
-			val.AddMember("target", target_val, alloc);
+		rapidjson::Value target_val;
+		auto& target = persp_cam->GetTarget();
+		target_val.SetObject();
+		target_val.AddMember("x", target.x, alloc);
+		target_val.AddMember("y", target.y, alloc);
+		target_val.AddMember("z", target.z, alloc);
+		val.AddMember("target", target_val, alloc);
 
-			rapidjson::Value up_val;
-			auto& up = persp_cam->GetUpDir();
-			up_val.SetObject();
-			up_val.AddMember("x", up.x, alloc);
-			up_val.AddMember("y", up.y, alloc);
-			up_val.AddMember("z", up.z, alloc);
-			val.AddMember("up", up_val, alloc);
-		}
-		break;
+		rapidjson::Value up_val;
+		auto& up = persp_cam->GetUpDir();
+		up_val.SetObject();
+		up_val.AddMember("x", up.x, alloc);
+		up_val.AddMember("y", up.y, alloc);
+		up_val.AddMember("z", up.z, alloc);
+		val.AddMember("up", up_val, alloc);
 	}
 
 	return val;
 }
 
-pt3::ICameraPtr Serializer::LoadCamera(const rapidjson::Value& val)
+pt0::CameraPtr Serializer::LoadCamera(const rapidjson::Value& val)
 {
-	pt3::ICameraPtr ret = nullptr;
+	pt0::CameraPtr ret = nullptr;
 
 	auto type = val["type"].GetString();
 	if (type == "ortho")

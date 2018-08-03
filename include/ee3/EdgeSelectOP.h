@@ -11,7 +11,7 @@ namespace mesh
 class EdgeSelectOP : public MeshSelectBaseOP<BrushEdge>
 {
 public:
-	EdgeSelectOP(pt3::ICamera& cam, const pt3::Viewport& vp,
+	EdgeSelectOP(const pt0::CameraPtr& cam, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr, const MeshPointQuery::Selected& selected);
 
 protected:

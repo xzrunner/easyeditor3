@@ -20,7 +20,8 @@ namespace ee3
 namespace mesh
 {
 
-PolySelectOP::PolySelectOP(ee0::WxStagePage& stage, pt3::PerspCam& cam,
+PolySelectOP::PolySelectOP(ee0::WxStagePage& stage, 
+	                       const std::shared_ptr<pt3::PerspCam>& cam,
 	                       const pt3::Viewport& vp)
 	: m_stage(stage)
 	, m_cam(cam)
@@ -66,11 +67,11 @@ bool PolySelectOP::OnMouseLeftDown(int x, int y)
 
 	ee0::GameObj selected_obj = GAME_OBJ_NULL;
 	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(
-		sm::vec2(static_cast<float>(x), static_cast<float>(y)), m_cam);
-	sm::Ray ray(m_cam.GetPos(), ray_dir);
+		sm::vec2(static_cast<float>(x), static_cast<float>(y)), *m_cam);
+	sm::Ray ray(m_cam->GetPos(), ray_dir);
 	m_stage.Traverse([&](const ee0::GameObj& obj)->bool
 	{
-		bool find = MeshPointQuery::Query(obj, ray, m_cam.GetPos(), selected);
+		bool find = MeshPointQuery::Query(obj, ray, m_cam->GetPos(), selected);
 		if (find) {
 			selected_obj = obj;
 		}
@@ -121,11 +122,11 @@ bool PolySelectOP::OnMouseMove(int x, int y)
 	auto& ctrans = m_selected.node->GetUniqueComp<n3::CompTransform>();
 
 	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(
-		sm::vec2(static_cast<float>(x), static_cast<float>(y)), m_cam);
-	sm::Ray ray(m_cam.GetPos(), ray_dir);
+		sm::vec2(static_cast<float>(x), static_cast<float>(y)), *m_cam);
+	sm::Ray ray(m_cam->GetPos(), ray_dir);
 
 	m_selected.min_dist = std::numeric_limits<float>::max();
-	MeshPointQuery::Query(m_selected.poly, ctrans, ray, m_cam.GetPos(), m_selected);
+	MeshPointQuery::Query(m_selected.poly, ctrans, ray, m_cam->GetPos(), m_selected);
 
 	if (m_selected.face) {
 		m_selected_face.clear();

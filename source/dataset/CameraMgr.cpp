@@ -18,7 +18,7 @@ CameraMgr::CameraMgr(bool only3d)
 	}
 }
 
-const pt3::ICameraPtr& CameraMgr::SwitchToNext()
+const pt0::CameraPtr& CameraMgr::SwitchToNext()
 {
 	m_curr = static_cast<CameraType>((m_curr + 1) % CAM_MAX_COUNT);
 	return m_cams[m_curr];

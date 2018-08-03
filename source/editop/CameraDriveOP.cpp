@@ -97,34 +97,30 @@ bool CameraDriveOP::OnMouseDrag(int x, int y)
 	}
 
 	auto& cam = m_cam_mgr.GetCamera();
-	switch (cam->Type())
+	auto cam_type = cam->TypeID();
+	if (cam_type == pt0::GetCamTypeID<pt3::OrthoCam>())
 	{
-	case pt3::CAM_ORTHO:
-		{
-			auto& o_cam = std::dynamic_pointer_cast<pt3::OrthoCam>(cam);
+		auto& o_cam = std::dynamic_pointer_cast<pt3::OrthoCam>(cam);
 
-			auto dx = m_last_pos.x - x;
-			auto dy = y - m_last_pos.y;
-			o_cam->Translate(sm::vec2(dx, dy));
+		auto dx = m_last_pos.x - x;
+		auto dy = y - m_last_pos.y;
+		o_cam->Translate(sm::vec2(dx, dy));
 
-			m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
-		}
-		break;
-	case pt3::CAM_PERSPECTIVE:
-		{
-			auto& p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(cam);
+		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+	}
+	else if (cam_type == pt0::GetCamTypeID<pt3::PerspCam>())
+	{
+		auto& p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(cam);
 
-			int dx = x - m_last_pos.x;
-			int dy = y - m_last_pos.y;
+		int dx = x - m_last_pos.x;
+		int dy = y - m_last_pos.y;
 
-			static const float SCALE = 0.5f;
-			p_cam->Yaw(-dx * SCALE);
-			p_cam->Pitch(-dy * SCALE);
-			p_cam->SetUpDir(sm::vec3(0, 1, 0));
+		static const float SCALE = 0.5f;
+		p_cam->Yaw(-dx * SCALE);
+		p_cam->Pitch(-dy * SCALE);
+		p_cam->SetUpDir(sm::vec3(0, 1, 0));
 
-			m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
-		}
-		break;
+		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 	}
 
 	m_last_pos.Set(x, y);
@@ -139,38 +135,34 @@ bool CameraDriveOP::OnMouseWheelRotation(int x, int y, int direction)
 	}
 
 	auto& cam = m_cam_mgr.GetCamera();
-	switch (cam->Type())
+	auto cam_type = cam->TypeID();
+	if (cam_type == pt0::GetCamTypeID<pt3::OrthoCam>())
 	{
-	case pt3::CAM_ORTHO:
-		{
-			auto& o_cam = std::dynamic_pointer_cast<pt3::OrthoCam>(cam);
+		auto& o_cam = std::dynamic_pointer_cast<pt3::OrthoCam>(cam);
 
-			float w = m_vp.Width(),
-				  h = m_vp.Height();
-			float scale = direction > 0 ? 1 / 1.1f : 1.1f;
-			const float cx = static_cast<float>(x),
-				        cy = static_cast<float>(h - y);
-			o_cam->Scale(scale, cx, cy, w, h);
+		float w = m_vp.Width(),
+			  h = m_vp.Height();
+		float scale = direction > 0 ? 1 / 1.1f : 1.1f;
+		const float cx = static_cast<float>(x),
+				    cy = static_cast<float>(h - y);
+		o_cam->Scale(scale, cx, cy, w, h);
 
-			m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+	}
+	else if (cam_type == pt0::GetCamTypeID<pt3::PerspCam>())
+	{
+		auto& p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(cam);
+
+		sm::vec2 pos(static_cast<float>(x), static_cast<float>(y));
+		sm::vec3 dir = m_vp.TransPos3ScreenToDir(pos, *p_cam);
+		static const float OFFSET = 0.05f;
+		if (direction > 0) {
+			p_cam->Move(dir, p_cam->GetDistance() * OFFSET);
+		} else {
+			p_cam->Move(dir, -p_cam->GetDistance() * OFFSET);
 		}
-		break;
-	case pt3::CAM_PERSPECTIVE:
-		{
-			auto& p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(cam);
 
-			sm::vec2 pos(static_cast<float>(x), static_cast<float>(y));
-			sm::vec3 dir = m_vp.TransPos3ScreenToDir(pos, *p_cam);
-			static const float OFFSET = 0.05f;
-			if (direction > 0) {
-				p_cam->Move(dir, p_cam->GetDistance() * OFFSET);
-			} else {
-				p_cam->Move(dir, -p_cam->GetDistance() * OFFSET);
-			}
-
-			m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
-		}
-		break;
+		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 	}
 
 	return false;
@@ -189,33 +181,31 @@ bool CameraDriveOP::Update(float dt)
 	}
 
 	auto& cam = m_cam_mgr.GetCamera();
-	switch (cam->Type())
+	auto cam_type = cam->TypeID();
+	if (cam_type == pt0::GetCamTypeID<pt3::OrthoCam>())
 	{
-	case pt3::CAM_ORTHO:
-		break;
-	case pt3::CAM_PERSPECTIVE:
+	}
+	else if (cam_type == pt0::GetCamTypeID<pt3::PerspCam>())
+	{
+		auto& p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(cam);
+
+		switch (m_move_dir)
 		{
-			auto& p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(cam);
-
-			switch (m_move_dir)
-			{
-			case MOVE_LEFT:
-				p_cam->Translate(offset, 0);
-				break;
-			case MOVE_RIGHT:
-				p_cam->Translate(-offset, 0);
-				break;
-			case MOVE_UP:
-				p_cam->MoveToward(offset);
-				break;
-			case MOVE_DOWN:
-				p_cam->MoveToward(-offset);
-				break;
-			}
-
-			m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+		case MOVE_LEFT:
+			p_cam->Translate(offset, 0);
+			break;
+		case MOVE_RIGHT:
+			p_cam->Translate(-offset, 0);
+			break;
+		case MOVE_UP:
+			p_cam->MoveToward(offset);
+			break;
+		case MOVE_DOWN:
+			p_cam->MoveToward(-offset);
+			break;
 		}
-		break;
+
+		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 	}
 
 	return true;

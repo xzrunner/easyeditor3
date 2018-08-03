@@ -18,7 +18,7 @@ namespace ee3
 namespace mesh
 {
 
-PolyArrangeOP::PolyArrangeOP(pt3::PerspCam& cam,
+PolyArrangeOP::PolyArrangeOP(const std::shared_ptr<pt3::PerspCam>& cam,
 	                         const pt3::Viewport& vp,
 	                         const ee0::SubjectMgrPtr& sub_mgr,
 	                         const MeshPointQuery::Selected& m_selected)
@@ -39,7 +39,7 @@ bool PolyArrangeOP::OnKeyDown(int key_code)
 	if (!m_face_pp_state)
 	{
 		if (key_code == WXK_SHIFT && m_selected.poly) {
-			m_face_pp_state = std::make_shared<FacePushPullState>(m_cam, m_vp, m_sub_mgr, m_selected);
+			m_face_pp_state = std::make_shared<FacePushPullState>(*m_cam, m_vp, m_sub_mgr, m_selected);
 		}
 	}
 
@@ -102,8 +102,8 @@ bool PolyArrangeOP::OnMouseDrag(int x, int y)
 	}
 
 	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(
-		sm::vec2(static_cast<float>(x), static_cast<float>(y)), m_cam);
-	sm::Ray ray(m_cam.GetPos(), ray_dir);
+		sm::vec2(static_cast<float>(x), static_cast<float>(y)), *m_cam);
+	sm::Ray ray(m_cam->GetPos(), ray_dir);
 
 	sm::Plane plane;
 	CalcTranslatePlane(ray, plane);

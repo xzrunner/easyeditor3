@@ -17,7 +17,7 @@ namespace mesh
 class PolyArrangeOP : public ee0::EditOP
 {
 public:
-	PolyArrangeOP(pt3::PerspCam& cam, const pt3::Viewport& vp,
+	PolyArrangeOP(const std::shared_ptr<pt3::PerspCam>& cam, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr, const MeshPointQuery::Selected& selected);
 
 	virtual bool OnKeyDown(int key_code) override;
@@ -35,7 +35,7 @@ private:
 	void TranslateSelected(const sm::vec3& offset);
 
 private:
-	const pt3::PerspCam& m_cam;
+	std::shared_ptr<pt3::PerspCam> m_cam;
 	const pt3::Viewport& m_vp;
 	ee0::SubjectMgrPtr   m_sub_mgr;
 

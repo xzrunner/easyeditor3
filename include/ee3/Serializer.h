@@ -1,6 +1,6 @@
 #pragma once
 
-#include <painting3/ICamera.h>
+#include <painting0/Camera.h>
 
 #include <rapidjson/document.h>
 
@@ -18,8 +18,8 @@ public:
 	static void LoadFroimJson(const std::string& filepath, ee0::WxStagePage* stage);
 
 private:
-	static rapidjson::Value StoreCamera(const pt3::ICameraPtr& cam, rapidjson::MemoryPoolAllocator<>& alloc);
-	static pt3::ICameraPtr LoadCamera(const rapidjson::Value& val);
+	static rapidjson::Value StoreCamera(const pt0::CameraPtr& cam, rapidjson::MemoryPoolAllocator<>& alloc);
+	static pt0::CameraPtr LoadCamera(const rapidjson::Value& val);
 
 }; // Serializer
 

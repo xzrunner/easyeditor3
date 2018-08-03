@@ -18,7 +18,7 @@ namespace mesh
 class PolySelectOP : public ee0::EditOP
 {
 public:
-	PolySelectOP(ee0::WxStagePage& stage, pt3::PerspCam& cam,
+	PolySelectOP(ee0::WxStagePage& stage, const std::shared_ptr<pt3::PerspCam>& cam,
 		const pt3::Viewport& vp);
 
 	virtual bool OnKeyDown(int key_code) override;
@@ -42,7 +42,7 @@ private:
 private:
 	ee0::WxStagePage&    m_stage;
 
-	pt3::PerspCam&       m_cam;
+	std::shared_ptr<pt3::PerspCam> m_cam;
 	const pt3::Viewport& m_vp;
 	ee0::SubjectMgrPtr   m_sub_mgr;
 

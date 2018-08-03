@@ -8,7 +8,6 @@
 #include <ee2/DrawSelectRectState.h>
 
 #include <painting2/PrimitiveDraw.h>
-#include <painting3/ICamera.h>
 #include <painting3/Viewport.h>
 #include <SM_Calc.h>
 #include <model/Model.h>
@@ -22,7 +21,7 @@ namespace mesh
 {
 
 template <typename T>
-MeshSelectBaseOP<T>::MeshSelectBaseOP(pt3::ICamera& cam, const pt3::Viewport& vp,
+MeshSelectBaseOP<T>::MeshSelectBaseOP(const pt0::CameraPtr& cam, const pt3::Viewport& vp,
 	                                  const ee0::SubjectMgrPtr& sub_mgr,
 	                                  const MeshPointQuery::Selected& selected)
 	: m_cam(cam)
@@ -165,7 +164,8 @@ bool MeshSelectBaseOP<T>::OnDraw() const
 		return true;
 	}
 
-	if (m_base_selected.brush_idx < 0) 
+	auto brush = m_base_selected.GetBrush();
+	if (!brush || m_base_selected.brush_idx < 0) 
 	{
 		if (m_draw_state_enable) {
 			m_draw_state->OnDraw();
@@ -173,11 +173,7 @@ bool MeshSelectBaseOP<T>::OnDraw() const
 		return false;
 	}
 
-	auto cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
-
-	auto brush = m_base_selected.GetBrush();
-	assert(brush);
-
+	auto cam_mat = m_cam->GetModelViewMat() * m_cam->GetProjectionMat();
 	DrawImpl(*brush, cam_mat);
 
 	if (m_draw_state_enable) {

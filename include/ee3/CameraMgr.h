@@ -1,6 +1,6 @@
 #pragma once
 
-#include <painting3/ICamera.h>
+#include <painting0/Camera.h>
 
 namespace ee3
 {
@@ -21,19 +21,19 @@ public:
 public:
 	CameraMgr(bool only3d = true);
 
-	const pt3::ICameraPtr& GetCamera(CameraType type) const {
+	const pt0::CameraPtr& GetCamera(CameraType type) const {
 		return m_cams[type];
 	}
-	void SetCamera(const pt3::ICameraPtr& cam, CameraType type) {
+	void SetCamera(const pt0::CameraPtr& cam, CameraType type) {
 		m_cams[type] = cam;
 	}
 
-	const pt3::ICameraPtr& GetCamera() const { return m_cams[m_curr]; }
+	const pt0::CameraPtr& GetCamera() const { return m_cams[m_curr]; }
 
-	const pt3::ICameraPtr& SwitchToNext();
+	const pt0::CameraPtr& SwitchToNext();
 
 private:
-	pt3::ICameraPtr m_cams[CAM_MAX_COUNT];
+	pt0::CameraPtr m_cams[CAM_MAX_COUNT];
 
 	CameraType m_curr;
 

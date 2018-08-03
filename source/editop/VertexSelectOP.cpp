@@ -5,7 +5,7 @@ namespace ee3
 namespace mesh
 {
 
-VertexSelectOP::VertexSelectOP(pt3::ICamera& cam, const pt3::Viewport& vp,
+VertexSelectOP::VertexSelectOP(const pt0::CameraPtr& cam, const pt3::Viewport& vp,
 	                           const ee0::SubjectMgrPtr& sub_mgr,
 	                           const MeshPointQuery::Selected& selected)
 	: MeshSelectBaseOP<quake::BrushVertexPtr>(cam, vp, sub_mgr, selected)
@@ -39,13 +39,16 @@ void VertexSelectOP::DrawImpl(const quake::MapBrush& brush, const sm::mat4& cam_
 
 quake::BrushVertexPtr VertexSelectOP::QueryByPos(int x, int y) const
 {
+	auto brush = m_base_selected.GetBrush();
+	if (!brush) {
+		return nullptr;
+	}
+
 	auto pos = m_cam2d.TransPosScreenToProject(x, y,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 
-	auto cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
+	auto cam_mat = m_cam->GetModelViewMat() * m_cam->GetProjectionMat();
 
-	auto brush = m_base_selected.GetBrush();
-	assert(brush);
 	for (auto& v : brush->vertices) {
 		auto p = m_vp.TransPosProj3ToProj2(v->pos * model::MapLoader::VERTEX_SCALE, cam_mat);
 		if (sm::dis_pos_to_pos(p, pos) < NODE_QUERY_RADIUS) {
@@ -58,16 +61,18 @@ quake::BrushVertexPtr VertexSelectOP::QueryByPos(int x, int y) const
 
 void VertexSelectOP::QueryByRect(const sm::irect& rect, std::vector<quake::BrushVertexPtr>& selection) const
 {
+	auto brush = m_base_selected.GetBrush();
+	if (!brush) {
+		return;
+	}
+
 	auto r_min = m_cam2d.TransPosScreenToProject(rect.xmin, rect.ymin,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 	auto r_max = m_cam2d.TransPosScreenToProject(rect.xmax, rect.ymax,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 	sm::rect s_rect(r_min, r_max);
 
-	auto cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
-
-	auto brush = m_base_selected.GetBrush();
-	assert(brush);
+	auto cam_mat = m_cam->GetModelViewMat() * m_cam->GetProjectionMat();
 	for (auto& v : brush->vertices) {
 		auto p = m_vp.TransPosProj3ToProj2(v->pos * model::MapLoader::VERTEX_SCALE, cam_mat);
 		if (sm::is_point_in_rect(p, s_rect)) {
