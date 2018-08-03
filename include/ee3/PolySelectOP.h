@@ -8,7 +8,7 @@
 #include <ee0/GameObj.h>
 
 namespace ee0 { class WxStagePage; }
-namespace pt3 { class PerspCam; class Viewport; }
+namespace pt3 { class Viewport; }
 
 namespace ee3
 {
@@ -18,8 +18,8 @@ namespace mesh
 class PolySelectOP : public ee0::EditOP
 {
 public:
-	PolySelectOP(ee0::WxStagePage& stage, const std::shared_ptr<pt3::PerspCam>& cam,
-		const pt3::Viewport& vp);
+	PolySelectOP(const std::shared_ptr<pt0::Camera>& camera, 
+		ee0::WxStagePage& stage, const pt3::Viewport& vp);
 
 	virtual bool OnKeyDown(int key_code) override;
 	virtual bool OnKeyUp(int key_code) override;
@@ -42,7 +42,6 @@ private:
 private:
 	ee0::WxStagePage&    m_stage;
 
-	std::shared_ptr<pt3::PerspCam> m_cam;
 	const pt3::Viewport& m_vp;
 	ee0::SubjectMgrPtr   m_sub_mgr;
 

@@ -1,5 +1,6 @@
 #include "ee3/FaceSelectOP.h"
 
+#include <painting2/OrthoCamera.h>
 #include <painting3/PrimitiveDraw.h>
 
 namespace ee3
@@ -7,10 +8,10 @@ namespace ee3
 namespace mesh
 {
 
-FaceSelectOP::FaceSelectOP(const pt0::CameraPtr& cam, const pt3::Viewport& vp,
+FaceSelectOP::FaceSelectOP(const std::shared_ptr<pt0::Camera>& camera, const pt3::Viewport& vp,
 	                       const ee0::SubjectMgrPtr& sub_mgr,
 	                       const MeshPointQuery::Selected& selected)
-	: MeshSelectBaseOP<quake::BrushFacePtr>(cam, vp, sub_mgr, selected)
+	: MeshSelectBaseOP<quake::BrushFacePtr>(camera, vp, sub_mgr, selected)
 {
 	m_selecting = nullptr;
 }
@@ -50,10 +51,10 @@ quake::BrushFacePtr FaceSelectOP::QueryByPos(int x, int y) const
 		return nullptr;
 	}
 
-	auto pos = m_cam2d.TransPosScreenToProject(x, y,
+	auto pos = m_cam2d->TransPosScreenToProject(x, y,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 
-	auto cam_mat = m_cam->GetModelViewMat() * m_cam->GetProjectionMat();	
+	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 	for (auto& f : brush->faces) {
 		auto center = CalcFaceCenter(*f, cam_mat);
 		if (sm::dis_pos_to_pos(center, pos) < NODE_QUERY_RADIUS) {
@@ -71,13 +72,13 @@ void FaceSelectOP::QueryByRect(const sm::irect& rect, std::vector<quake::BrushFa
 		return;
 	}
 
-	auto r_min = m_cam2d.TransPosScreenToProject(rect.xmin, rect.ymin,
+	auto r_min = m_cam2d->TransPosScreenToProject(rect.xmin, rect.ymin,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
-	auto r_max = m_cam2d.TransPosScreenToProject(rect.xmax, rect.ymax,
+	auto r_max = m_cam2d->TransPosScreenToProject(rect.xmax, rect.ymax,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 	sm::rect s_rect(r_min, r_max);
 
-	auto cam_mat = m_cam->GetModelViewMat() * m_cam->GetProjectionMat();
+	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 	for (auto& f : brush->faces) {
 		auto center = CalcFaceCenter(*f, cam_mat);
 		if (sm::is_point_in_rect(center, s_rect)) {

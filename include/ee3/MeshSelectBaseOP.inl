@@ -7,6 +7,7 @@
 #include <ee0/MessageID.h>
 #include <ee2/DrawSelectRectState.h>
 
+#include <painting2/OrthoCamera.h>
 #include <painting2/PrimitiveDraw.h>
 #include <painting3/Viewport.h>
 #include <SM_Calc.h>
@@ -21,15 +22,16 @@ namespace mesh
 {
 
 template <typename T>
-MeshSelectBaseOP<T>::MeshSelectBaseOP(const pt0::CameraPtr& cam, const pt3::Viewport& vp,
+MeshSelectBaseOP<T>::MeshSelectBaseOP(const std::shared_ptr<pt0::Camera>& camera, const pt3::Viewport& vp,
 	                                  const ee0::SubjectMgrPtr& sub_mgr,
 	                                  const MeshPointQuery::Selected& selected)
-	: m_cam(cam)
+	: ee0::EditOP(camera)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 	, m_base_selected(selected)
+	, m_cam2d(std::make_shared<pt2::OrthoCamera>())
 {
-	m_cam2d.OnSize(static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
+	m_cam2d->OnSize(m_vp.Width(), m_vp.Height());
 
 	m_draw_state = std::make_unique<ee2::DrawSelectRectState>(m_cam2d, m_sub_mgr);
 }
@@ -173,7 +175,7 @@ bool MeshSelectBaseOP<T>::OnDraw() const
 		return false;
 	}
 
-	auto cam_mat = m_cam->GetModelViewMat() * m_cam->GetProjectionMat();
+	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 	DrawImpl(*brush, cam_mat);
 
 	if (m_draw_state_enable) {

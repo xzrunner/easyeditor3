@@ -3,7 +3,7 @@
 #include <ee0/NodeSelectOP.h>
 
 namespace ee0 { class WxStagePage; }
-namespace pt3 { class PerspCam; class Viewport; }
+namespace pt3 { class Viewport; }
 
 namespace ee3
 {
@@ -11,8 +11,8 @@ namespace ee3
 class NodeSelectOP : public ee0::NodeSelectOP
 {
 public:	
-	NodeSelectOP(ee0::WxStagePage& stage, pt3::PerspCam& cam,
-		const pt3::Viewport& vp);
+	NodeSelectOP(const std::shared_ptr<pt0::Camera>& camera,
+		ee0::WxStagePage& stage, const pt3::Viewport& vp);
 
 	virtual bool OnDraw() const override;
 
@@ -22,7 +22,6 @@ private:
 		bool contain, std::vector<ee0::GameObj>& result) const {}
 
 private:
-	pt3::PerspCam&       m_cam;
 	const pt3::Viewport& m_vp;
 
 }; // NodeSelectOP

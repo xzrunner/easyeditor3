@@ -9,11 +9,15 @@
 namespace ee3
 {
 
-NodeTranslateOP::NodeTranslateOP(ee0::WxStagePage& stage, pt3::PerspCam& cam,
-	                             const pt3::Viewport& vp)
-	: m_sub_mgr(stage.GetSubjectMgr())
+NodeTranslateOP::NodeTranslateOP(const std::shared_ptr<pt0::Camera>& camera,
+	                             ee0::WxStagePage& stage, const pt3::Viewport& vp)
+	: ee0::EditOP(camera)
+	, m_sub_mgr(stage.GetSubjectMgr())
 {
-	m_translate_state = std::make_shared<NodeTranslate3State>(cam, vp, m_sub_mgr, stage.GetSelection());
+	assert(camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>());
+	auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
+	m_translate_state = std::make_shared<NodeTranslate3State>(
+		p_cam, vp, m_sub_mgr, stage.GetSelection());
 }
 
 bool NodeTranslateOP::OnMouseLeftDown(int x, int y)

@@ -9,9 +9,10 @@
 namespace ee3
 {
 
-CamZoomState::CamZoomState(pt3::PerspCam& cam, const pt3::Viewport& vp,
+CamZoomState::CamZoomState(const std::shared_ptr<pt0::Camera>& camera, 
+	                       const pt3::Viewport& vp,
 	                       const ee0::SubjectMgrPtr& sub_mgr)
-	: m_cam(cam)
+	: ee0::EditOpState(camera)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 {
@@ -19,16 +20,21 @@ CamZoomState::CamZoomState(pt3::PerspCam& cam, const pt3::Viewport& vp,
 
 bool CamZoomState::OnMouseWheelRotation(int x, int y, int direction)
 {
-	sm::vec2 pos(static_cast<float>(x), static_cast<float>(y));
-	sm::vec3 dir = m_vp.TransPos3ScreenToDir(pos, m_cam);
-	static const float OFFSET = 0.05f;
-	if (direction > 0) {
-		m_cam.Move(dir, m_cam.GetDistance() * OFFSET);
-	} else {
-		m_cam.Move(dir, - m_cam.GetDistance() * OFFSET);
-	}
+	if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
+	{
+		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 
-	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+		sm::vec2 pos(static_cast<float>(x), static_cast<float>(y));
+		sm::vec3 dir = m_vp.TransPos3ScreenToDir(pos, *p_cam);
+		static const float OFFSET = 0.05f;
+		if (direction > 0) {
+			p_cam->Move(dir, p_cam->GetDistance() * OFFSET);
+		} else {
+			p_cam->Move(dir, -p_cam->GetDistance() * OFFSET);
+		}
+	
+		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+	}
 
 	return false;
 }

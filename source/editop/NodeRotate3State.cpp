@@ -5,6 +5,7 @@
 
 #include <SM_Cube.h>
 #include <SM_Calc.h>
+#include <painting2/OrthoCamera.h>
 #include <painting2/PrimitiveDraw.h>
 #include <painting3/Viewport.h>
 #include <painting3/PrimitiveDraw.h>
@@ -25,25 +26,27 @@ static const float NODE_RADIUS = 5;
 namespace ee3
 {
 
-NodeRotate3State::NodeRotate3State(const pt0::Camera& cam, const pt3::Viewport& vp,
+NodeRotate3State::NodeRotate3State(const std::shared_ptr<pt0::Camera>& camera, 
+	                               const pt3::Viewport& vp,
 	                               const ee0::SubjectMgrPtr& sub_mgr,
 	                               const ee0::SelectionSet<ee0::GameObjWithPos>& selection)
-	: m_cam(cam)
+	: ee0::EditOpState(camera)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 	, m_selection(selection)
+	, m_cam2d(std::make_shared<pt2::OrthoCamera>())
 	, m_op_type(POINT_QUERY_NULL)
 {
 	m_last_pos.MakeInvalid();
 
-	m_cam2d.OnSize(static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
+	m_cam2d->OnSize(m_vp.Width(), m_vp.Height());
 }
 
 bool NodeRotate3State::OnMousePress(int x, int y)
 {
 	m_op_type = PointQuery(x, y);
 	if (m_op_type != POINT_QUERY_NULL) {
-		m_last_pos = m_cam2d.TransPosScreenToProject(x, y,
+		m_last_pos = m_cam2d->TransPosScreenToProject(x, y,
 			static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 		return true;
 	} else {
@@ -62,7 +65,7 @@ bool NodeRotate3State::OnMouseRelease(int x, int y)
 
 bool NodeRotate3State::OnMouseDrag(int x, int y)
 {
-	auto pos = m_cam2d.TransPosScreenToProject(x, y,
+	auto pos = m_cam2d->TransPosScreenToProject(x, y,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 	Rotate(m_last_pos, pos);
 	m_last_pos = pos;
@@ -96,9 +99,9 @@ bool NodeRotate3State::OnDraw() const
 
 NodeRotate3State::PointQueryType NodeRotate3State::PointQuery(int x, int y) const
 {
-	auto cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
+	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 
-	auto proj2d = m_cam2d.TransPosScreenToProject(x, y,
+	auto proj2d = m_cam2d->TransPosScreenToProject(x, y,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 	// x, green
 	auto pos2d = m_vp.TransPosProj3ToProj2(sm::vec3(m_center.x + ARC_RADIUS, m_center.y, m_center.z), cam_mat);
@@ -145,13 +148,13 @@ void NodeRotate3State::UpdateSelectionSetInfo()
 	});
 	m_center /= static_cast<float>(count);
 
-	auto cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
+	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 	m_center2d = m_vp.TransPosProj3ToProj2(m_center, cam_mat);
 }
 
 void NodeRotate3State::Rotate(const sm::vec2& start, const sm::vec2& end)
 {
-	auto cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
+	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 	auto raidus = m_vp.TransPosProj3ToProj2(sm::vec3(ARC_RADIUS, 0, 0), cam_mat);
 	float angle = atan(sm::dis_pos_to_pos(start, end) / raidus.Length());
 	if ((start - m_center2d).Cross(end - m_center2d) < 0) {
@@ -205,7 +208,7 @@ void NodeRotate3State::DrawEdges() const
 
 void NodeRotate3State::DrawNodes() const
 {
-	auto cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
+	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 	// x, green
 	auto pos2d = m_vp.TransPosProj3ToProj2(sm::vec3(m_center.x + ARC_RADIUS, m_center.y, m_center.z), cam_mat);
 	pt2::PrimitiveDraw::SetColor(0xff00ff00);

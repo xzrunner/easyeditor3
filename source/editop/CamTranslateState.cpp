@@ -8,8 +8,9 @@
 namespace ee3
 {
 
-CamTranslateState::CamTranslateState(pt3::PerspCam& cam, const ee0::SubjectMgrPtr& sub_mgr)
-	: m_cam(cam)
+CamTranslateState::CamTranslateState(const std::shared_ptr<pt0::Camera>& camera, 
+	                                 const ee0::SubjectMgrPtr& sub_mgr)
+	: ee0::EditOpState(camera)
 	, m_sub_mgr(sub_mgr)
 {
 	m_last_pos.MakeInvalid();
@@ -28,16 +29,21 @@ bool CamTranslateState::OnMouseRelease(int x, int y)
 
 bool CamTranslateState::OnMouseDrag(int x, int y)
 {
-	int dx = x - m_last_pos.x;
-	int dy = y - m_last_pos.y;
+	if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
+	{
+		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 
-	float dist = m_cam.GetDistance();
-	static const float SCALE = 0.002f;
-	m_cam.Translate(dx * dist * SCALE, dy * dist * SCALE);
+		int dx = x - m_last_pos.x;
+		int dy = y - m_last_pos.y;
+
+		float dist = p_cam->GetDistance();
+		static const float SCALE = 0.002f;
+		p_cam->Translate(dx * dist * SCALE, dy * dist * SCALE);
+
+		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+	}
 
 	m_last_pos.Set(x, y);
-
-	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 
 	return false;
 }

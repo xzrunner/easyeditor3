@@ -6,12 +6,11 @@
 #include <ee0/typedef.h>
 
 #include <SM_Rect.h>
-#include <painting0/Camera.h>
-#include <painting2/OrthoCamera.h>
 #include <quake/MapModel.h>
 
 #include <set>
 
+namespace pt2 { class OrthoCamera; }
 namespace pt3 { class Viewport; }
 
 namespace ee3
@@ -23,7 +22,7 @@ template <typename T>
 class MeshSelectBaseOP : public ee0::EditOP
 {
 public:
-	MeshSelectBaseOP(const pt0::CameraPtr& cam, const pt3::Viewport& vp,
+	MeshSelectBaseOP(const std::shared_ptr<pt0::Camera>& camera, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr, const MeshPointQuery::Selected& selected);
 
 	virtual bool OnMouseLeftDown(int x, int y) override;
@@ -35,8 +34,8 @@ public:
 
 	auto& GetSelected() const { return m_selected; }
 
-	void SetCamera(const pt0::CameraPtr& cam) {
-		m_cam = cam;
+	void SetCamera(const std::shared_ptr<pt0::Camera>& camera) {
+		m_camera = camera;
 	}
 
 protected:
@@ -46,13 +45,12 @@ protected:
 	virtual void QueryByRect(const sm::irect& rect, std::vector<T>& selection) const = 0;
 
 protected:
-	pt0::CameraPtr       m_cam;
 	const pt3::Viewport& m_vp;
 	ee0::SubjectMgrPtr   m_sub_mgr;
 
 	const MeshPointQuery::Selected& m_base_selected;
 
-	pt2::OrthoCamera m_cam2d;
+	std::shared_ptr<pt2::OrthoCamera> m_cam2d;
 
 	ee0::SelectionSet<T> m_selected;
 	T                    m_selecting;

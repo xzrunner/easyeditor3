@@ -15,15 +15,17 @@ namespace ee3
 
 static const float MOUSE_SENSITIVITY = 0.3f;
 
-WorldTravelOP::WorldTravelOP(pt3::PerspCam& cam, const pt3::Viewport& vp,
+WorldTravelOP::WorldTravelOP(const std::shared_ptr<pt0::Camera>& camera, 
+	                         const pt3::Viewport& vp,
 	                         const ee0::SubjectMgrPtr& sub_mgr)
-	: ee0::EditOP()
-	, m_cam(cam)
+	: ee0::EditOP(camera)
 	, m_sub_mgr(sub_mgr)
 {
-	m_rotate_state    = std::make_shared<CamRotateState>(cam, sub_mgr);
-	m_translate_state = std::make_shared<CamTranslateState>(cam, sub_mgr);
-	m_zoom_state      = std::make_shared<CamZoomState>(cam, vp, sub_mgr);
+	assert(camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>());
+	auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(camera);
+	m_rotate_state    = std::make_shared<CamRotateState>(p_cam, sub_mgr);
+	m_translate_state = std::make_shared<CamTranslateState>(p_cam, sub_mgr);
+	m_zoom_state      = std::make_shared<CamZoomState>(p_cam, vp, sub_mgr);
 	m_op_state = m_rotate_state;
 }
 
@@ -36,25 +38,37 @@ bool WorldTravelOP::OnKeyDown(int key_code)
 	switch (key_code)
 	{
 	case WXK_ESCAPE:
-		m_cam.Reset();
+		m_camera->Reset();
 		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 		break;
-	case 'w': case 'W':
-		m_cam.Translate(0, OFFSET);
-		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
-		break;
-	case 's': case 'S':
-		m_cam.Translate(0, -OFFSET);
-		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
-		break;
- 	case 'a': case 'A':
-		m_cam.Translate(OFFSET, 0);
-		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
- 		break;
- 	case 'd': case 'D':
-		m_cam.Translate(-OFFSET, 0);
-		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
- 		break;
+	}
+
+	if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
+	{
+		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
+		switch (key_code)
+		{
+		case WXK_ESCAPE:
+			m_camera->Reset();
+			m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+			break;
+		case 'w': case 'W':
+			p_cam->Translate(0, OFFSET);
+			m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+			break;
+		case 's': case 'S':
+			p_cam->Translate(0, -OFFSET);
+			m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+			break;
+ 		case 'a': case 'A':
+			p_cam->Translate(OFFSET, 0);
+			m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+ 			break;
+ 		case 'd': case 'D':
+			p_cam->Translate(-OFFSET, 0);
+			m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+ 			break;
+		}
 	}
 
 	return false;
@@ -127,21 +141,6 @@ bool WorldTravelOP::OnMouseWheelRotation(int x, int y, int direction)
 	}
 
 	return m_op_state->OnMouseWheelRotation(x, y, direction);
-}
-
-void WorldTravelOP::ChangeEditOpState(const ee0::EditOpStatePtr& state)
-{
-	if (m_op_state == state) {
-		return;
-	}
-
-	if (m_op_state) {
-		m_op_state->UnBind();
-	}
-	m_op_state = state;
-	if (m_op_state) {
-		m_op_state->Bind();
-	}
 }
 
 }

@@ -5,11 +5,11 @@ namespace ee3
 namespace mesh
 {
 
-EdgeSelectOP::EdgeSelectOP(const pt0::CameraPtr& cam,
+EdgeSelectOP::EdgeSelectOP(const std::shared_ptr<pt0::Camera>& camera,
 	                       const pt3::Viewport& vp, 
 	                       const ee0::SubjectMgrPtr& sub_mgr, 
 	                       const MeshPointQuery::Selected& selected)
-	: MeshSelectBaseOP<BrushEdge>(cam, vp, sub_mgr, selected)
+	: MeshSelectBaseOP<BrushEdge>(camera, vp, sub_mgr, selected)
 {
 }
 
@@ -58,10 +58,10 @@ BrushEdge EdgeSelectOP::QueryByPos(int x, int y) const
 		return BrushEdge();
 	}
 
-	auto pos = m_cam2d.TransPosScreenToProject(x, y,
+	auto pos = m_cam2d->TransPosScreenToProject(x, y,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 
-	auto cam_mat = m_cam->GetModelViewMat() * m_cam->GetProjectionMat();
+	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 	for (auto& face : brush->faces)
 	{
 		auto& vs = face->vertices;
@@ -90,13 +90,13 @@ void EdgeSelectOP::QueryByRect(const sm::irect& rect, std::vector<BrushEdge>& se
 		return;
 	}
 
-	auto r_min = m_cam2d.TransPosScreenToProject(rect.xmin, rect.ymin,
+	auto r_min = m_cam2d->TransPosScreenToProject(rect.xmin, rect.ymin,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
-	auto r_max = m_cam2d.TransPosScreenToProject(rect.xmax, rect.ymax,
+	auto r_max = m_cam2d->TransPosScreenToProject(rect.xmax, rect.ymax,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 	sm::rect s_rect(r_min, r_max);
 
-	auto cam_mat = m_cam->GetModelViewMat() * m_cam->GetProjectionMat();
+	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 	for (auto& face : brush->faces)
 	{
 		auto& vs = face->vertices;

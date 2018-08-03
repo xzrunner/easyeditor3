@@ -18,11 +18,11 @@ namespace ee3
 namespace mesh
 {
 
-PolyArrangeOP::PolyArrangeOP(const std::shared_ptr<pt3::PerspCam>& cam,
+PolyArrangeOP::PolyArrangeOP(const std::shared_ptr<pt0::Camera>& camera,
 	                         const pt3::Viewport& vp,
 	                         const ee0::SubjectMgrPtr& sub_mgr,
 	                         const MeshPointQuery::Selected& m_selected)
-	: m_cam(cam)
+	: ee0::EditOP(camera)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 	, m_selected(m_selected)
@@ -38,8 +38,12 @@ bool PolyArrangeOP::OnKeyDown(int key_code)
 
 	if (!m_face_pp_state)
 	{
-		if (key_code == WXK_SHIFT && m_selected.poly) {
-			m_face_pp_state = std::make_shared<FacePushPullState>(*m_cam, m_vp, m_sub_mgr, m_selected);
+		if (key_code == WXK_SHIFT && m_selected.poly) 
+		{
+			assert(m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>());
+			auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
+			m_face_pp_state = std::make_shared<FacePushPullState>(
+				p_cam, m_vp, m_sub_mgr, m_selected);
 		}
 	}
 
@@ -101,24 +105,29 @@ bool PolyArrangeOP::OnMouseDrag(int x, int y)
 		return false;
 	}
 
-	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(
-		sm::vec2(static_cast<float>(x), static_cast<float>(y)), *m_cam);
-	sm::Ray ray(m_cam->GetPos(), ray_dir);
+	if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
+	{
+		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 
-	sm::Plane plane;
-	CalcTranslatePlane(ray, plane);
+		sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(
+			sm::vec2(static_cast<float>(x), static_cast<float>(y)), *p_cam);
+		sm::Ray ray(p_cam->GetPos(), ray_dir);
 
-	sm::vec3 cross;
-	if (!sm::ray_plane_intersect(ray, plane, &cross)) {
-		return true;
+		sm::Plane plane;
+		CalcTranslatePlane(ray, plane);
+
+		sm::vec3 cross;
+		if (!sm::ray_plane_intersect(ray, plane, &cross)) {
+			return true;
+		}
+
+		sm::vec3 offset = cross - m_last_pos;
+		m_last_pos = cross;
+
+		TranslateSelected(offset);
+
+		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 	}
-
-	sm::vec3 offset = cross - m_last_pos;
-	m_last_pos = cross;
-
-	TranslateSelected(offset);
-
-	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 
 	return false;
 }

@@ -5,12 +5,12 @@ namespace ee3
 namespace mesh
 {
 
-VertexTranslateOP::VertexTranslateOP(pt3::PerspCam& cam,
+VertexTranslateOP::VertexTranslateOP(const std::shared_ptr<pt0::Camera>& camera,
 	                                 const pt3::Viewport& vp,
 	                                 const ee0::SubjectMgrPtr& sub_mgr,
 	                                 const MeshPointQuery::Selected& selected,
 	                                 const ee0::SelectionSet<quake::BrushVertexPtr>& selection)
-	: MeshTranslateBaseOP<quake::BrushVertexPtr>(cam, vp, sub_mgr, selected, selection)
+	: MeshTranslateBaseOP<quake::BrushVertexPtr>(camera, vp, sub_mgr, selected, selection)
 {
 }
 

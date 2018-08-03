@@ -9,11 +9,15 @@
 namespace ee3
 {
 
-NodeRotateOP::NodeRotateOP(ee0::WxStagePage& stage, pt3::PerspCam& cam,
-	                       const pt3::Viewport& vp)
-	: m_sub_mgr(stage.GetSubjectMgr())
+NodeRotateOP::NodeRotateOP(const std::shared_ptr<pt0::Camera>& camera,
+	                       ee0::WxStagePage& stage, const pt3::Viewport& vp)
+	: ee0::EditOP(camera)
+	, m_sub_mgr(stage.GetSubjectMgr())
 {
-	m_rotate_state = std::make_shared<NodeRotate3State>(cam, vp, m_sub_mgr, stage.GetSelection());
+	assert(camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>());
+	auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
+	m_rotate_state = std::make_shared<NodeRotate3State>(
+		p_cam, vp, m_sub_mgr, stage.GetSelection());
 }
 
 bool NodeRotateOP::OnMouseLeftDown(int x, int y)

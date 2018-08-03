@@ -13,10 +13,11 @@
 namespace ee3
 {
 
-NodeRotateState::NodeRotateState(const pt3::PerspCam& cam, const pt3::Viewport& vp,
+NodeRotateState::NodeRotateState(const std::shared_ptr<pt0::Camera>& camera, 
+	                             const pt3::Viewport& vp,
 	                             const ee0::SubjectMgrPtr& sub_mgr,
 	                             const ee0::SelectionSet<ee0::GameObjWithPos>& selection)
-	: m_cam(cam)
+	: ee0::EditOpState(camera)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 	, m_selection(selection)
@@ -50,35 +51,49 @@ bool NodeRotateState::OnMouseDrag(int x, int y)
 
 void NodeRotateState::Rotate(const sm::ivec2& start, const sm::ivec2& end)
 {
-	m_selection.Traverse([&](const ee0::GameObjWithPos& nwp)->bool
+	if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
 	{
-#ifndef GAME_OBJ_ECS
-		auto& ctrans = nwp.GetNode()->GetUniqueComp<n3::CompTransform>();
+		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 
-		sm::vec2 center = TransPos3ProjectToScreen(ctrans.GetPosition());
-		sm::vec2 base = TransPos3ProjectToScreen(sm::vec3(0, 0, 0));
+		m_selection.Traverse([&](const ee0::GameObjWithPos& nwp)->bool
+		{
+	#ifndef GAME_OBJ_ECS
+			auto& ctrans = nwp.GetNode()->GetUniqueComp<n3::CompTransform>();
 
-   		sm::vec3 start3 = m_vp.MapToSphere(
-			base + sm::vec2(static_cast<float>(start.x), static_cast<float>(start.y)) -  center);
-   		sm::vec3 end3   = m_vp.MapToSphere(
-			base + sm::vec2(static_cast<float>(end.x), static_cast<float>(end.y)) - center);
+			sm::vec2 center = TransPos3ProjectToScreen(ctrans.GetPosition());
+			sm::vec2 base = TransPos3ProjectToScreen(sm::vec3(0, 0, 0));
 
-		auto cam_mat = m_cam.GetRotateMat().Inverted();
-		start3 = cam_mat * start3;
-		end3   = cam_mat * end3;
+   			sm::vec3 start3 = m_vp.MapToSphere(
+				base + sm::vec2(static_cast<float>(start.x), static_cast<float>(start.y)) -  center);
+   			sm::vec3 end3   = m_vp.MapToSphere(
+				base + sm::vec2(static_cast<float>(end.x), static_cast<float>(end.y)) - center);
+
+			auto cam_mat = p_cam->GetRotateMat().Inverted();
+			start3 = cam_mat * start3;
+			end3   = cam_mat * end3;
 		
-   		sm::Quaternion delta = sm::Quaternion::CreateFromVectors(start3, end3);
-		ctrans.Rotate(-delta);
-#endif // GAME_OBJ_ECS
+   			sm::Quaternion delta = sm::Quaternion::CreateFromVectors(start3, end3);
+			ctrans.Rotate(-delta);
+	#endif // GAME_OBJ_ECS
 
-		return true;
-	});
+			return true;
+		});
+	}
 }
 
 sm::vec2 NodeRotateState::TransPos3ProjectToScreen(const sm::vec3& proj) const
 {
-	// todo proj mat
-	return m_vp.TransPos3ProjectToScreen(/*m_mat_projection * */m_cam.GetModelViewMat() * proj, m_cam);
+	if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
+	{
+		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
+
+		// todo proj mat
+		return m_vp.TransPos3ProjectToScreen(/*m_mat_projection * */m_camera->GetModelViewMat() * proj, *p_cam);
+	}
+	else
+	{
+		return sm::vec2();
+	}
 }
 
 }

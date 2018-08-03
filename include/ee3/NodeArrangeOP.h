@@ -7,7 +7,7 @@
 #include <ee0/GameObj.h>
 
 namespace ee0 { class EditOpState; class WxStagePage; }
-namespace pt3 { class PerspCam; class Viewport; }
+namespace pt3 { class Viewport; }
 
 namespace ee3
 {
@@ -17,8 +17,8 @@ class WxStageCanvas;
 class NodeArrangeOP : public NodeSelectOP
 {
 public:
-	NodeArrangeOP(ee0::WxStagePage& stage, pt3::PerspCam& cam,
-		const pt3::Viewport& vp);
+	NodeArrangeOP(const std::shared_ptr<pt0::Camera>& camera,
+		ee0::WxStagePage& stage, const pt3::Viewport& vp);
 
 	virtual bool OnKeyDown(int key_code) override;
 	virtual bool OnMouseLeftDown(int x, int y) override;
@@ -30,16 +30,11 @@ public:
 	virtual bool OnMouseWheelRotation(int x, int y, int direction) override;
 
 private:
-	void ChangeEditOpState(const ee0::EditOpStatePtr& state);
-
-private:
 	ee0::SubjectMgrPtr m_sub_mgr;
 
 	ee0::SelectionSet<ee0::GameObjWithPos>& m_selection;
 
 	std::shared_ptr<WxStageCanvas> m_canvas = nullptr;
-
-	ee0::EditOpStatePtr m_op_state = nullptr;
 
 	ee0::EditOpStatePtr m_cam_rotate_state    = nullptr;
 	ee0::EditOpStatePtr m_cam_translate_state = nullptr;

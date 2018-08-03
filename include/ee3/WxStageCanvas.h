@@ -22,10 +22,6 @@ public:
 
 	virtual void OnNotify(uint32_t msg, const ee0::VariantSet& variants) override;
 
-	pt0::CameraPtr& GetCamera() { return m_camera; }
-	const pt0::CameraPtr& GetCamera() const { return m_camera; }
-	void SetCamera(const pt0::CameraPtr& cam) { m_camera = cam; }
-
 	const pt3::Viewport& GetViewport() const { return m_viewport; }
 
 	//sm::vec2 TransPos3ProjectToScreen(const sm::vec3& proj) const;
@@ -46,8 +42,7 @@ protected:
 private:
 	bool m_has2d;
 
-	pt0::CameraPtr m_camera;
-	pt3::Viewport  m_viewport;
+	pt3::Viewport m_viewport;
 
 	sm::mat4 m_mat_projection;
 

@@ -5,6 +5,7 @@
 #include <ee0/MessageID.h>
 
 #include <SM_RayIntersect.h>
+#include <painting2/OrthoCamera.h>
 #include <painting3/Viewport.h>
 #include <painting3/PrimitiveDraw.h>
 #include <painting3/PerspCam.h>
@@ -17,15 +18,17 @@ namespace ee3
 namespace mesh
 {
 
-FacePushPullState::FacePushPullState(const pt3::PerspCam& cam, const pt3::Viewport& vp,
+FacePushPullState::FacePushPullState(const std::shared_ptr<pt0::Camera>& camera, 
+	                                 const pt3::Viewport& vp,
 	                                 const ee0::SubjectMgrPtr& sub_mgr,
 	                                 const MeshPointQuery::Selected& selected)
-	: m_cam(cam)
+	: ee0::EditOpState(camera)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 	, m_selected(selected)
+	, m_cam2d(std::make_shared<pt2::OrthoCamera>())
 {
-	m_cam2d.OnSize(static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
+	m_cam2d->OnSize(m_vp.Width(), m_vp.Height());
 
 	m_last_pos3d.MakeInvalid();
 }
@@ -36,51 +39,65 @@ bool FacePushPullState::OnMousePress(int x, int y)
 		return false;
 	}
 
-	m_first_pos2 = m_cam2d.TransPosScreenToProject(x, y,
-		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
+	if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
+	{
+		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 
-	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(sm::vec2((float)x, (float)y), m_cam);
-	sm::Ray ray(m_cam.GetPos(), ray_dir);
-	sm::vec3 intersect;
-	sm::Plane plane;
-	m_selected.face->GetPlane(plane);
-	bool crossed = false;
-	if (crossed = sm::ray_plane_intersect(ray, plane, &intersect)) {
-		m_move_path3d.origin = intersect;
+		m_first_pos2 = m_cam2d->TransPosScreenToProject(x, y,
+			static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
+
+		sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(sm::vec2((float)x, (float)y), *p_cam);
+		sm::Ray ray(p_cam->GetPos(), ray_dir);
+		sm::vec3 intersect;
+		sm::Plane plane;
+		m_selected.face->GetPlane(plane);
+		bool crossed = false;
+		if (crossed = sm::ray_plane_intersect(ray, plane, &intersect)) {
+			m_move_path3d.origin = intersect;
+		}
+		assert(crossed);
+		m_move_path3d.dir = plane.normal;
+
+		m_cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
+		auto next_pos2 = m_vp.TransPosProj3ToProj2(m_move_path3d.origin + m_move_path3d.dir, m_cam_mat);
+		m_first_dir2 = (next_pos2 - m_first_pos2).Normalized();
 	}
-	assert(crossed);
-	m_move_path3d.dir = plane.normal;
-
-	m_cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
-	auto next_pos2 = m_vp.TransPosProj3ToProj2(m_move_path3d.origin + m_move_path3d.dir, m_cam_mat);
-	m_first_dir2 = (next_pos2 - m_first_pos2).Normalized();
 
 	return false;
 }
 
 bool FacePushPullState::OnMouseDrag(int x, int y)
 {
-	auto curr_pos2 = m_cam2d.TransPosScreenToProject(x, y,
-		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
-	auto fixed_curr_pos2 = m_first_pos2 + m_first_dir2 * ((curr_pos2 - m_first_pos2).Dot(m_first_dir2));
-	auto screen_fixed_curr_pos2 = m_cam2d.TransPosProjectToScreen(fixed_curr_pos2,
-		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
+	if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
+	{
+		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 
-	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(screen_fixed_curr_pos2, m_cam);
-	sm::Ray ray(m_cam.GetPos(), ray_dir);
-	sm::vec3 cross;
-	if (sm::ray_ray_intersect(ray, m_move_path3d, &cross)) {
-		if (m_last_pos3d.IsValid()) {
-			TranslateFace(cross - m_last_pos3d);
+		auto curr_pos2 = m_cam2d->TransPosScreenToProject(x, y,
+			static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
+		auto fixed_curr_pos2 = m_first_pos2 + m_first_dir2 * ((curr_pos2 - m_first_pos2).Dot(m_first_dir2));
+		auto screen_fixed_curr_pos2 = m_cam2d->TransPosProjectToScreen(fixed_curr_pos2,
+			static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
+
+		sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(screen_fixed_curr_pos2, *p_cam);
+		sm::Ray ray(p_cam->GetPos(), ray_dir);
+		sm::vec3 cross;
+		if (sm::ray_ray_intersect(ray, m_move_path3d, &cross)) {
+			if (m_last_pos3d.IsValid()) {
+				TranslateFace(cross - m_last_pos3d);
+			}
+			m_last_pos3d = cross;
+		} else {
+			m_last_pos3d.MakeInvalid();
 		}
-		m_last_pos3d = cross;
-	} else {
-		m_last_pos3d.MakeInvalid();
+
+		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+
+		return true;
 	}
-
-	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
-
-	return true;
+	else
+	{
+		return false;
+	}
 }
 
 bool FacePushPullState::OnDraw() const

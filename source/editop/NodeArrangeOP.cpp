@@ -18,19 +18,23 @@
 namespace ee3
 {
 
-NodeArrangeOP::NodeArrangeOP(ee0::WxStagePage& stage, pt3::PerspCam& cam,
+NodeArrangeOP::NodeArrangeOP(const std::shared_ptr<pt0::Camera>& camera,
+	                         ee0::WxStagePage& stage,
 	                         const pt3::Viewport& vp)
-	: NodeSelectOP(stage, cam, vp)
+	: NodeSelectOP(camera, stage, vp)
 	, m_sub_mgr(stage.GetSubjectMgr())
 	, m_selection(stage.GetSelection())
 	, m_canvas(std::dynamic_pointer_cast<WxStageCanvas>(stage.GetImpl().GetCanvas()))
 {
-	m_cam_rotate_state    = std::make_shared<CamRotateState>(cam, m_sub_mgr);
-	m_cam_translate_state = std::make_shared<CamTranslateState>(cam, m_sub_mgr);
-	m_cam_zoom_state      = std::make_shared<CamZoomState>(cam, vp, m_sub_mgr);
+	assert(camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>());
+	auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(camera);
 
-	m_node_rotate_state    = std::make_shared<NodeRotateState>(cam, vp, m_sub_mgr, m_selection);
-	m_node_translate_state = std::make_shared<NodeTranslateState>(cam, vp, m_sub_mgr, m_selection);
+	m_cam_rotate_state    = std::make_shared<CamRotateState>(p_cam, m_sub_mgr);
+	m_cam_translate_state = std::make_shared<CamTranslateState>(p_cam, m_sub_mgr);
+	m_cam_zoom_state      = std::make_shared<CamZoomState>(p_cam, vp, m_sub_mgr);
+
+	m_node_rotate_state    = std::make_shared<NodeRotateState>(p_cam, vp, m_sub_mgr, m_selection);
+	m_node_translate_state = std::make_shared<NodeTranslateState>(p_cam, vp, m_sub_mgr, m_selection);
 
 	m_op_state = m_cam_rotate_state;
 
@@ -175,21 +179,6 @@ bool NodeArrangeOP::OnMouseWheelRotation(int x, int y, int direction)
 	}
 
 	return m_op_state->OnMouseWheelRotation(x, y, direction);
-}
-
-void NodeArrangeOP::ChangeEditOpState(const ee0::EditOpStatePtr& state)
-{
-	if (m_op_state == state) {
-		return;
-	}
-
-	if (m_op_state) {
-		m_op_state->UnBind();
-	}
-	m_op_state = state;
-	if (m_op_state) {
-		m_op_state->Bind();
-	}
 }
 
 }

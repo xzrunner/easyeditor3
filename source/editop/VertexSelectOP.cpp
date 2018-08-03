@@ -1,14 +1,16 @@
 #include "ee3/VertexSelectOP.h"
 
+#include <painting2/OrthoCamera.h>
+
 namespace ee3
 {
 namespace mesh
 {
 
-VertexSelectOP::VertexSelectOP(const pt0::CameraPtr& cam, const pt3::Viewport& vp,
+VertexSelectOP::VertexSelectOP(const std::shared_ptr<pt0::Camera>& camera, const pt3::Viewport& vp,
 	                           const ee0::SubjectMgrPtr& sub_mgr,
 	                           const MeshPointQuery::Selected& selected)
-	: MeshSelectBaseOP<quake::BrushVertexPtr>(cam, vp, sub_mgr, selected)
+	: MeshSelectBaseOP<quake::BrushVertexPtr>(camera, vp, sub_mgr, selected)
 {
 	m_selecting = nullptr;
 }
@@ -44,10 +46,10 @@ quake::BrushVertexPtr VertexSelectOP::QueryByPos(int x, int y) const
 		return nullptr;
 	}
 
-	auto pos = m_cam2d.TransPosScreenToProject(x, y,
+	auto pos = m_cam2d->TransPosScreenToProject(x, y,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 
-	auto cam_mat = m_cam->GetModelViewMat() * m_cam->GetProjectionMat();
+	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 
 	for (auto& v : brush->vertices) {
 		auto p = m_vp.TransPosProj3ToProj2(v->pos * model::MapLoader::VERTEX_SCALE, cam_mat);
@@ -66,13 +68,13 @@ void VertexSelectOP::QueryByRect(const sm::irect& rect, std::vector<quake::Brush
 		return;
 	}
 
-	auto r_min = m_cam2d.TransPosScreenToProject(rect.xmin, rect.ymin,
+	auto r_min = m_cam2d->TransPosScreenToProject(rect.xmin, rect.ymin,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
-	auto r_max = m_cam2d.TransPosScreenToProject(rect.xmax, rect.ymax,
+	auto r_max = m_cam2d->TransPosScreenToProject(rect.xmax, rect.ymax,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 	sm::rect s_rect(r_min, r_max);
 
-	auto cam_mat = m_cam->GetModelViewMat() * m_cam->GetProjectionMat();
+	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 	for (auto& v : brush->vertices) {
 		auto p = m_vp.TransPosProj3ToProj2(v->pos * model::MapLoader::VERTEX_SCALE, cam_mat);
 		if (sm::is_point_in_rect(p, s_rect)) {

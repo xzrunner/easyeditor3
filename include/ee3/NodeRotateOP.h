@@ -4,7 +4,7 @@
 #include <ee0/typedef.h>
 
 namespace ee0 { class WxStagePage; }
-namespace pt3 { class PerspCam; class Viewport; }
+namespace pt3 { class Viewport; }
 
 namespace ee3
 {
@@ -12,8 +12,8 @@ namespace ee3
 class NodeRotateOP : public ee0::EditOP
 {
 public:
-	NodeRotateOP(ee0::WxStagePage& stage, pt3::PerspCam& cam,
-		const pt3::Viewport& vp);
+	NodeRotateOP(const std::shared_ptr<pt0::Camera>& camera,
+		ee0::WxStagePage& stage, const pt3::Viewport& vp);
 
 	virtual bool OnMouseLeftDown(int x, int y) override;
 	virtual bool OnMouseLeftUp(int x, int y) override;

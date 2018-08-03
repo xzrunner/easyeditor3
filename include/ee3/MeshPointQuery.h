@@ -8,7 +8,6 @@
 #include <halfedge/HalfEdge.h>
 #include <halfedge/Polyhedron.h>
 
-namespace pt3 { class Camera; }
 namespace n3 { class CompTransform; }
 namespace model { struct Model; }
 namespace quake { struct MapBrush; }

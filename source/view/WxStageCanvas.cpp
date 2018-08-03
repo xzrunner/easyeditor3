@@ -33,14 +33,10 @@ namespace ee3
 
 WxStageCanvas::WxStageCanvas(ee0::WxStagePage* stage, const ee0::RenderContext* rc,
 	                         const ee0::WindowContext* wc, bool has2d)
-	: ee0::WxStageCanvas(stage, stage->GetImpl(), rc, wc, HAS_2D * has2d | HAS_3D)
+	: ee0::WxStageCanvas(stage, stage->GetImpl(), std::make_shared<pt3::PerspCam>(sm::vec3(0, 2, -2), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0)), rc, wc, HAS_2D * has2d | HAS_3D)
 	, m_stage(stage)
 	, m_has2d(has2d)
 {
-	m_camera = std::make_shared<pt3::PerspCam>(
-		sm::vec3(0, 2, -2), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0)
-	);
-
 	for (auto& msg : MESSAGES) {
 		stage->GetSubjectMgr()->RegisterObserver(msg, this);
 	}

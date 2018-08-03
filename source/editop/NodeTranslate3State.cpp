@@ -8,6 +8,7 @@
 #include <SM_Ray.h>
 #include <SM_RayIntersect.h>
 #include <painting2/PrimitiveDraw.h>
+#include <painting2/OrthoCamera.h>
 #include <painting3/PerspCam.h>
 #include <painting3/Viewport.h>
 #include <painting3/PrimitiveDraw.h>
@@ -28,19 +29,21 @@ static const float NODE_RADIUS = 5;
 namespace ee3
 {
 
-NodeTranslate3State::NodeTranslate3State(const pt3::PerspCam& cam, const pt3::Viewport& vp,
+NodeTranslate3State::NodeTranslate3State(const std::shared_ptr<pt0::Camera>& camera, 
+	                                     const pt3::Viewport& vp,
 	                                     const ee0::SubjectMgrPtr& sub_mgr,
 	                                     const ee0::SelectionSet<ee0::GameObjWithPos>& selection)
-	: m_cam(cam)
+	: ee0::EditOpState(camera)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 	, m_selection(selection)
+	, m_cam2d(std::make_shared<pt2::OrthoCamera>())
 	, m_op_type(POINT_QUERY_NULL)
 {
 	m_last_pos2.MakeInvalid();
 	m_last_pos3.MakeInvalid();
 
-	m_cam2d.OnSize(static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
+	m_cam2d->OnSize(m_vp.Width(), m_vp.Height());
 }
 
 bool NodeTranslate3State::OnMousePress(int x, int y)
@@ -64,7 +67,7 @@ bool NodeTranslate3State::OnMousePress(int x, int y)
 		break;
 	}
 
-	auto cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
+	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 	m_last_pos2 = GetCtrlPos2D(cam_mat, axis);
 	m_first_pos2 = m_last_pos2;
 
@@ -94,7 +97,7 @@ bool NodeTranslate3State::OnMouseDrag(int x, int y)
 		return false;
 	}
 
-	auto pos = m_cam2d.TransPosScreenToProject(x, y,
+	auto pos = m_cam2d->TransPosScreenToProject(x, y,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 	Translate(m_last_pos2, pos);
 	m_last_pos2 = pos;
@@ -128,9 +131,9 @@ bool NodeTranslate3State::OnDraw() const
 
 NodeTranslate3State::PointQueryType NodeTranslate3State::PointQuery(int x, int y) const
 {
-	auto cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
+	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 
-	auto proj2d = m_cam2d.TransPosScreenToProject(x, y,
+	auto proj2d = m_cam2d->TransPosScreenToProject(x, y,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 	// x, red
 	auto pos2d = GetCtrlPos2D(cam_mat, AXIS_X);
@@ -180,39 +183,44 @@ void NodeTranslate3State::UpdateSelectionSetInfo()
 	});
 	m_center /= static_cast<float>(count);
 
-	auto cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
+	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 	m_center2d = m_vp.TransPosProj3ToProj2(m_center, cam_mat);
 }
 
 void NodeTranslate3State::Translate(const sm::vec2& start, const sm::vec2& end)
 {
-	auto fixed_end = m_first_pos2 + m_first_dir2 * ((end - m_first_pos2).Dot(m_first_dir2));
-	auto screen_fixed_end = m_cam2d.TransPosProjectToScreen(fixed_end,
-		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
-
-	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(screen_fixed_end, m_cam);
-	sm::Ray ray(m_cam.GetPos(), ray_dir);
-
-	sm::vec3 cross_face_pos = m_move_path3d.origin + m_move_path3d.dir.Cross(ray_dir);
-	sm::Plane cross_face(m_move_path3d.origin, m_move_path3d.origin + m_move_path3d.dir, cross_face_pos);
-
-	sm::vec3 offset;
-	sm::vec3 cross;
-	if (sm::ray_plane_intersect(ray, cross_face, &cross)) {
-		offset = cross - m_last_pos3;
-		m_last_pos3 = cross;
-	}
-
-	m_selection.Traverse([&](const ee0::GameObjWithPos& nwp)->bool
+	if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
 	{
-#ifndef GAME_OBJ_ECS
-		auto& ctrans = nwp.GetNode()->GetUniqueComp<n3::CompTransform>();
-		ctrans.Translate(offset);
-#endif // GAME_OBJ_ECS
-		return true;
-	});
+		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 
-	m_center += offset;
+		auto fixed_end = m_first_pos2 + m_first_dir2 * ((end - m_first_pos2).Dot(m_first_dir2));
+		auto screen_fixed_end = m_cam2d->TransPosProjectToScreen(fixed_end,
+			static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
+
+		sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(screen_fixed_end, *p_cam);
+		sm::Ray ray(p_cam->GetPos(), ray_dir);
+
+		sm::vec3 cross_face_pos = m_move_path3d.origin + m_move_path3d.dir.Cross(ray_dir);
+		sm::Plane cross_face(m_move_path3d.origin, m_move_path3d.origin + m_move_path3d.dir, cross_face_pos);
+
+		sm::vec3 offset;
+		sm::vec3 cross;
+		if (sm::ray_plane_intersect(ray, cross_face, &cross)) {
+			offset = cross - m_last_pos3;
+			m_last_pos3 = cross;
+		}
+
+		m_selection.Traverse([&](const ee0::GameObjWithPos& nwp)->bool
+		{
+	#ifndef GAME_OBJ_ECS
+			auto& ctrans = nwp.GetNode()->GetUniqueComp<n3::CompTransform>();
+			ctrans.Translate(offset);
+	#endif // GAME_OBJ_ECS
+			return true;
+		});
+
+		m_center += offset;
+	}
 }
 
 void NodeTranslate3State::DrawEdges() const
@@ -231,7 +239,7 @@ void NodeTranslate3State::DrawEdges() const
 
 void NodeTranslate3State::DrawNodes() const
 {
-	auto cam_mat = m_cam.GetModelViewMat() * m_cam.GetProjectionMat();
+	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 	// x, red
 	auto pos2d = GetCtrlPos2D(cam_mat, AXIS_X);
 	pt2::PrimitiveDraw::SetColor(0xff0000ff);

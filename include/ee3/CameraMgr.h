@@ -24,8 +24,8 @@ public:
 	const pt0::CameraPtr& GetCamera(CameraType type) const {
 		return m_cams[type];
 	}
-	void SetCamera(const pt0::CameraPtr& cam, CameraType type) {
-		m_cams[type] = cam;
+	void SetCamera(const std::shared_ptr<pt0::Camera>& camera, CameraType type) {
+		m_cams[type] = camera;
 	}
 
 	const pt0::CameraPtr& GetCamera() const { return m_cams[m_curr]; }

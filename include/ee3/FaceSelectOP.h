@@ -10,7 +10,7 @@ namespace mesh
 class FaceSelectOP : public MeshSelectBaseOP<quake::BrushFacePtr>
 {
 public:
-	FaceSelectOP(const pt0::CameraPtr& cam, const pt3::Viewport& vp,
+	FaceSelectOP(const std::shared_ptr<pt0::Camera>& camera, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr, const MeshPointQuery::Selected& selected);
 
 protected:

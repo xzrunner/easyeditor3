@@ -14,9 +14,10 @@
 namespace ee3
 {
 
-CameraDriveOP::CameraDriveOP(CameraMgr& cam_mgr, const pt3::Viewport& vp,
+CameraDriveOP::CameraDriveOP(const std::shared_ptr<pt0::Camera>& camera, 
+	                         const pt3::Viewport& vp,
 	                         const ee0::SubjectMgrPtr& sub_mgr)
-	: m_cam_mgr(cam_mgr)
+	: ee0::EditOP(camera)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 {
@@ -30,7 +31,7 @@ bool CameraDriveOP::OnKeyDown(int key_code)
 	switch (key_code)
 	{
 	case WXK_ESCAPE:
-		m_cam_mgr.GetCamera()->Reset();
+		m_camera->Reset();
 		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 		break;
 	case 'w': case 'W':
@@ -96,11 +97,10 @@ bool CameraDriveOP::OnMouseDrag(int x, int y)
 		return false;
 	}
 
-	auto& cam = m_cam_mgr.GetCamera();
-	auto cam_type = cam->TypeID();
+	auto cam_type = m_camera->TypeID();
 	if (cam_type == pt0::GetCamTypeID<pt3::OrthoCam>())
 	{
-		auto& o_cam = std::dynamic_pointer_cast<pt3::OrthoCam>(cam);
+		auto& o_cam = std::dynamic_pointer_cast<pt3::OrthoCam>(m_camera);
 
 		auto dx = m_last_pos.x - x;
 		auto dy = y - m_last_pos.y;
@@ -110,7 +110,7 @@ bool CameraDriveOP::OnMouseDrag(int x, int y)
 	}
 	else if (cam_type == pt0::GetCamTypeID<pt3::PerspCam>())
 	{
-		auto& p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(cam);
+		auto& p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 
 		int dx = x - m_last_pos.x;
 		int dy = y - m_last_pos.y;
@@ -134,11 +134,10 @@ bool CameraDriveOP::OnMouseWheelRotation(int x, int y, int direction)
 		return true;
 	}
 
-	auto& cam = m_cam_mgr.GetCamera();
-	auto cam_type = cam->TypeID();
+	auto cam_type = m_camera->TypeID();
 	if (cam_type == pt0::GetCamTypeID<pt3::OrthoCam>())
 	{
-		auto& o_cam = std::dynamic_pointer_cast<pt3::OrthoCam>(cam);
+		auto& o_cam = std::dynamic_pointer_cast<pt3::OrthoCam>(m_camera);
 
 		float w = m_vp.Width(),
 			  h = m_vp.Height();
@@ -151,7 +150,7 @@ bool CameraDriveOP::OnMouseWheelRotation(int x, int y, int direction)
 	}
 	else if (cam_type == pt0::GetCamTypeID<pt3::PerspCam>())
 	{
-		auto& p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(cam);
+		auto& p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 
 		sm::vec2 pos(static_cast<float>(x), static_cast<float>(y));
 		sm::vec3 dir = m_vp.TransPos3ScreenToDir(pos, *p_cam);
@@ -180,14 +179,13 @@ bool CameraDriveOP::Update(float dt)
 		offset *= 0.1f;
 	}
 
-	auto& cam = m_cam_mgr.GetCamera();
-	auto cam_type = cam->TypeID();
+	auto cam_type = m_camera->TypeID();
 	if (cam_type == pt0::GetCamTypeID<pt3::OrthoCam>())
 	{
 	}
 	else if (cam_type == pt0::GetCamTypeID<pt3::PerspCam>())
 	{
-		auto& p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(cam);
+		auto& p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 
 		switch (m_move_dir)
 		{

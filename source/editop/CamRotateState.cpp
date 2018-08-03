@@ -9,8 +9,9 @@
 namespace ee3
 {
 
-CamRotateState::CamRotateState(pt3::PerspCam& cam, const ee0::SubjectMgrPtr& sub_mgr)
-	: m_cam(cam)
+CamRotateState::CamRotateState(const std::shared_ptr<pt0::Camera>& camera, 
+	                           const ee0::SubjectMgrPtr& sub_mgr)
+	: ee0::EditOpState(camera)
 	, m_sub_mgr(sub_mgr)
 {
 	m_last_pos.MakeInvalid();
@@ -29,17 +30,22 @@ bool CamRotateState::OnMouseRelease(int x, int y)
 
 bool CamRotateState::OnMouseDrag(int x, int y)
 {
-	int dx = x - m_last_pos.x;
-	int dy = y - m_last_pos.y;
+	if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
+	{
+		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 
-	m_cam.Yaw(- dx * 0.2f);
-	m_cam.Pitch(- dy * 0.2f);
-	m_cam.AimAtTarget();
-	m_cam.SetUpDir(sm::vec3(0, 1, 0));
+		int dx = x - m_last_pos.x;
+		int dy = y - m_last_pos.y;
+
+		p_cam->Yaw(-dx * 0.2f);
+		p_cam->Pitch(-dy * 0.2f);
+		p_cam->AimAtTarget();
+		p_cam->SetUpDir(sm::vec3(0, 1, 0));
+
+		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+	}
 
 	m_last_pos.Set(x, y);
-
-	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 
 	return false;
 }

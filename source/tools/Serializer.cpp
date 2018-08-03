@@ -41,8 +41,8 @@ void Serializer::StoreToJson(const std::string& filepath, const ee0::WxStagePage
 	doc.AddMember("nodes", val_nodes, alloc);
 
 	auto canvas = std::dynamic_pointer_cast<const WxStageCanvas>(stage->GetImpl().GetCanvas());
-	auto& cam = canvas->GetCamera();
-	rapidjson::Value cam_val = StoreCamera(cam, alloc);
+	auto& camera = canvas->GetCamera();
+	rapidjson::Value cam_val = StoreCamera(camera, alloc);
 	doc.AddMember("camera", cam_val, alloc);
 
 	js::RapidJsonHelper::WriteToFile(filepath.c_str(), doc);
@@ -67,17 +67,17 @@ void Serializer::LoadFroimJson(const std::string& filepath, ee0::WxStagePage* st
 #endif // GAME_OBJ_ECS
 	}
 
-	auto cam = LoadCamera(doc["camera"]);
+	auto camera = LoadCamera(doc["camera"]);
 	auto canvas = std::dynamic_pointer_cast<const WxStageCanvas>(stage->GetImpl().GetCanvas());
-	std::const_pointer_cast<WxStageCanvas>(canvas)->SetCamera(cam);
+	std::const_pointer_cast<WxStageCanvas>(canvas)->SetCamera(camera);
 }
 
-rapidjson::Value Serializer::StoreCamera(const pt0::CameraPtr& cam, rapidjson::MemoryPoolAllocator<>& alloc)
+rapidjson::Value Serializer::StoreCamera(const std::shared_ptr<pt0::Camera>& camera, rapidjson::MemoryPoolAllocator<>& alloc)
 {
 	rapidjson::Value val;
 	val.SetObject();
 
-	auto cam_type = cam->TypeID();
+	auto cam_type = camera->TypeID();
 	if (cam_type == pt0::GetCamTypeID<pt3::OrthoCam>())
 	{
 		val.AddMember("type", "ortho", alloc);
@@ -86,7 +86,7 @@ rapidjson::Value Serializer::StoreCamera(const pt0::CameraPtr& cam, rapidjson::M
 	{
 		val.AddMember("type", "perspective", alloc);
 
-		auto persp_cam = std::dynamic_pointer_cast<const pt3::PerspCam>(cam);
+		auto persp_cam = std::dynamic_pointer_cast<const pt3::PerspCam>(camera);
 
 		rapidjson::Value pos_val;
 		auto& pos = persp_cam->GetPos();

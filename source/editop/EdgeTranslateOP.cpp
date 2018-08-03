@@ -5,12 +5,12 @@ namespace ee3
 namespace mesh
 {
 
-EdgeTranslateOP::EdgeTranslateOP(pt3::PerspCam& cam,
+EdgeTranslateOP::EdgeTranslateOP(const std::shared_ptr<pt0::Camera>& camera,
 	                             const pt3::Viewport& vp,
 	                             const ee0::SubjectMgrPtr& sub_mgr,
 	                             const MeshPointQuery::Selected& selected,
 	                             const ee0::SelectionSet<BrushEdge>& selection)
-	: MeshTranslateBaseOP<BrushEdge>(cam, vp, sub_mgr, selected, selection)
+	: MeshTranslateBaseOP<BrushEdge>(camera, vp, sub_mgr, selected, selection)
 {
 }
 

@@ -11,7 +11,7 @@ namespace mesh
 class EdgeTranslateOP : public MeshTranslateBaseOP<BrushEdge>
 {
 public:
-	EdgeTranslateOP(pt3::PerspCam& cam, const pt3::Viewport& vp,
+	EdgeTranslateOP(const std::shared_ptr<pt0::Camera>& camera, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr, const MeshPointQuery::Selected& selected,
 		const ee0::SelectionSet<BrushEdge>& selection);
 

@@ -18,7 +18,7 @@ public:
 	static void LoadFroimJson(const std::string& filepath, ee0::WxStagePage* stage);
 
 private:
-	static rapidjson::Value StoreCamera(const pt0::CameraPtr& cam, rapidjson::MemoryPoolAllocator<>& alloc);
+	static rapidjson::Value StoreCamera(const std::shared_ptr<pt0::Camera>& camera, rapidjson::MemoryPoolAllocator<>& alloc);
 	static pt0::CameraPtr LoadCamera(const rapidjson::Value& val);
 
 }; // Serializer

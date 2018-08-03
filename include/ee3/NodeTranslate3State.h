@@ -8,9 +8,9 @@
 #include <SM_Vector.h>
 #include <SM_Matrix.h>
 #include <SM_Ray.h>
-#include <painting2/OrthoCamera.h>
 
-namespace pt3 { class PerspCam; class Viewport; }
+namespace pt2 { class OrthoCamera; }
+namespace pt3 { class Viewport; }
 
 namespace ee3
 {
@@ -18,7 +18,7 @@ namespace ee3
 class NodeTranslate3State : public ee0::EditOpState
 {
 public:
-	NodeTranslate3State(const pt3::PerspCam& cam, const pt3::Viewport& vp,
+	NodeTranslate3State(const std::shared_ptr<pt0::Camera>& camera, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr, const ee0::SelectionSet<ee0::GameObjWithPos>& selection);
 
 	virtual bool OnMousePress(int x, int y) override;
@@ -57,14 +57,13 @@ private:
 	sm::vec3 GetCtrlPos3D(AxisNodeType type) const;
 
 private:
-	const pt3::PerspCam&   m_cam;
 	const pt3::Viewport& m_vp;
 
 	ee0::SubjectMgrPtr m_sub_mgr;
 
 	const ee0::SelectionSet<ee0::GameObjWithPos>& m_selection;
 
-	pt2::OrthoCamera m_cam2d;
+	std::shared_ptr<pt2::OrthoCamera> m_cam2d;
 
 	// move path 2d
 	sm::vec2 m_first_pos2;

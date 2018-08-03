@@ -15,10 +15,11 @@
 namespace ee3
 {
 
-NodeTranslateState::NodeTranslateState(const pt3::PerspCam& cam, const pt3::Viewport& vp,
+NodeTranslateState::NodeTranslateState(const std::shared_ptr<pt0::Camera>& camera, 
+	                                   const pt3::Viewport& vp,
 	                                   const ee0::SubjectMgrPtr& sub_mgr,
 	                                   const ee0::SelectionSet<ee0::GameObjWithPos>& selection)
-	: m_cam(cam)
+	: ee0::EditOpState(camera)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 	, m_selection(selection)
@@ -54,32 +55,37 @@ bool NodeTranslateState::OnMouseDrag(int x, int y)
 
 void NodeTranslateState::Translate(const sm::ivec2& last, const sm::ivec2& curr)
 {
-	m_selection.Traverse([&](const ee0::GameObjWithPos& nwp)->bool
+	if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
 	{
-#ifndef GAME_OBJ_ECS
-		auto& node = nwp.GetNode();
-		auto& ctrans = node->GetUniqueComp<n3::CompTransform>();
+		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 
-		auto& aabb = node->GetUniqueComp<n3::CompAABB>().GetAABB();
-		sm::vec3 node_center = aabb.Cube().Center() + aabb.Position();
-		node_center = ctrans.GetTransformMat() * node_center;
+		m_selection.Traverse([&](const ee0::GameObjWithPos& nwp)->bool
+		{
+	#ifndef GAME_OBJ_ECS
+			auto& node = nwp.GetNode();
+			auto& ctrans = node->GetUniqueComp<n3::CompTransform>();
 
-//		auto node_pos = ctrans.GetPosition();
-		auto cam_pos = m_cam.GetPos();
+			auto& aabb = node->GetUniqueComp<n3::CompAABB>().GetAABB();
+			sm::vec3 node_center = aabb.Cube().Center() + aabb.Position();
+			node_center = ctrans.GetTransformMat() * node_center;
 
-		float dist_center = sm::dis_pos3_to_pos3(node_center, cam_pos);
-//		float dist_pos = sm::dis_pos3_to_pos3(node_pos, cam_pos);
+	//		auto node_pos = ctrans.GetPosition();
+			auto cam_pos = p_cam->GetPos();
 
-		sm::vec3 _last = m_vp.TransPos3ScreenToDir(
-			sm::vec2(static_cast<float>(last.x), static_cast<float>(last.y)), m_cam);
-		sm::vec3 _curr = m_vp.TransPos3ScreenToDir(
-			sm::vec2(static_cast<float>(curr.x), static_cast<float>(curr.y)), m_cam);
+			float dist_center = sm::dis_pos3_to_pos3(node_center, cam_pos);
+	//		float dist_pos = sm::dis_pos3_to_pos3(node_pos, cam_pos);
 
-		ctrans.Translate((_curr - _last) * /*dist_pos*/dist_center);
-#endif // GAME_OBJ_ECS
+			sm::vec3 _last = m_vp.TransPos3ScreenToDir(
+				sm::vec2(static_cast<float>(last.x), static_cast<float>(last.y)), *p_cam);
+			sm::vec3 _curr = m_vp.TransPos3ScreenToDir(
+				sm::vec2(static_cast<float>(curr.x), static_cast<float>(curr.y)), *p_cam);
 
-		return true;
-	});
+			ctrans.Translate((_curr - _last) * /*dist_pos*/dist_center);
+	#endif // GAME_OBJ_ECS
+
+			return true;
+		});
+	}
 }
 
 }
