@@ -44,7 +44,8 @@ protected:
 
 	std::shared_ptr<pt2::OrthoCamera> m_cam2d;
 
-	mutable sm::vec3 m_last_pos;
+	sm::ivec2 m_last_pos2;
+	mutable sm::vec3 m_last_pos3;
 
 }; // MeshTranslateBaseOP
 

@@ -24,7 +24,7 @@ bool EdgeTranslateOP::QueryByPos(const sm::vec2& pos, const BrushEdge& edge,
 	auto e2 = m_vp.TransPosProj3ToProj2(e3, cam_mat);
 	auto mid2 = m_vp.TransPosProj3ToProj2(mid3, cam_mat);
 	if (sm::dis_pos_to_pos(mid2, pos) < NODE_QUERY_RADIUS) {
-		m_last_pos = mid3;
+		m_last_pos3 = mid3;
 		return true;
 	} else {
 		return false;

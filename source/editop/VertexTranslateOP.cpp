@@ -20,7 +20,7 @@ bool VertexTranslateOP::QueryByPos(const sm::vec2& pos, const quake::BrushVertex
 	auto p3 = vert->pos * model::MapLoader::VERTEX_SCALE;
 	auto p2 = m_vp.TransPosProj3ToProj2(p3, cam_mat);
 	if (sm::dis_pos_to_pos(p2, pos) < NODE_QUERY_RADIUS) {
-		m_last_pos = p3;
+		m_last_pos3 = p3;
 		return true;
 	} else {
 		return false;

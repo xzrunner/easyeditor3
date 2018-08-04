@@ -26,7 +26,7 @@ bool FaceTranslateOP::QueryByPos(const sm::vec2& pos, const quake::BrushFacePtr&
 	c3 *= model::MapLoader::VERTEX_SCALE;
 	auto c2 = m_vp.TransPosProj3ToProj2(c3, cam_mat);
 	if (sm::dis_pos_to_pos(c2, pos) < NODE_QUERY_RADIUS) {
-		m_last_pos = c3;
+		m_last_pos3 = c3;
 		return true;
 	} else {
 		return false;
