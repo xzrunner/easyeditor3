@@ -113,12 +113,16 @@ bool PolyArrangeOP::OnMouseDrag(int x, int y)
 	{
 		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 
+		sm::vec3 center_dir = m_vp.TransPos3ScreenToDir(
+			sm::vec2(m_vp.Width() * 0.5f, m_vp.Height() * 0.5f), *p_cam);
+		sm::Ray center_ray(p_cam->GetPos(), center_dir);
+
+		sm::Plane plane;
+		CalcTranslatePlane(center_ray, plane);
+
 		sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(
 			sm::vec2(static_cast<float>(x), static_cast<float>(y)), *p_cam);
 		sm::Ray ray(p_cam->GetPos(), ray_dir);
-
-		sm::Plane plane;
-		CalcTranslatePlane(ray, plane);
 
 		sm::vec3 cross;
 		if (!sm::ray_plane_intersect(ray, plane, &cross)) {
