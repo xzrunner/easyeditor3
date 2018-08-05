@@ -18,7 +18,7 @@ namespace mesh
 class PolySelectOP : public ee0::EditOP
 {
 public:
-	PolySelectOP(const std::shared_ptr<pt0::Camera>& camera, 
+	PolySelectOP(const std::shared_ptr<pt0::Camera>& camera,
 		ee0::WxStagePage& stage, const pt3::Viewport& vp);
 
 	virtual bool OnKeyDown(int key_code) override;
@@ -35,9 +35,8 @@ public:
 		m_select_null = select_null;
 	}
 
-private:
 	// for draw
-	void UpdatePolyBorderPos();
+	void UpdateCachedPolyBorder();
 
 private:
 	ee0::WxStagePage&    m_stage;

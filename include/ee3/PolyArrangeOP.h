@@ -18,7 +18,8 @@ class PolyArrangeOP : public ee0::EditOP
 {
 public:
 	PolyArrangeOP(const std::shared_ptr<pt0::Camera>& camera, const pt3::Viewport& vp,
-		const ee0::SubjectMgrPtr& sub_mgr, const MeshPointQuery::Selected& selected);
+		const ee0::SubjectMgrPtr& sub_mgr, const MeshPointQuery::Selected& selected,
+		std::function<void()> update_cb);
 
 	virtual bool OnKeyDown(int key_code) override;
 	virtual bool OnKeyUp(int key_code) override;
@@ -43,6 +44,8 @@ private:
 	sm::vec3 m_last_pos;
 
 	ee0::EditOpStatePtr m_face_pp_state = nullptr;
+
+	std::function<void()> m_update_cb;
 
 }; // PolyArrangeOP
 

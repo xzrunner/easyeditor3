@@ -93,7 +93,7 @@ bool PolySelectOP::OnMouseLeftDown(int x, int y)
 		nwps.push_back(n0::NodeWithPos(selected_obj, selected_obj, 0));
 		ee0::MsgHelper::InsertSelection(*m_sub_mgr, nwps);
 
-		UpdatePolyBorderPos();
+		UpdateCachedPolyBorder();
 	}
 	else
 	{
@@ -181,7 +181,7 @@ bool PolySelectOP::OnDraw() const
 	return false;
 }
 
-void PolySelectOP::UpdatePolyBorderPos()
+void PolySelectOP::UpdateCachedPolyBorder()
 {
 	if (!m_selected.poly) {
 		return;

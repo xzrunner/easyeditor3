@@ -27,13 +27,15 @@ MeshTranslateBaseOP<T>::MeshTranslateBaseOP(const std::shared_ptr<pt0::Camera>& 
 	                                        const pt3::Viewport& vp,
 	                                        const ee0::SubjectMgrPtr& sub_mgr,
 	                                        const MeshPointQuery::Selected& selected,
-	                                        const ee0::SelectionSet<T>& selection)
+	                                        const ee0::SelectionSet<T>& selection,
+	                                        std::function<void()> update_cb)
 	: ee0::EditOP(camera)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 	, m_selected(selected)
 	, m_selection(selection)
 	, m_cam2d(std::make_shared<pt2::OrthoCamera>())
+	, m_update_cb(update_cb)
 {
 	m_cam2d->OnSize(m_vp.Width(), m_vp.Height());
 
@@ -140,6 +142,8 @@ bool MeshTranslateBaseOP<T>::OnMouseDrag(int x, int y)
 		TranslateSelected(cross - m_last_pos3);
 		m_last_pos3 = cross;
 
+		m_update_cb();
+
 		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 	}
 	else if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::OrthoCam>())
@@ -162,6 +166,8 @@ bool MeshTranslateBaseOP<T>::OnMouseDrag(int x, int y)
 			TranslateSelected(sm::vec3(d_pos.x, d_pos.y, 0));
 			break;
 		}
+
+		m_update_cb();
 
 		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 	}

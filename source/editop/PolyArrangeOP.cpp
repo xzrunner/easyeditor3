@@ -21,11 +21,13 @@ namespace mesh
 PolyArrangeOP::PolyArrangeOP(const std::shared_ptr<pt0::Camera>& camera,
 	                         const pt3::Viewport& vp,
 	                         const ee0::SubjectMgrPtr& sub_mgr,
-	                         const MeshPointQuery::Selected& m_selected)
+	                         const MeshPointQuery::Selected& m_selected,
+	                         std::function<void()> update_cb)
 	: ee0::EditOP(camera)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 	, m_selected(m_selected)
+	, m_update_cb(update_cb)
 {
 	m_last_pos.MakeInvalid();
 }
@@ -38,7 +40,7 @@ bool PolyArrangeOP::OnKeyDown(int key_code)
 
 	if (!m_face_pp_state)
 	{
-		if (key_code == WXK_SHIFT && m_selected.poly) 
+		if (key_code == WXK_SHIFT && m_selected.poly)
 		{
 			assert(m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>());
 			auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
@@ -210,11 +212,11 @@ void PolyArrangeOP::TranslateSelected(const sm::vec3& offset)
 	}
 	m_selected.model->aabb = model_aabb;
 
-	//// update m_selected border
-	//UpdatePolyBorderPos();
-
 	// update vbo
 	model::MapLoader::UpdateVBO(*m_selected.model, m_selected.brush_idx);
+
+	// update m_selected border
+	m_update_cb();
 }
 
 }

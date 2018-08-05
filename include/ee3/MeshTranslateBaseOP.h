@@ -22,7 +22,7 @@ class MeshTranslateBaseOP : public ee0::EditOP
 public:
 	MeshTranslateBaseOP(const std::shared_ptr<pt0::Camera>& camera, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr, const MeshPointQuery::Selected& selected,
-		const ee0::SelectionSet<T>& selection);
+		const ee0::SelectionSet<T>& selection, std::function<void()> update_cb);
 
 	virtual bool OnKeyDown(int key_code) override;
 	virtual bool OnMouseLeftDown(int x, int y) override;
@@ -46,6 +46,8 @@ protected:
 
 	sm::ivec2 m_last_pos2;
 	mutable sm::vec3 m_last_pos3;
+
+	std::function<void()> m_update_cb;
 
 }; // MeshTranslateBaseOP
 
