@@ -153,9 +153,9 @@ bool PolyArrangeOP::OnDraw() const
 	if (m_first_pos.IsValid() && m_last_pos.IsValid())
 	{
 		pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
-		pt3::PrimitiveDraw::Line(sm::vec3(m_first_pos.x, m_last_pos.y, m_last_pos.z), m_last_pos);
+		pt3::PrimitiveDraw::Line(m_first_pos, sm::vec3(m_last_pos.x, m_first_pos.y, m_first_pos.z));
 		pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
-		pt3::PrimitiveDraw::Line(sm::vec3(m_last_pos.x, m_first_pos.y, m_last_pos.z), m_last_pos);
+		pt3::PrimitiveDraw::Line(sm::vec3(m_last_pos.x, m_first_pos.y, m_first_pos.z), sm::vec3(m_last_pos.x, m_last_pos.y, m_first_pos.z));
 		pt3::PrimitiveDraw::SetColor(0x0ffff0000);
 		pt3::PrimitiveDraw::Line(sm::vec3(m_last_pos.x, m_last_pos.y, m_first_pos.z), m_last_pos);
 	}
