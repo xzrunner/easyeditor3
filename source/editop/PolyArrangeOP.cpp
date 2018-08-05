@@ -7,6 +7,7 @@
 #include <SM_RayIntersect.h>
 #include <painting3/PerspCam.h>
 #include <painting3/Viewport.h>
+#include <painting3/PrimitiveDraw.h>
 #include <model/MapLoader.h>
 #include <model/QuakeMapEntity.h>
 #include <model/Model.h>
@@ -78,7 +79,8 @@ bool PolyArrangeOP::OnMouseLeftDown(int x, int y)
 		return true;
 	}
 
-	m_last_pos = m_selected.pos;
+	m_first_pos = m_selected.pos;
+	m_last_pos  = m_first_pos;
 
 	return false;
 }
@@ -142,6 +144,18 @@ bool PolyArrangeOP::OnDraw() const
 	if (m_face_pp_state && m_face_pp_state->OnDraw()) {
 		return true;
 	}
+
+	// auxiliary line
+	if (m_first_pos.IsValid() && m_last_pos.IsValid())
+	{
+		pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
+		pt3::PrimitiveDraw::Line(sm::vec3(m_first_pos.x, m_last_pos.y, m_last_pos.z), m_last_pos);
+		pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
+		pt3::PrimitiveDraw::Line(sm::vec3(m_last_pos.x, m_first_pos.y, m_last_pos.z), m_last_pos);
+		pt3::PrimitiveDraw::SetColor(0x0ffff0000);
+		pt3::PrimitiveDraw::Line(sm::vec3(m_last_pos.x, m_last_pos.y, m_first_pos.z), m_last_pos);
+	}
+
 	return false;
 }
 

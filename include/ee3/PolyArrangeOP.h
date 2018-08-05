@@ -41,6 +41,7 @@ private:
 
 	const MeshPointQuery::Selected& m_selected;
 
+	sm::vec3 m_first_pos;
 	sm::vec3 m_last_pos;
 
 	ee0::EditOpStatePtr m_face_pp_state = nullptr;
