@@ -12,6 +12,7 @@
 #include <unirender/Blackboard.h>
 #include <unirender/RenderContext.h>
 #include <painting3/PerspCam.h>
+#include <painting3/OrthoCam.h>
 #include <painting3/Viewport.h>
 #include <painting3/PrimitiveDraw.h>
 
@@ -63,21 +64,46 @@ bool PolySelectOP::OnKeyUp(int key_code)
 
 bool PolySelectOP::OnMouseLeftDown(int x, int y)
 {
-	if (m_camera->TypeID() != pt0::GetCamTypeID<pt3::PerspCam>()) {
-		return false;
-	}
-
-	auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
-
+	ee0::GameObj selected_obj = GAME_OBJ_NULL;
 	MeshPointQuery::Selected selected;
 
-	ee0::GameObj selected_obj = GAME_OBJ_NULL;
-	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(
-		sm::vec2(static_cast<float>(x), static_cast<float>(y)), *p_cam);
-	sm::Ray ray(p_cam->GetPos(), ray_dir);
+	sm::Ray ray;
+	sm::vec3 cam_pos;
+
+	auto cam_type = m_camera->TypeID();
+	if (cam_type == pt0::GetCamTypeID<pt3::PerspCam>())
+	{
+		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
+		ray.dir = m_vp.TransPos3ScreenToDir(
+			sm::vec2(static_cast<float>(x), static_cast<float>(y)), *p_cam);
+		ray.origin = p_cam->GetPos();
+		cam_pos = p_cam->GetPos();
+	}
+	else if (cam_type == pt0::GetCamTypeID<pt3::OrthoCam>())
+	{
+		auto o_cam = std::dynamic_pointer_cast<pt3::OrthoCam>(m_camera);
+		auto pos2 = o_cam->TransPosScreenToProject(x, y);
+		switch (o_cam->GetViewPlaneType())
+		{
+		case pt3::OrthoCam::VP_ZY:
+			ray.origin.Set(0, pos2.y, pos2.x);
+			ray.dir.Set(-1, 0, 0);
+			break;
+		case pt3::OrthoCam::VP_XZ:
+			ray.origin.Set(pos2.x, 0, pos2.y);
+			ray.dir.Set(0, -1, 0);
+			break;
+		case pt3::OrthoCam::VP_XY:
+			ray.origin.Set(pos2.x, pos2.y, 0);
+			ray.dir.Set(0, 0, -1);
+			break;
+		}
+		cam_pos = ray.origin;
+	}
+
 	m_stage.Traverse([&](const ee0::GameObj& obj)->bool
 	{
-		bool find = MeshPointQuery::Query(obj, ray, p_cam->GetPos(), selected);
+		bool find = MeshPointQuery::Query(obj, ray, cam_pos, selected);
 		if (find) {
 			selected_obj = obj;
 		}
