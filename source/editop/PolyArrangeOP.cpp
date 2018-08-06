@@ -4,8 +4,9 @@
 #include <ee0/MessageID.h>
 #include <ee0/SubjectMgr.h>
 
-#include <SM_RayIntersect.h>
+#include <SM_RayIntersect.h>m_first_pos3
 #include <painting3/PerspCam.h>
+#include <painting3/OrthoCam.h>
 #include <painting3/Viewport.h>
 #include <painting3/PrimitiveDraw.h>
 #include <model/MapLoader.h>
@@ -31,7 +32,10 @@ PolyArrangeOP::PolyArrangeOP(const std::shared_ptr<pt0::Camera>& camera,
 	, m_update_cb(update_cb)
 	, m_move_type(MOVE_ANY)
 {
-	m_last_pos.MakeInvalid();
+	m_first_pos3.MakeInvalid();
+	m_last_pos3.MakeInvalid();
+	m_first_pos2.MakeInvalid();
+	m_last_pos2.MakeInvalid();
 }
 
 bool PolyArrangeOP::OnKeyDown(int key_code)
@@ -43,28 +47,83 @@ bool PolyArrangeOP::OnKeyDown(int key_code)
 	if (key_code == WXK_SHIFT)
 	{
 		// Axis Restriction
-		if (m_first_pos.IsValid())
+		if (m_first_pos3.IsValid())
 		{
 			if (m_move_type == MOVE_ANY)
 			{
-				assert(m_last_pos.IsValid());
-				sm::vec3 d = m_last_pos - m_first_pos;
-				sm::vec3 fixed_offset;
-				if (fabs(d.x) >= fabs(d.y) && fabs(d.x) >= fabs(d.z)) {
-					m_move_type = MOVE_X;
-					fixed_offset.x = d.x;
+				auto cam_type = m_camera->TypeID();
+				if (cam_type == pt0::GetCamTypeID<pt3::PerspCam>())
+				{
+					assert(m_last_pos3.IsValid());
+					sm::vec3 d = m_last_pos3 - m_first_pos3;
+					sm::vec3 fixed_offset;
+					if (fabs(d.x) >= fabs(d.y) && fabs(d.x) >= fabs(d.z)) {
+						m_move_type = MOVE_X;
+						fixed_offset.x = d.x;
+					} else if (fabs(d.y) >= fabs(d.x) && fabs(d.y) >= fabs(d.z)) {
+						m_move_type = MOVE_Y;
+						fixed_offset.y = d.y;
+					} else {
+						m_move_type = MOVE_Z;
+						fixed_offset.z = d.z;
+					}
+					fixed_offset += m_first_pos3 - m_last_pos3;
+					TranslateSelected(fixed_offset);
+					m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 				}
-				else if (fabs(d.y) >= fabs(d.x) && fabs(d.y) >= fabs(d.z)) {
-					m_move_type = MOVE_Y;
-					fixed_offset.y = d.y;
+				else if (cam_type == pt0::GetCamTypeID<pt3::OrthoCam>())
+				{
+					auto o_cam = std::dynamic_pointer_cast<pt3::OrthoCam>(m_camera);
+					auto vp = o_cam->GetViewPlaneType();
+					auto first = o_cam->TransPosScreenToProject(m_first_pos2.x, m_first_pos2.y);
+					auto last  = o_cam->TransPosScreenToProject(m_last_pos2.x, m_last_pos2.y);
+					auto d = last - first;
+					sm::vec3 fixed_offset;
+					switch (vp)
+					{
+					case pt3::OrthoCam::VP_ZY:
+						if (fabs(d.x) > fabs(d.y))
+						{
+							m_move_type = MOVE_Z;
+							fixed_offset.z = d.x;
+						}
+						else
+						{
+							m_move_type = MOVE_Y;
+							fixed_offset.y = d.y;
+						}
+						fixed_offset += sm::vec3(0, -d.y, -d.x);
+						break;
+					case pt3::OrthoCam::VP_XZ:
+						if (fabs(d.x) > fabs(d.y))
+						{
+							m_move_type = MOVE_X;
+							fixed_offset.x = d.x;
+						}
+						else
+						{
+							m_move_type = MOVE_Z;
+							fixed_offset.z = d.y;
+						}
+						fixed_offset += sm::vec3(-d.x, 0, -d.y);
+						break;
+					case pt3::OrthoCam::VP_XY:
+						if (fabs(d.x) > fabs(d.y))
+						{
+							m_move_type = MOVE_X;
+							fixed_offset.x = d.x;
+						}
+						else
+						{
+							m_move_type = MOVE_Y;
+							fixed_offset.y = d.y;
+						}
+						fixed_offset += sm::vec3(-d.x, -d.y, 0);
+						break;
+					}
+					TranslateSelected(fixed_offset);
+					m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 				}
-				else {
-					m_move_type = MOVE_Z;
-					fixed_offset.z = d.z;
-				}
-				fixed_offset += m_first_pos - m_last_pos;
-				TranslateSelected(fixed_offset);
-				m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 			}
 		}
 		// Face push and pull
@@ -93,22 +152,77 @@ bool PolyArrangeOP::OnKeyUp(int key_code)
 	{
 		if (m_move_type != MOVE_ANY)
 		{
-			sm::vec3 fixed_offset;
-			switch (m_move_type)
+			auto cam_type = m_camera->TypeID();
+			if (cam_type == pt0::GetCamTypeID<pt3::PerspCam>())
 			{
-			case MOVE_X:
-				fixed_offset.x = m_first_pos.x - m_last_pos.x;
-				break;
-			case MOVE_Y:
-				fixed_offset.y = m_first_pos.y - m_last_pos.y;
-				break;
-			case MOVE_Z:
-				fixed_offset.z = m_first_pos.z - m_last_pos.z;
-				break;
+				sm::vec3 fixed_offset;
+				switch (m_move_type)
+				{
+				case MOVE_X:
+					fixed_offset.x = m_first_pos3.x - m_last_pos3.x;
+					break;
+				case MOVE_Y:
+					fixed_offset.y = m_first_pos3.y - m_last_pos3.y;
+					break;
+				case MOVE_Z:
+					fixed_offset.z = m_first_pos3.z - m_last_pos3.z;
+					break;
+				}
+				fixed_offset += m_last_pos3 - m_first_pos3;
+				TranslateSelected(fixed_offset);
 			}
-			fixed_offset += m_last_pos - m_first_pos;
-			TranslateSelected(fixed_offset);
-
+			else if (cam_type == pt0::GetCamTypeID<pt3::OrthoCam>())
+			{
+				auto o_cam = std::dynamic_pointer_cast<pt3::OrthoCam>(m_camera);
+				auto vp = o_cam->GetViewPlaneType();
+				auto first = o_cam->TransPosScreenToProject(m_first_pos2.x, m_first_pos2.y);
+				auto last = o_cam->TransPosScreenToProject(m_last_pos2.x, m_last_pos2.y);
+				auto d = last - first;
+				sm::vec3 fixed_offset;
+				switch (m_move_type)
+				{
+				case MOVE_X:
+					switch (vp)
+					{
+					case pt3::OrthoCam::VP_XZ:
+						fixed_offset.x = -d.x;
+						fixed_offset += sm::vec3(d.x, 0, d.y);
+						break;
+					case pt3::OrthoCam::VP_XY:
+						fixed_offset.x = -d.x;
+						fixed_offset += sm::vec3(d.x, d.y, 0);
+						break;
+					}
+					break;
+				case MOVE_Y:
+					switch (vp)
+					{
+					case pt3::OrthoCam::VP_ZY:
+						fixed_offset.y = -d.x;
+						fixed_offset += sm::vec3(0, d.y, d.x);
+						break;
+					case pt3::OrthoCam::VP_XY:
+						fixed_offset.y = -d.y;
+						fixed_offset += sm::vec3(d.x, d.y, 0);
+						break;
+					}
+					break;
+				case MOVE_Z:
+					switch (vp)
+					{
+					case pt3::OrthoCam::VP_ZY:
+						fixed_offset.z = -d.y;
+						fixed_offset += sm::vec3(0, d.y, d.x);
+						break;
+					case pt3::OrthoCam::VP_XZ:
+						fixed_offset.z = -d.y;
+						fixed_offset += sm::vec3(d.x, 0, d.y);
+						break;
+					}
+					break;
+				}
+				TranslateSelected(fixed_offset);
+			}
 			m_move_type = MOVE_ANY;
 		}
 		else
@@ -129,8 +243,11 @@ bool PolyArrangeOP::OnMouseLeftDown(int x, int y)
 		return true;
 	}
 
-	m_first_pos = m_selected.pos;
-	m_last_pos  = m_first_pos;
+	m_first_pos3 = m_selected.pos;
+	m_last_pos3  = m_first_pos3;
+
+	m_first_pos2.Set(x, y);
+	m_last_pos2 = m_first_pos2;
 
 	return false;
 }
@@ -141,7 +258,12 @@ bool PolyArrangeOP::OnMouseLeftUp(int x, int y)
 		return true;
 	}
 
-	m_last_pos.MakeInvalid();
+	m_first_pos3.MakeInvalid();
+	m_last_pos3.MakeInvalid();
+	m_first_pos2.MakeInvalid();
+	m_last_pos2.MakeInvalid();
+
+	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 
 	return false;
 }
@@ -155,11 +277,12 @@ bool PolyArrangeOP::OnMouseDrag(int x, int y)
 		return true;
 	}
 
-	if (!m_last_pos.IsValid()) {
+	if (!m_last_pos3.IsValid()) {
 		return false;
 	}
 
-	if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
+	auto cam_type = m_camera->TypeID();
+	if (cam_type == pt0::GetCamTypeID<pt3::PerspCam>())
 	{
 		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 
@@ -179,7 +302,7 @@ bool PolyArrangeOP::OnMouseDrag(int x, int y)
 			return true;
 		}
 
-		sm::vec3 offset = cross - m_last_pos;
+		sm::vec3 offset = cross - m_last_pos3;
 		switch (m_move_type)
 		{
 		case MOVE_X:
@@ -194,10 +317,77 @@ bool PolyArrangeOP::OnMouseDrag(int x, int y)
 		}
 		TranslateSelected(offset);
 
-		m_last_pos = cross;
+		m_last_pos3 = cross;
 
 		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 	}
+	else if (cam_type == pt0::GetCamTypeID<pt3::OrthoCam>())
+	{
+		auto o_cam = std::dynamic_pointer_cast<pt3::OrthoCam>(m_camera);
+
+		auto vp = o_cam->GetViewPlaneType();
+		auto old_pos = o_cam->TransPosScreenToProject(m_last_pos2.x, m_last_pos2.y);
+		auto new_pos = o_cam->TransPosScreenToProject(x, y);
+		auto d_pos = new_pos - old_pos;
+		switch (vp)
+		{
+		case pt3::OrthoCam::VP_ZY:
+			switch (m_move_type)
+			{
+			case MOVE_ANY:
+				TranslateSelected(sm::vec3(0, d_pos.y, d_pos.x));
+				break;
+			case MOVE_X:
+				assert(0);
+				break;
+			case MOVE_Y:
+				TranslateSelected(sm::vec3(0, d_pos.y, 0));
+				break;
+			case MOVE_Z:
+				TranslateSelected(sm::vec3(0, 0, d_pos.x));
+				break;
+			}
+			break;
+		case pt3::OrthoCam::VP_XZ:
+			switch (m_move_type)
+			{
+			case MOVE_ANY:
+				TranslateSelected(sm::vec3(d_pos.x, 0, d_pos.y));
+				break;
+			case MOVE_X:
+				TranslateSelected(sm::vec3(d_pos.x, 0, 0));
+				break;
+			case MOVE_Y:
+				assert(0);
+				break;
+			case MOVE_Z:
+				TranslateSelected(sm::vec3(0, 0, d_pos.y));
+				break;
+			}
+			break;
+		case pt3::OrthoCam::VP_XY:
+			switch (m_move_type)
+			{
+			case MOVE_ANY:
+				TranslateSelected(sm::vec3(d_pos.x, d_pos.y, 0));
+				break;
+			case MOVE_X:
+				TranslateSelected(sm::vec3(d_pos.x, 0, 0));
+				break;
+			case MOVE_Y:
+				TranslateSelected(sm::vec3(0, d_pos.y, 0));
+				break;
+			case MOVE_Z:
+				assert(0);
+				break;
+			}
+			break;
+		}
+
+		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+	}
+
+	m_last_pos2.Set(x, y);
 
 	return false;
 }
@@ -211,39 +401,113 @@ bool PolyArrangeOP::OnDraw() const
 		return true;
 	}
 
-	// auxiliary line
-	if (m_first_pos.IsValid() && m_last_pos.IsValid())
+	// draw auxiliary line
+	auto cam_type = m_camera->TypeID();
+	if (cam_type == pt0::GetCamTypeID<pt3::PerspCam>())
 	{
-		auto& first = m_first_pos;
-		auto last = m_last_pos;
-		switch (m_move_type)
+		if (m_first_pos3.IsValid() && m_last_pos3.IsValid())
 		{
-		case MOVE_ANY:
-			pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
-			pt3::PrimitiveDraw::Line(first, sm::vec3(last.x, first.y, first.z));
-			pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
-			pt3::PrimitiveDraw::Line(sm::vec3(last.x, first.y, first.z), sm::vec3(last.x, last.y, first.z));
-			pt3::PrimitiveDraw::SetColor(0x0ffff0000);
-			pt3::PrimitiveDraw::Line(sm::vec3(last.x, last.y, first.z), m_last_pos);
-			break;
-		case MOVE_X:
-			last.y = first.y;
-			last.z = first.z;
-			pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
-			pt3::PrimitiveDraw::Line(first, last);
-			break;
-		case MOVE_Y:
-			last.x = first.x;
-			last.z = first.z;
-			pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
-			pt3::PrimitiveDraw::Line(first, last);
-			break;
-		case MOVE_Z:
-			last.x = first.x;
-			last.y = first.y;
-			pt3::PrimitiveDraw::SetColor(0x0ffff0000);
-			pt3::PrimitiveDraw::Line(first, last);
-			break;
+			auto& first = m_first_pos3;
+			auto last = m_last_pos3;
+			switch (m_move_type)
+			{
+			case MOVE_ANY:
+				pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
+				pt3::PrimitiveDraw::Line(first, sm::vec3(last.x, first.y, first.z));
+				pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
+				pt3::PrimitiveDraw::Line(sm::vec3(last.x, first.y, first.z), sm::vec3(last.x, last.y, first.z));
+				pt3::PrimitiveDraw::SetColor(0x0ffff0000);
+				pt3::PrimitiveDraw::Line(sm::vec3(last.x, last.y, first.z), m_last_pos3);
+				break;
+			case MOVE_X:
+				last.y = first.y;
+				last.z = first.z;
+				pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
+				pt3::PrimitiveDraw::Line(first, last);
+				break;
+			case MOVE_Y:
+				last.x = first.x;
+				last.z = first.z;
+				pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
+				pt3::PrimitiveDraw::Line(first, last);
+				break;
+			case MOVE_Z:
+				last.x = first.x;
+				last.y = first.y;
+				pt3::PrimitiveDraw::SetColor(0x0ffff0000);
+				pt3::PrimitiveDraw::Line(first, last);
+				break;
+			}
+		}
+	}
+	else if (cam_type == pt0::GetCamTypeID<pt3::OrthoCam>())
+	{
+		if (m_first_pos2.IsValid() && m_last_pos2.IsValid())
+		{
+			auto o_cam = std::dynamic_pointer_cast<pt3::OrthoCam>(m_camera);
+			auto first = o_cam->TransPosScreenToProject(m_first_pos2.x, m_first_pos2.y);
+			auto last  = o_cam->TransPosScreenToProject(m_last_pos2.x, m_last_pos2.y);
+			auto vp = o_cam->GetViewPlaneType();
+			switch (vp)
+			{
+			case pt3::OrthoCam::VP_ZY:
+				switch (m_move_type)
+				{
+				case MOVE_ANY:
+					pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
+					pt3::PrimitiveDraw::Line(sm::vec3(0, first.y, first.x), sm::vec3(0, last.y, first.x));
+					pt3::PrimitiveDraw::SetColor(0x0ffff0000);
+					pt3::PrimitiveDraw::Line(sm::vec3(0, last.y, first.x), sm::vec3(0, last.y, last.x));
+					break;
+				case MOVE_Z:
+					pt3::PrimitiveDraw::SetColor(0x0ffff0000);
+					pt3::PrimitiveDraw::Line(sm::vec3(0, first.y, first.x), sm::vec3(0, first.y, last.x));
+					break;
+				case MOVE_Y:
+					pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
+					pt3::PrimitiveDraw::Line(sm::vec3(0, first.y, first.x), sm::vec3(0, last.y, first.x));
+					break;
+				}
+				break;
+			case pt3::OrthoCam::VP_XZ:
+				switch (m_move_type)
+				{
+				case MOVE_ANY:
+					pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
+					pt3::PrimitiveDraw::Line(sm::vec3(first.x, 0, first.y), sm::vec3(last.x, 0, first.y));
+					pt3::PrimitiveDraw::SetColor(0x0ffff0000);
+					pt3::PrimitiveDraw::Line(sm::vec3(last.x, 0, first.y), sm::vec3(last.x, 0, last.y));
+					break;
+				case MOVE_X:
+					pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
+					pt3::PrimitiveDraw::Line(sm::vec3(first.x, 0, first.y), sm::vec3(last.x, 0, first.y));
+					break;
+				case MOVE_Z:
+					pt3::PrimitiveDraw::SetColor(0x0ffff0000);
+					pt3::PrimitiveDraw::Line(sm::vec3(first.x, 0, first.y), sm::vec3(first.x, 0, last.y));
+					break;
+				}
+				break;
+			case pt3::OrthoCam::VP_XY:
+				switch (m_move_type)
+				{
+				case MOVE_ANY:
+					pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
+					pt3::PrimitiveDraw::Line(sm::vec3(first.x, first.y, 0), sm::vec3(last.x, first.y, 0));
+					pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
+					pt3::PrimitiveDraw::Line(sm::vec3(last.x, first.y, 0), sm::vec3(last.x, last.y, 0));
+					break;
+				case MOVE_X:
+					pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
+					pt3::PrimitiveDraw::Line(sm::vec3(first.x, first.y, 0), sm::vec3(last.x, first.y, 0));
+					break;
+				case MOVE_Y:
+					pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
+					pt3::PrimitiveDraw::Line(sm::vec3(first.x, first.y, 0), sm::vec3(first.x, last.y, 0));
+					break;
+				}
+				break;
+			}
 		}
 	}
 
@@ -259,30 +523,30 @@ void PolyArrangeOP::CalcTranslatePlane(const sm::Ray& ray, sm::Plane& plane) con
 	{
 		if (dotx > 0) {
 			plane.normal = sm::vec3(-1, 0, 0);
-			plane.dist = m_last_pos.x;
+			plane.dist = m_last_pos3.x;
 		} else {
 			plane.normal = sm::vec3(1, 0, 0);
-			plane.dist = -m_last_pos.x;
+			plane.dist = -m_last_pos3.x;
 		}
 	}
 	else if (fabs(doty) > fabs(dotx) && fabs(doty) > fabs(dotz))
 	{
 		if (doty > 0) {
 			plane.normal = sm::vec3(0, -1, 0);
-			plane.dist = m_last_pos.y;
+			plane.dist = m_last_pos3.y;
 		} else {
 			plane.normal = sm::vec3(0, 1, 0);
-			plane.dist = -m_last_pos.y;
+			plane.dist = -m_last_pos3.y;
 		}
 	}
 	else
 	{
 		if (dotz > 0) {
 			plane.normal = sm::vec3(0, 0, -1);
-			plane.dist = m_last_pos.z;
+			plane.dist = m_last_pos3.z;
 		} else {
 			plane.normal = sm::vec3(0, 0, 1);
-			plane.dist = -m_last_pos.z;
+			plane.dist = -m_last_pos3.z;
 		}
 	}
 }
