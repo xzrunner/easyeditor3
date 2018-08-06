@@ -36,6 +36,16 @@ private:
 	void TranslateSelected(const sm::vec3& offset);
 
 private:
+	// Axis Restriction
+	enum MoveType
+	{
+		MOVE_ANY = 0,
+		MOVE_X,
+		MOVE_Y,
+		MOVE_Z,
+	};
+
+private:
 	const pt3::Viewport& m_vp;
 	ee0::SubjectMgrPtr   m_sub_mgr;
 
@@ -43,6 +53,7 @@ private:
 
 	sm::vec3 m_first_pos;
 	sm::vec3 m_last_pos;
+	MoveType m_move_type;
 
 	ee0::EditOpStatePtr m_face_pp_state = nullptr;
 

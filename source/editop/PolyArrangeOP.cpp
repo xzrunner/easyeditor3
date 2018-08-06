@@ -29,6 +29,7 @@ PolyArrangeOP::PolyArrangeOP(const std::shared_ptr<pt0::Camera>& camera,
 	, m_sub_mgr(sub_mgr)
 	, m_selected(m_selected)
 	, m_update_cb(update_cb)
+	, m_move_type(MOVE_ANY)
 {
 	m_last_pos.MakeInvalid();
 }
@@ -39,14 +40,43 @@ bool PolyArrangeOP::OnKeyDown(int key_code)
 		return true;
 	}
 
-	if (!m_face_pp_state)
+	if (key_code == WXK_SHIFT)
 	{
-		if (key_code == WXK_SHIFT && m_selected.poly)
+		// Axis Restriction
+		if (m_first_pos.IsValid())
 		{
-			assert(m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>());
-			auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
-			m_face_pp_state = std::make_shared<FacePushPullState>(
-				p_cam, m_vp, m_sub_mgr, m_selected);
+			if (m_move_type == MOVE_ANY)
+			{
+				assert(m_last_pos.IsValid());
+				sm::vec3 d = m_last_pos - m_first_pos;
+				sm::vec3 fixed_offset;
+				if (fabs(d.x) >= fabs(d.y) && fabs(d.x) >= fabs(d.z)) {
+					m_move_type = MOVE_X;
+					fixed_offset.x = d.x;
+				}
+				else if (fabs(d.y) >= fabs(d.x) && fabs(d.y) >= fabs(d.z)) {
+					m_move_type = MOVE_Y;
+					fixed_offset.y = d.y;
+				}
+				else {
+					m_move_type = MOVE_Z;
+					fixed_offset.z = d.z;
+				}
+				fixed_offset += m_first_pos - m_last_pos;
+				TranslateSelected(fixed_offset);
+				m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+			}
+		}
+		// Face push and pull
+		else
+		{
+			if (m_selected.poly)
+			{
+				assert(m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>());
+				auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
+				m_face_pp_state = std::make_shared<FacePushPullState>(
+					p_cam, m_vp, m_sub_mgr, m_selected);
+			}
 		}
 	}
 
@@ -59,11 +89,31 @@ bool PolyArrangeOP::OnKeyUp(int key_code)
 		return true;
 	}
 
-	if (m_face_pp_state)
+	if (key_code == WXK_SHIFT)
 	{
-		if (key_code == WXK_SHIFT) {
+		if (m_move_type != MOVE_ANY)
+		{
+			sm::vec3 fixed_offset;
+			switch (m_move_type)
+			{
+			case MOVE_X:
+				fixed_offset.x = m_first_pos.x - m_last_pos.x;
+				break;
+			case MOVE_Y:
+				fixed_offset.y = m_first_pos.y - m_last_pos.y;
+				break;
+			case MOVE_Z:
+				fixed_offset.z = m_first_pos.z - m_last_pos.z;
+				break;
+			}
+			fixed_offset += m_last_pos - m_first_pos;
+			TranslateSelected(fixed_offset);
+
+			m_move_type = MOVE_ANY;
+		}
+		else
+		{
 			m_face_pp_state.reset();
-//			m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 		}
 	}
 
@@ -130,9 +180,21 @@ bool PolyArrangeOP::OnMouseDrag(int x, int y)
 		}
 
 		sm::vec3 offset = cross - m_last_pos;
-		m_last_pos = cross;
-
+		switch (m_move_type)
+		{
+		case MOVE_X:
+			offset.y = offset.z = 0;
+			break;
+		case MOVE_Y:
+			offset.x = offset.z = 0;
+			break;
+		case MOVE_Z:
+			offset.x = offset.y = 0;
+			break;
+		}
 		TranslateSelected(offset);
+
+		m_last_pos = cross;
 
 		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 	}
@@ -152,12 +214,37 @@ bool PolyArrangeOP::OnDraw() const
 	// auxiliary line
 	if (m_first_pos.IsValid() && m_last_pos.IsValid())
 	{
-		pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
-		pt3::PrimitiveDraw::Line(m_first_pos, sm::vec3(m_last_pos.x, m_first_pos.y, m_first_pos.z));
-		pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
-		pt3::PrimitiveDraw::Line(sm::vec3(m_last_pos.x, m_first_pos.y, m_first_pos.z), sm::vec3(m_last_pos.x, m_last_pos.y, m_first_pos.z));
-		pt3::PrimitiveDraw::SetColor(0x0ffff0000);
-		pt3::PrimitiveDraw::Line(sm::vec3(m_last_pos.x, m_last_pos.y, m_first_pos.z), m_last_pos);
+		auto& first = m_first_pos;
+		auto last = m_last_pos;
+		switch (m_move_type)
+		{
+		case MOVE_ANY:
+			pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
+			pt3::PrimitiveDraw::Line(first, sm::vec3(last.x, first.y, first.z));
+			pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
+			pt3::PrimitiveDraw::Line(sm::vec3(last.x, first.y, first.z), sm::vec3(last.x, last.y, first.z));
+			pt3::PrimitiveDraw::SetColor(0x0ffff0000);
+			pt3::PrimitiveDraw::Line(sm::vec3(last.x, last.y, first.z), m_last_pos);
+			break;
+		case MOVE_X:
+			last.y = first.y;
+			last.z = first.z;
+			pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
+			pt3::PrimitiveDraw::Line(first, last);
+			break;
+		case MOVE_Y:
+			last.x = first.x;
+			last.z = first.z;
+			pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
+			pt3::PrimitiveDraw::Line(first, last);
+			break;
+		case MOVE_Z:
+			last.x = first.x;
+			last.y = first.y;
+			pt3::PrimitiveDraw::SetColor(0x0ffff0000);
+			pt3::PrimitiveDraw::Line(first, last);
+			break;
+		}
 	}
 
 	return false;
