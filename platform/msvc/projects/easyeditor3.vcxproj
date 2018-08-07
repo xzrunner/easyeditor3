@@ -21,8 +21,11 @@
     <ClInclude Include="..\..\..\include\ee3\MeshEditStyle.h" />
     <ClInclude Include="..\..\..\include\ee3\FaceSelectOP.h" />
     <ClInclude Include="..\..\..\include\ee3\MeshPointQuery.h" />
+    <ClInclude Include="..\..\..\include\ee3\MeshRayIntersect.h" />
     <ClInclude Include="..\..\..\include\ee3\MeshSelectBaseOP.h" />
     <ClInclude Include="..\..\..\include\ee3\MeshTranslateBaseOP.h" />
+    <ClInclude Include="..\..\..\include\ee3\PolyBuildState.h" />
+    <ClInclude Include="..\..\..\include\ee3\PolyTranslateState.h" />
     <ClInclude Include="..\..\..\include\ee3\VertexSelectOP.h" />
     <ClInclude Include="..\..\..\include\ee3\VertexTranslateOP.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeRotate3State.h" />
@@ -55,6 +58,9 @@
     <ClCompile Include="..\..\..\source\editop\FaceSelectOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\FaceTranslateOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\MeshPointQuery.cpp" />
+    <ClCompile Include="..\..\..\source\editop\MeshRayIntersect.cpp" />
+    <ClCompile Include="..\..\..\source\editop\PolyBuildState.cpp" />
+    <ClCompile Include="..\..\..\source\editop\PolyTranslateState.cpp" />
     <ClCompile Include="..\..\..\source\editop\VertexSelectOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\VertexTranslateOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\NodeRotate3State.cpp" />

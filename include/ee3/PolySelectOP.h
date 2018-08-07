@@ -25,7 +25,9 @@ public:
 	virtual bool OnKeyUp(int key_code) override;
 
 	virtual bool OnMouseLeftDown(int x, int y) override;
+	virtual bool OnMouseLeftUp(int x, int y) override;
 	virtual bool OnMouseMove(int x, int y) override;
+	virtual bool OnMouseDrag(int x, int y);
 
 	virtual bool OnDraw() const override;
 
@@ -37,6 +39,11 @@ public:
 
 	// for draw
 	void UpdateCachedPolyBorder();
+
+private:
+	void SelectByPos(const sm::ivec2& pos, MeshPointQuery::Selected& selected);
+
+	void ClearSelected();
 
 private:
 	ee0::WxStagePage&    m_stage;
@@ -51,6 +58,8 @@ private:
 	// cache for draw
 	std::vector<std::vector<sm::vec3>> m_selected_poly;
 	std::vector<sm::vec3>              m_selected_face;
+
+	sm::ivec2 m_first_pos;
 
 	bool m_move_select = false;
 

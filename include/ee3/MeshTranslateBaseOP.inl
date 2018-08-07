@@ -16,6 +16,7 @@
 #include <SM_RayIntersect.h>
 
 #include <wx/defs.h>
+#include <wx/utils.h>
 
 namespace ee3
 {
@@ -133,10 +134,28 @@ bool MeshTranslateBaseOP<T>::OnMouseDrag(int x, int y)
 			sm::vec2(static_cast<float>(x), static_cast<float>(y)), *p_cam);
 		sm::Ray ray(p_cam->GetPos(), ray_dir);
 
-		sm::Plane plane(sm::vec3(0, 1, 0), -m_last_pos3.y);
+		sm::Plane plane;
+		// vertical move
+		if (wxGetKeyState(WXK_ALT))
+		{
+			sm::vec3 n = p_cam->GetPos() - m_last_pos3;
+			n.y = 0;
+			n.Normalize();
+			
+			// n.x * m_last_pos3.x + n.z * m_last_pos3.z + d = 0
+			plane.Build(n, -m_last_pos3.x * n.x - m_last_pos3.z * n.z);
+		}
+		else
+		{
+			plane.Build(sm::vec3(0, 1, 0), -m_last_pos3.y);
+		}
 		sm::vec3 cross;
 		if (!sm::ray_plane_intersect(ray, plane, &cross)) {
 			return false;
+		}
+		if (wxGetKeyState(WXK_ALT)) {
+			cross.x = m_last_pos3.x;
+			cross.z = m_last_pos3.z;
 		}
 
 		TranslateSelected(cross - m_last_pos3);

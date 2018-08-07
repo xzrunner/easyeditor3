@@ -44,6 +44,10 @@ protected:
 	virtual T QueryByPos(int x, int y) const = 0;
 	virtual void QueryByRect(const sm::irect& rect, std::vector<T>& selection) const = 0;
 
+private:
+	void SelectByPos(const sm::ivec2& pos);
+	void SelectByRect(const sm::irect& rect);
+
 protected:
 	const pt3::Viewport& m_vp;
 	ee0::SubjectMgrPtr   m_sub_mgr;

@@ -54,39 +54,12 @@ bool MeshSelectBaseOP<T>::OnMouseLeftDown(int x, int y)
 
 	m_first_pos.Set(x, y);
 
-	auto selected = QueryByPos(x, y);
-	if (selected) {
-		m_draw_state_enable = false;
-	}
-
-	if (!selected) 
-	{
-		m_selected.Clear();
-	} 
-	else 
-	{
-		if (m_selected.IsEmpty()) 
-		{
-			m_selected.Add(selected);
-		} 
-		else 
-		{
-			if (wxGetKeyState(WXK_CONTROL))
-			{
-				if (m_selected.IsExist(selected)) {
-					m_selected.Remove(selected);
-				} else {
-					m_selected.Add(selected);
-				}
-			}
-			else
-			{
-				if (!m_selected.IsExist(selected)) {
-					m_selected.Clear();
-					m_selected.Add(selected);
-				}
-			}
-		}
+	// select
+	sm::ivec2 end_pos(x, y);
+	if (m_first_pos == end_pos) {
+		SelectByPos(end_pos);
+	} else {
+		SelectByRect(sm::irect(m_first_pos, end_pos));
 	}
 
 	return false;
@@ -99,20 +72,13 @@ bool MeshSelectBaseOP<T>::OnMouseLeftUp(int x, int y)
 		return true;
 	}
 
-	// rect select
-	if (m_selected.IsEmpty())
-	{
-		sm::ivec2 end(x, y);
-		if (end != m_first_pos)
-		{
-			std::vector<T> selection;
-			sm::irect r(m_first_pos, end);
-			QueryByRect(r, selection);
-			for (auto& v : selection) {
-				m_selected.Add(v);
-			}
-		}
-	}
+	//// select
+	//sm::ivec2 end_pos(x, y);
+	//if (m_first_pos == end_pos) {
+	//	SelectByPos(end_pos);
+	//} else {
+	//	SelectByRect(sm::irect(m_first_pos, end_pos));
+	//}
 
 	// draw state
 	if (m_draw_state_enable) {
@@ -183,6 +149,70 @@ bool MeshSelectBaseOP<T>::OnDraw() const
 	}
 
 	return false;
+}
+
+template <typename T>
+void MeshSelectBaseOP<T>::SelectByPos(const sm::ivec2& pos)
+{
+	auto selected = QueryByPos(pos.x, pos.y);
+	if (selected) {
+		m_draw_state_enable = false;
+	}
+
+	if (!selected) 
+	{
+		m_selected.Clear();
+	} 
+	else 
+	{
+		if (m_selected.IsEmpty()) 
+		{
+			m_selected.Add(selected);
+		} 
+		else 
+		{
+			if (wxGetKeyState(WXK_CONTROL))
+			{
+				if (m_selected.IsExist(selected)) {
+					m_selected.Remove(selected);
+				} else {
+					m_selected.Add(selected);
+				}
+			}
+			else
+			{
+				if (!m_selected.IsExist(selected)) {
+					m_selected.Clear();
+					m_selected.Add(selected);
+				}
+			}
+		}
+	}
+}
+
+template <typename T>
+void MeshSelectBaseOP<T>::SelectByRect(const sm::irect& rect)
+{
+	std::vector<T> selection;
+	QueryByRect(rect, selection);
+	if (wxGetKeyState(WXK_CONTROL))
+	{
+		for (auto& v : selection) 
+		{
+			if (m_selected.IsExist(v)) {
+				m_selected.Remove(v);
+			} else {
+				m_selected.Add(v);
+			}
+		}
+	}
+	else
+	{
+		m_selected.Clear();
+		for (auto& v : selection) {
+			m_selected.Add(v);
+		}
+	}
 }
 
 }

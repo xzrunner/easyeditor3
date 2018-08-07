@@ -58,6 +58,9 @@
     <Filter Include="dataset">
       <UniqueIdentifier>{cac92868-b9be-477e-a95c-ede1254db7b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="editop\mesh\4.polyhedron\state">
+      <UniqueIdentifier>{c569e6e5-3301-4ddb-825c-9ce170fc7f38}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\ee3\NodeRotateState.h">
@@ -159,6 +162,15 @@
     <ClInclude Include="..\..\..\include\ee3\CameraMgr.h">
       <Filter>dataset</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\PolyTranslateState.h">
+      <Filter>editop\mesh\4.polyhedron\state</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\PolyBuildState.h">
+      <Filter>editop\mesh\4.polyhedron\state</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\MeshRayIntersect.h">
+      <Filter>editop\mesh\utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\editop\NodeRotateState.cpp">
@@ -250,6 +262,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\dataset\CameraMgr.cpp">
       <Filter>dataset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\PolyTranslateState.cpp">
+      <Filter>editop\mesh\4.polyhedron\state</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\PolyBuildState.cpp">
+      <Filter>editop\mesh\4.polyhedron\state</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\MeshRayIntersect.cpp">
+      <Filter>editop\mesh\utility</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

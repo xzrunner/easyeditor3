@@ -31,37 +31,18 @@ public:
 	virtual bool OnDraw() const override;
 
 private:
-	void CalcTranslatePlane(const sm::Ray& ray, sm::Plane& plane) const;
-
-	void TranslateSelected(const sm::vec3& offset);
-
-private:
-	// Axis Restriction
-	enum MoveType
-	{
-		MOVE_ANY = 0,
-		MOVE_X,
-		MOVE_Y,
-		MOVE_Z,
-	};
-
-private:
 	const pt3::Viewport& m_vp;
 	ee0::SubjectMgrPtr   m_sub_mgr;
 
 	const MeshPointQuery::Selected& m_selected;
 
-	sm::vec3 m_first_pos3;
-	sm::vec3 m_last_pos3;
+	ee0::EditOpStatePtr m_face_pp_state    = nullptr;
+	ee0::EditOpStatePtr m_poly_trans_state = nullptr;
+	ee0::EditOpStatePtr m_poly_build_state = nullptr;
 
 	sm::ivec2 m_first_pos2;
-	sm::ivec2 m_last_pos2;
 
-	MoveType m_move_type;
-
-	ee0::EditOpStatePtr m_face_pp_state = nullptr;
-
-	std::function<void()> m_update_cb;
+	bool m_mouse_pressing = false;
 
 }; // PolyArrangeOP
 
