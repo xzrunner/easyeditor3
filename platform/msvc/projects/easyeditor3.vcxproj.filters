@@ -171,6 +171,12 @@
     <ClInclude Include="..\..\..\include\ee3\MeshRayIntersect.h">
       <Filter>editop\mesh\utility</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\CameraFlyOP.h">
+      <Filter>editop\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\CameraMoveOP.h">
+      <Filter>editop\camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\editop\NodeRotateState.cpp">
@@ -271,6 +277,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\MeshRayIntersect.cpp">
       <Filter>editop\mesh\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\CameraFlyOP.cpp">
+      <Filter>editop\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\CameraMoveOP.cpp">
+      <Filter>editop\camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

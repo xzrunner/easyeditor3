@@ -8,68 +8,22 @@
 #include <painting3/PerspCam.h>
 #include <painting3/Viewport.h>
 
-#include <wx/defs.h>
-#include <wx/utils.h>
-
 namespace ee3
 {
 
-CameraDriveOP::CameraDriveOP(const std::shared_ptr<pt0::Camera>& camera, 
+CameraDriveOP::CameraDriveOP(const std::shared_ptr<pt0::Camera>& camera,
 	                         const pt3::Viewport& vp,
 	                         const ee0::SubjectMgrPtr& sub_mgr)
-	: ee0::EditOP(camera)
+	: CameraMoveOP(camera, sub_mgr)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 {
 	m_last_pos.MakeInvalid();
 }
 
-bool CameraDriveOP::OnKeyDown(int key_code)
-{
-	if (ee0::EditOP::OnKeyDown(key_code)) { return true; }
-
-	switch (key_code)
-	{
-	case WXK_ESCAPE:
-		m_camera->Reset();
-		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
-		break;
-	case 'w': case 'W':
-		m_move_dir = MOVE_UP;
-		break;
-	case 's': case 'S':
-		m_move_dir = MOVE_DOWN;
-		break;
-	case 'a': case 'A':
-		m_move_dir = MOVE_LEFT;
-		break;
-	case 'd': case 'D':
-		m_move_dir = MOVE_RIGHT;
-		break;
-	}
-
-	return false;
-}
-
-bool CameraDriveOP::OnKeyUp(int key_code)
-{
-	if (ee0::EditOP::OnKeyUp(key_code)) { return true; }
-
-	switch (key_code)
-	{
-		case 'W':
-		case 'S':
-		case 'A':
-		case 'D':
-			m_move_dir = MOVE_NONE;
-	}
-
-	return false;
-}
-
 bool CameraDriveOP::OnMouseRightDown(int x, int y)
 {
-	if (ee0::EditOP::OnMouseRightDown(x, y)) {
+	if (CameraMoveOP::OnMouseRightDown(x, y)) {
 		return true;
 	}
 
@@ -79,7 +33,7 @@ bool CameraDriveOP::OnMouseRightDown(int x, int y)
 
 bool CameraDriveOP::OnMouseRightUp(int x, int y)
 {
-	if (ee0::EditOP::OnMouseRightUp(x, y)) {
+	if (CameraMoveOP::OnMouseRightUp(x, y)) {
 		return true;
 	}
 
@@ -89,7 +43,7 @@ bool CameraDriveOP::OnMouseRightUp(int x, int y)
 
 bool CameraDriveOP::OnMouseDrag(int x, int y)
 {
-	if (ee0::EditOP::OnMouseDrag(x, y)) {
+	if (CameraMoveOP::OnMouseDrag(x, y)) {
 		return true;
 	}
 
@@ -102,8 +56,8 @@ bool CameraDriveOP::OnMouseDrag(int x, int y)
 	{
 		auto& o_cam = std::dynamic_pointer_cast<pt3::OrthoCam>(m_camera);
 
-		auto dx = m_last_pos.x - x;
-		auto dy = y - m_last_pos.y;
+		float dx = static_cast<float>(m_last_pos.x - x);
+		float dy = static_cast<float>(y - m_last_pos.y);
 		o_cam->Translate(sm::vec2(dx, dy));
 
 		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
@@ -130,7 +84,7 @@ bool CameraDriveOP::OnMouseDrag(int x, int y)
 
 bool CameraDriveOP::OnMouseWheelRotation(int x, int y, int direction)
 {
-	if (ee0::EditOP::OnMouseWheelRotation(x, y, direction)) {
+	if (CameraMoveOP::OnMouseWheelRotation(x, y, direction)) {
 		return true;
 	}
 
@@ -165,48 +119,6 @@ bool CameraDriveOP::OnMouseWheelRotation(int x, int y, int direction)
 	}
 
 	return false;
-}
-
-bool CameraDriveOP::Update(float dt)
-{
-	if (m_move_dir == MOVE_NONE) {
-		return false;
-	}
-
-	static const float SPEED = 5.0f;
-	float offset = SPEED * dt;
-	if (wxGetKeyState(WXK_SHIFT)) {
-		offset *= 0.1f;
-	}
-
-	auto cam_type = m_camera->TypeID();
-	if (cam_type == pt0::GetCamTypeID<pt3::OrthoCam>())
-	{
-	}
-	else if (cam_type == pt0::GetCamTypeID<pt3::PerspCam>())
-	{
-		auto& p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
-
-		switch (m_move_dir)
-		{
-		case MOVE_LEFT:
-			p_cam->Translate(offset, 0);
-			break;
-		case MOVE_RIGHT:
-			p_cam->Translate(-offset, 0);
-			break;
-		case MOVE_UP:
-			p_cam->MoveToward(offset);
-			break;
-		case MOVE_DOWN:
-			p_cam->MoveToward(-offset);
-			break;
-		}
-
-		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
-	}
-
-	return true;
 }
 
 }
