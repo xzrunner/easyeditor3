@@ -61,6 +61,9 @@
     <Filter Include="editop\mesh\4.polyhedron\state">
       <UniqueIdentifier>{c569e6e5-3301-4ddb-825c-9ce170fc7f38}</UniqueIdentifier>
     </Filter>
+    <Filter Include="editop\model">
+      <UniqueIdentifier>{8fab3924-6f57-4a87-aff4-ef8d05e6c911}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\ee3\NodeRotateState.h">
@@ -177,6 +180,9 @@
     <ClInclude Include="..\..\..\include\ee3\CameraMoveOP.h">
       <Filter>editop\camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\EditSeletonOP.h">
+      <Filter>editop\model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\editop\NodeRotateState.cpp">
@@ -283,6 +289,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\CameraMoveOP.cpp">
       <Filter>editop\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\EditSeletonOP.cpp">
+      <Filter>editop\model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
