@@ -1,13 +1,13 @@
 #pragma once
 
 #include <ee0/EditOpState.h>
-#include <ee0/SelectionSet.h>
 #include <ee0/typedef.h>
 #include <ee0/GameObj.h>
 
 #include <SM_Vector.h>
-#include <SM_Matrix.h>
-#include <SM_Ray.h>
+#include <SM_Quaternion.h>
+
+#include <functional>
 
 namespace pt2 { class OrthoCamera; }
 namespace pt3 { class Viewport; }
@@ -15,11 +15,28 @@ namespace pt3 { class Viewport; }
 namespace ee3
 {
 
-class NodeTranslate3State : public ee0::EditOpState
+class RotateAxisState : public ee0::EditOpState
 {
 public:
-	NodeTranslate3State(const std::shared_ptr<pt0::Camera>& camera, const pt3::Viewport& vp,
-		const ee0::SubjectMgrPtr& sub_mgr, const ee0::SelectionSet<ee0::GameObjWithPos>& selection);
+	struct Callback
+	{
+		std::function<bool()>     is_need_draw;
+		std::function<sm::vec3()> get_center_pos;
+		std::function<void(const sm::Quaternion&)> rotate;
+	};
+
+	struct Config
+	{
+		Config(float arc_radius = 5, float node_radius = 5)
+			: arc_radius(arc_radius), node_radius(node_radius) {}
+
+		float arc_radius;
+		float node_radius;
+	};
+
+public:
+	RotateAxisState(const std::shared_ptr<pt0::Camera>& camera, const pt3::Viewport& vp,
+		const ee0::SubjectMgrPtr& sub_mgr, const Callback& cb, const Config& cfg);
 
 	virtual bool OnMousePress(int x, int y) override;
 	virtual bool OnMouseRelease(int x, int y) override;
@@ -40,49 +57,30 @@ private:
 
 	void UpdateSelectionSetInfo();
 
-	void Translate(const sm::vec2& start, const sm::vec2& end);
+	void Rotate(const sm::vec2& start, const sm::vec2& end);
 
 	void DrawEdges() const;
 	void DrawNodes() const;
-
-	enum AxisNodeType
-	{
-		AXIS_CENTER = 0,
-		AXIS_X,
-		AXIS_Y,
-		AXIS_Z,
-	};
-
-	sm::vec2 GetCtrlPos2D(const sm::mat4& cam_mat, AxisNodeType type) const;
-	sm::vec3 GetCtrlPos3D(AxisNodeType type) const;
 
 private:
 	const pt3::Viewport& m_vp;
 
 	ee0::SubjectMgrPtr m_sub_mgr;
 
-	const ee0::SelectionSet<ee0::GameObjWithPos>& m_selection;
+	Callback m_cb;
+	Config   m_cfg;
 
 	std::shared_ptr<pt2::OrthoCamera> m_cam2d;
 
-	// move path 2d
-	sm::vec2 m_first_pos2;
-	sm::vec2 m_first_dir2;
-
-	sm::Ray m_move_path3d;
-
-	sm::vec2 m_last_pos2;
-	sm::vec3 m_last_pos3;
+	sm::vec2 m_last_pos;
 
 	PointQueryType m_op_type;
-
-	// selection set info
 
 	sm::vec3 m_center;
 	sm::vec2 m_center2d;
 
-	sm::mat4 m_rot_mat;
+	bool m_active = true;
 
-}; // NodeTranslate3State
+}; // RotateAxisState
 
 }

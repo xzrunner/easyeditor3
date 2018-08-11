@@ -28,10 +28,10 @@
     <ClInclude Include="..\..\..\include\ee3\MeshTranslateBaseOP.h" />
     <ClInclude Include="..\..\..\include\ee3\PolyBuildState.h" />
     <ClInclude Include="..\..\..\include\ee3\PolyTranslateState.h" />
-    <ClInclude Include="..\..\..\include\ee3\EditSeletonOP.h" />
+    <ClInclude Include="..\..\..\include\ee3\EditSkeletonOP.h" />
+    <ClInclude Include="..\..\..\include\ee3\RotateAxisState.h" />
     <ClInclude Include="..\..\..\include\ee3\VertexSelectOP.h" />
     <ClInclude Include="..\..\..\include\ee3\VertexTranslateOP.h" />
-    <ClInclude Include="..\..\..\include\ee3\NodeRotate3State.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeRotateOP.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeTranslate3State.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeTranslateOP.h" />
@@ -66,10 +66,10 @@
     <ClCompile Include="..\..\..\source\editop\MeshRayIntersect.cpp" />
     <ClCompile Include="..\..\..\source\editop\PolyBuildState.cpp" />
     <ClCompile Include="..\..\..\source\editop\PolyTranslateState.cpp" />
-    <ClCompile Include="..\..\..\source\editop\EditSeletonOP.cpp" />
+    <ClCompile Include="..\..\..\source\editop\EditSkeletonOP.cpp" />
+    <ClCompile Include="..\..\..\source\editop\RotateAxisState.cpp" />
     <ClCompile Include="..\..\..\source\editop\VertexSelectOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\VertexTranslateOP.cpp" />
-    <ClCompile Include="..\..\..\source\editop\NodeRotate3State.cpp" />
     <ClCompile Include="..\..\..\source\editop\NodeRotateOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\NodeTranslate3State.cpp" />
     <ClCompile Include="..\..\..\source\editop\NodeTranslateOP.cpp" />

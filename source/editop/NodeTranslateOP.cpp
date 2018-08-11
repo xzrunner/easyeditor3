@@ -60,7 +60,7 @@ bool NodeTranslateOP::OnActive()
 		return true;
 	}
 
-	return m_translate_state->OnActive();
+	return m_translate_state->OnActive(true);
 }
 
 bool NodeTranslateOP::OnDraw() const

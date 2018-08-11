@@ -29,7 +29,7 @@ static const float NODE_RADIUS = 5;
 namespace ee3
 {
 
-NodeTranslate3State::NodeTranslate3State(const std::shared_ptr<pt0::Camera>& camera, 
+NodeTranslate3State::NodeTranslate3State(const std::shared_ptr<pt0::Camera>& camera,
 	                                     const pt3::Viewport& vp,
 	                                     const ee0::SubjectMgrPtr& sub_mgr,
 	                                     const ee0::SelectionSet<ee0::GameObjWithPos>& selection)
@@ -107,7 +107,7 @@ bool NodeTranslate3State::OnMouseDrag(int x, int y)
 	return false;
 }
 
-bool NodeTranslate3State::OnActive()
+bool NodeTranslate3State::OnActive(bool active)
 {
 	UpdateSelectionSetInfo();
 
