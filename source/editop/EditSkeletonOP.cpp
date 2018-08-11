@@ -155,12 +155,12 @@ void EditSkeletonOP::InitRotateState()
 	cb.is_need_draw = [&]() {
 		return m_selected >= 0;
 	};
-	cb.get_center_pos = [&]() {
-		if (m_model && m_selecting >= 0) {
+	cb.get_origin_transform = [&](sm::vec3& pos, sm::mat4& mat) {
+		if (m_model && m_selecting >= 0)
+		{
 			auto& g_trans = m_model->GetGlobalTrans();
-			return g_trans[m_selecting] * sm::vec3(0, 0, 0);
-		} else {
-			return sm::vec3();
+			pos = g_trans[m_selecting] * sm::vec3(0, 0, 0);
+			mat = g_trans[m_selecting];
 		}
 	};
 	cb.rotate = [&](const sm::Quaternion& delta) {

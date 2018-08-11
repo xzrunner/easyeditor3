@@ -5,6 +5,7 @@
 #include <ee0/GameObj.h>
 
 #include <SM_Vector.h>
+#include <SM_Matrix.h>
 #include <SM_Quaternion.h>
 
 #include <functional>
@@ -20,8 +21,8 @@ class RotateAxisState : public ee0::EditOpState
 public:
 	struct Callback
 	{
-		std::function<bool()>     is_need_draw;
-		std::function<sm::vec3()> get_center_pos;
+		std::function<bool()>                      is_need_draw;
+		std::function<void(sm::vec3&, sm::mat4&)>  get_origin_transform;
 		std::function<void(const sm::Quaternion&)> rotate;
 	};
 
@@ -76,8 +77,9 @@ private:
 
 	PointQueryType m_op_type;
 
-	sm::vec3 m_center;
-	sm::vec2 m_center2d;
+	sm::vec3 m_pos;
+	sm::vec2 m_pos2d;
+	sm::mat4 m_rotate;
 
 	bool m_active = true;
 

@@ -79,7 +79,7 @@ void NodeRotateOP::InitRotateState(ee0::WxStagePage& stage,
 	cb.is_need_draw = [&]() {
 		return !stage.GetSelection().IsEmpty();
 	};
-	cb.get_center_pos = [&]() {
+	cb.get_origin_transform = [&](sm::vec3& pos, sm::mat4& mat) {
 		//sm::cube tot_aabb;
 		//m_selection.Traverse([&](const ee0::GameObjWithPos& opw)->bool
 		//{
@@ -103,7 +103,7 @@ void NodeRotateOP::InitRotateState(ee0::WxStagePage& stage,
 			return false;
 		});
 		center /= static_cast<float>(count);
-		return center;
+		pos = center;
 	};
 	cb.rotate = [&](const sm::Quaternion& delta) {
 		stage.GetSelection().Traverse([&](const ee0::GameObjWithPos& nwp)->bool

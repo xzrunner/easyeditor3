@@ -102,17 +102,17 @@ RotateAxisState::PointQueryType RotateAxisState::PointQuery(int x, int y) const
 	auto proj2d = m_cam2d->TransPosScreenToProject(x, y,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 	// x, green
-	auto pos2d = m_vp.TransPosProj3ToProj2(sm::vec3(m_center.x + m_cfg.arc_radius, m_center.y, m_center.z), cam_mat);
+	auto pos2d = m_vp.TransPosProj3ToProj2(m_rotate * sm::vec3(m_cfg.arc_radius, 0, 0), cam_mat);
 	if (sm::dis_pos_to_pos(pos2d, proj2d) < m_cfg.node_radius) {
 		return POINT_QUERY_Y;
 	}
 	// y, blue
-	pos2d = m_vp.TransPosProj3ToProj2(sm::vec3(m_center.x, m_center.y + m_cfg.arc_radius, m_center.z), cam_mat);
+	pos2d = m_vp.TransPosProj3ToProj2(m_rotate * sm::vec3(0, m_cfg.arc_radius, 0), cam_mat);
 	if (sm::dis_pos_to_pos(pos2d, proj2d) < m_cfg.node_radius) {
 		return POINT_QUERY_Z;
 	}
 	// z, red
-	pos2d = m_vp.TransPosProj3ToProj2(sm::vec3(m_center.x, m_center.y, m_center.z - m_cfg.arc_radius), cam_mat);
+	pos2d = m_vp.TransPosProj3ToProj2(m_rotate * sm::vec3(0, 0, -m_cfg.arc_radius), cam_mat);
 	if (sm::dis_pos_to_pos(pos2d, proj2d) < m_cfg.node_radius) {
 		return POINT_QUERY_X;
 	}
@@ -122,10 +122,10 @@ RotateAxisState::PointQueryType RotateAxisState::PointQuery(int x, int y) const
 
 void RotateAxisState::UpdateSelectionSetInfo()
 {
-	m_center = m_cb.get_center_pos();
+	m_cb.get_origin_transform(m_pos, m_rotate);
 
 	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
-	m_center2d = m_vp.TransPosProj3ToProj2(m_center, cam_mat);
+	m_pos2d = m_vp.TransPosProj3ToProj2(m_pos, cam_mat);
 }
 
 void RotateAxisState::Rotate(const sm::vec2& start, const sm::vec2& end)
@@ -133,7 +133,7 @@ void RotateAxisState::Rotate(const sm::vec2& start, const sm::vec2& end)
 	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 	auto raidus = m_vp.TransPosProj3ToProj2(sm::vec3(m_cfg.arc_radius, 0, 0), cam_mat);
 	float angle = atan(sm::dis_pos_to_pos(start, end) / raidus.Length());
-	if ((start - m_center2d).Cross(end - m_center2d) < 0) {
+	if ((start - m_pos2d).Cross(end - m_pos2d) < 0) {
 		angle = -angle;
 	}
 
@@ -166,37 +166,38 @@ void RotateAxisState::Rotate(const sm::vec2& start, const sm::vec2& end)
 
 void RotateAxisState::DrawEdges() const
 {
+	pt2::PrimitiveDraw::LineWidth(2);
+
 	// axis
 	pt3::PrimitiveDraw::SetColor(0xff0000ff);
-	pt3::PrimitiveDraw::Line(m_center, sm::vec3(m_center.x + m_cfg.arc_radius, m_center.y, m_center.z));
+	pt3::PrimitiveDraw::Line(m_rotate * sm::vec3(), m_rotate * sm::vec3(m_cfg.arc_radius, 0, 0));
 	pt3::PrimitiveDraw::SetColor(0xff00ff00);
-	pt3::PrimitiveDraw::Line(m_center, sm::vec3(m_center.x, m_center.y + m_cfg.arc_radius, m_center.z));
+	pt3::PrimitiveDraw::Line(m_rotate * sm::vec3(), m_rotate * sm::vec3(0, m_cfg.arc_radius, 0));
 	pt3::PrimitiveDraw::SetColor(0xffff0000);
-	pt3::PrimitiveDraw::Line(m_center, sm::vec3(m_center.x, m_center.y, m_center.z - m_cfg.arc_radius));
+	pt3::PrimitiveDraw::Line(m_rotate * sm::vec3(), m_rotate * sm::vec3(0, 0, -m_cfg.arc_radius));
 
 	// arc
 	pt3::PrimitiveDraw::SetColor(0xff0000ff);
-	pt3::PrimitiveDraw::Arc(m_center, m_cfg.arc_radius, sm::vec3(0, 0, -1), sm::vec3(1, 0, 0), 0, SM_PI * 0.5f);
+	pt3::PrimitiveDraw::Arc(sm::mat4::RotatedAxis(sm::vec3(0, 1, 0), SM_PI * 0.5f) * m_rotate, m_cfg.arc_radius, 0, SM_PI * 0.5f);
 	pt3::PrimitiveDraw::SetColor(0xff00ff00);
-	pt3::PrimitiveDraw::Arc(m_center, m_cfg.arc_radius, sm::vec3(1, 0, 0), sm::vec3(0, 1, 0), 0, SM_PI * 0.5f);
+	pt3::PrimitiveDraw::Arc(sm::mat4::RotatedAxis(sm::vec3(1, 0, 0), - SM_PI * 0.5f) * m_rotate, m_cfg.arc_radius, 0, SM_PI * 0.5f);
 	pt3::PrimitiveDraw::SetColor(0xffff0000);
-	pt3::PrimitiveDraw::Arc(m_center, m_cfg.arc_radius, sm::vec3(1, 0, 0), sm::vec3(0, 0, 1), 0, SM_PI * 0.5f);
-
+	pt3::PrimitiveDraw::Arc(m_rotate, m_cfg.arc_radius, 0, SM_PI * 0.5f);
 }
 
 void RotateAxisState::DrawNodes() const
 {
 	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 	// x, green
-	auto pos2d = m_vp.TransPosProj3ToProj2(sm::vec3(m_center.x + m_cfg.arc_radius, m_center.y, m_center.z), cam_mat);
+	auto pos2d = m_vp.TransPosProj3ToProj2(m_rotate * sm::vec3(m_cfg.arc_radius, 0, 0), cam_mat);
 	pt2::PrimitiveDraw::SetColor(0xff00ff00);
 	pt2::PrimitiveDraw::Circle(nullptr, pos2d, m_cfg.node_radius, true);
 	// y, blue
-	pos2d = m_vp.TransPosProj3ToProj2(sm::vec3(m_center.x, m_center.y + m_cfg.arc_radius, m_center.z), cam_mat);
+	pos2d = m_vp.TransPosProj3ToProj2(m_rotate * sm::vec3(0, m_cfg.arc_radius, 0), cam_mat);
 	pt2::PrimitiveDraw::SetColor(0xffff0000);
 	pt2::PrimitiveDraw::Circle(nullptr, pos2d, m_cfg.node_radius, true);
 	// z, red
-	pos2d = m_vp.TransPosProj3ToProj2(sm::vec3(m_center.x, m_center.y, m_center.z - m_cfg.arc_radius), cam_mat);
+	pos2d = m_vp.TransPosProj3ToProj2(m_rotate * sm::vec3(0, 0, - m_cfg.arc_radius), cam_mat);
 	pt2::PrimitiveDraw::SetColor(0xff0000ff);
 	pt2::PrimitiveDraw::Circle(nullptr, pos2d, m_cfg.node_radius, true);
 }
