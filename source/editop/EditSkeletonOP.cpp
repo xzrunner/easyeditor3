@@ -124,20 +124,24 @@ bool EditSkeletonOP::OnDraw() const
 	auto& g_trans = m_model->GetGlobalTrans();
 	for (int i = 0, n = bones.size(); i < n; ++i)
 	{
+		// point
 		auto p_pos = g_trans[i] * sm::vec3(0, 0, 0);
 		if (i == m_selecting) {
 			// FIXME: set color will no use here, if not flush shader by call PointSize()
 			pt2::PrimitiveDraw::PointSize(NODE_DRAW_RADIUS * 2);
-			pt3::PrimitiveDraw::SetColor(0xffff0000);
+			pt3::PrimitiveDraw::SetColor(0xff00ffff);
 		} else {
 			pt2::PrimitiveDraw::PointSize(NODE_DRAW_RADIUS);
-			pt3::PrimitiveDraw::SetColor(0xff0000ff);
+			pt3::PrimitiveDraw::SetColor(0xffffff00);
 		}
 		pt3::PrimitiveDraw::Point(p_pos);
+
+		// edge
+		pt2::PrimitiveDraw::LineWidth(1);
 		for (auto& child : bones[i]->children)
 		{
 			auto c_pos = g_trans[child] * sm::vec3(0, 0, 0);
-			pt3::PrimitiveDraw::SetColor(0xff00ff00);
+			pt3::PrimitiveDraw::SetColor(0xffff00ff);
 			pt3::PrimitiveDraw::Line(p_pos, c_pos);
 		}
 	}
