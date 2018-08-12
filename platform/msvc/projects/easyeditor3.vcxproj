@@ -50,6 +50,7 @@
     <ClInclude Include="..\..\..\include\ee3\Serializer.h" />
     <ClInclude Include="..\..\..\include\ee3\WxStageCanvas.h" />
     <ClInclude Include="..\..\..\include\ee3\WxStageDropTarget.h" />
+    <ClInclude Include="..\..\..\include\ee3\WxTransformCtrl.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\dataset\CameraMgr.cpp" />
@@ -83,6 +84,7 @@
     <ClCompile Include="..\..\..\source\editop\NodeRotateState.cpp" />
     <ClCompile Include="..\..\..\source\editop\NodeSelectOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\NodeTranslateState.cpp" />
+    <ClCompile Include="..\..\..\source\gui\WxTransformCtrl.cpp" />
     <ClCompile Include="..\..\..\source\tools\Serializer.cpp" />
     <ClCompile Include="..\..\..\source\view\WxCompTransformPanel.cpp" />
     <ClCompile Include="..\..\..\source\view\WxLibGeoPage.cpp" />

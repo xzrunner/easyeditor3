@@ -25,8 +25,8 @@ namespace ee3
 {
 
 EditSkeletonOP::EditSkeletonOP(const std::shared_ptr<pt0::Camera>& camera,
-	                         const pt3::Viewport& vp,
-	                         const ee0::SubjectMgrPtr& sub_mgr)
+	                           const pt3::Viewport& vp,
+	                           const ee0::SubjectMgrPtr& sub_mgr)
 	: ee0::EditOP(camera)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)

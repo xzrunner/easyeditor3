@@ -67,6 +67,9 @@
     <Filter Include="editop\4.node\state">
       <UniqueIdentifier>{2d7788ec-fce3-48fe-a265-3e780842c96f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gui">
+      <UniqueIdentifier>{fde66802-dcd4-4eb1-8e5a-f40301f5a408}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\ee3\NodeRotateState.h">
@@ -92,9 +95,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\Serializer.h">
       <Filter>tools</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\WxCompTransformPanel.h">
-      <Filter>view\detail\comp</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\WxLibGeoPage.h">
       <Filter>view\library</Filter>
@@ -186,6 +186,12 @@
     <ClInclude Include="..\..\..\include\ee3\RotateAxisState.h">
       <Filter>editop\0.utility</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\WxTransformCtrl.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\WxCompTransformPanel.h">
+      <Filter>view\detail\comp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\editop\NodeRotateState.cpp">
@@ -211,9 +217,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\tools\Serializer.cpp">
       <Filter>tools</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\view\WxCompTransformPanel.cpp">
-      <Filter>view\detail\comp</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\view\WxLibGeoPage.cpp">
       <Filter>view\library</Filter>
@@ -295,6 +298,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\RotateAxisState.cpp">
       <Filter>editop\0.utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gui\WxTransformCtrl.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\view\WxCompTransformPanel.cpp">
+      <Filter>view\detail\comp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
