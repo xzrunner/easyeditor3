@@ -114,9 +114,6 @@
     <ClInclude Include="..\..\..\include\ee3\NodeTranslateOP.h">
       <Filter>editop\4.node</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\NodeTranslate3State.h">
-      <Filter>editop\4.node\state</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\CameraDriveOP.h">
       <Filter>editop\1.camera</Filter>
     </ClInclude>
@@ -180,9 +177,6 @@
     <ClInclude Include="..\..\..\include\ee3\CameraMoveOP.h">
       <Filter>editop\1.camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\EditSkeletonOP.h">
-      <Filter>editop\3.model</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\RotateAxisState.h">
       <Filter>editop\0.utility</Filter>
     </ClInclude>
@@ -191,6 +185,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\WxCompTransformPanel.h">
       <Filter>view\detail\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\TranslateAxisState.h">
+      <Filter>editop\0.utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\SkeletonJointOP.h">
+      <Filter>editop\3.model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\SkeletonIKOP.h">
+      <Filter>editop\3.model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -235,9 +238,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\NodeTranslateOP.cpp">
       <Filter>editop\4.node</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\editop\NodeTranslate3State.cpp">
-      <Filter>editop\4.node\state</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\CameraDriveOP.cpp">
       <Filter>editop\1.camera</Filter>
@@ -293,9 +293,6 @@
     <ClCompile Include="..\..\..\source\editop\CameraMoveOP.cpp">
       <Filter>editop\1.camera</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\editop\EditSkeletonOP.cpp">
-      <Filter>editop\3.model</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\editop\RotateAxisState.cpp">
       <Filter>editop\0.utility</Filter>
     </ClCompile>
@@ -304,6 +301,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\view\WxCompTransformPanel.cpp">
       <Filter>view\detail\comp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\TranslateAxisState.cpp">
+      <Filter>editop\0.utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\SkeletonJointOP.cpp">
+      <Filter>editop\3.model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\SkeletonIKOP.cpp">
+      <Filter>editop\3.model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

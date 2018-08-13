@@ -1,9 +1,12 @@
 #include "ee3/NodeTranslateOP.h"
-#include "ee3/NodeTranslate3State.h"
+#include "ee3/TranslateAxisState.h"
 
 #include <ee0/WxStagePage.h>
 #include <ee0/SubjectMgr.h>
 
+#include <node0/SceneNode.h>
+#include <node3/CompAABB.h>
+#include <node3/CompTransform.h>
 #include <painting3/PerspCam.h>
 
 namespace ee3
@@ -14,10 +17,7 @@ NodeTranslateOP::NodeTranslateOP(const std::shared_ptr<pt0::Camera>& camera,
 	: ee0::EditOP(camera)
 	, m_sub_mgr(stage.GetSubjectMgr())
 {
-	assert(camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>());
-	auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
-	m_translate_state = std::make_shared<NodeTranslate3State>(
-		p_cam, vp, m_sub_mgr, stage.GetSelection());
+	InitTranslateState(stage, vp);
 }
 
 bool NodeTranslateOP::OnMouseLeftDown(int x, int y)
@@ -70,6 +70,61 @@ bool NodeTranslateOP::OnDraw() const
 	}
 
 	return m_translate_state->OnDraw();
+}
+
+void NodeTranslateOP::InitTranslateState(ee0::WxStagePage& stage, const pt3::Viewport& vp)
+{
+	TranslateAxisState::Callback cb;
+	cb.is_need_draw = [&]() {
+		return !stage.GetSelection().IsEmpty();
+	};
+	cb.get_origin_transform = [&](sm::vec3& pos, sm::mat4& rot_mat) {
+		//sm::cube tot_aabb;
+		//m_selection.Traverse([&](const ee0::GameObjWithPos& opw)->bool
+		//{
+		//	auto aabb = opw.GetNode()->GetUniqueComp<n3::CompAABB>().GetAABB();
+		//	auto trans_aabb = aabb.Cube();
+		//	trans_aabb.Translate(aabb.Position());
+		//	tot_aabb.Combine(trans_aabb);
+		//	return false;
+		//});
+
+		//m_center = tot_aabb.Center();		
+
+		//////////////////////////////////////////////////////////////////////////
+
+		sm::vec3 center;
+		int count = 0;
+		stage.GetSelection().Traverse([&](const ee0::GameObjWithPos& opw)->bool
+		{
+			++count;
+			auto node = opw.GetNode();
+			auto aabb = opw.GetNode()->GetUniqueComp<n3::CompAABB>().GetAABB();
+			auto& ctrans = opw.GetNode()->GetUniqueComp<n3::CompTransform>();
+			rot_mat = sm::mat4(ctrans.GetAngle());
+			auto pos = ctrans.GetTransformMat() * aabb.Cube().Center();
+			center += pos;
+			return false;
+		});
+		center /= static_cast<float>(count);		
+		pos = center;
+	};
+	cb.translate = [&](const sm::vec3& offset) {
+		stage.GetSelection().Traverse([&](const ee0::GameObjWithPos& nwp)->bool
+		{
+#ifndef GAME_OBJ_ECS
+			auto& ctrans = nwp.GetNode()->GetUniqueComp<n3::CompTransform>();
+			ctrans.Translate(offset);
+#endif // GAME_OBJ_ECS
+			return true;
+		});		
+	};
+
+	assert(m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>());
+	auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
+
+	m_translate_state = std::make_shared<TranslateAxisState>(
+		p_cam, vp, m_sub_mgr, cb, TranslateAxisState::Config());
 }
 
 }

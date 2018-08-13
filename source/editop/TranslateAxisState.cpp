@@ -1,42 +1,35 @@
-#include "ee3/NodeTranslate3State.h"
+#include "ee3/TranslateAxisState.h"
 
 #include <ee0/SubjectMgr.h>
 #include <ee0/MessageID.h>
 
 #include <SM_Cube.h>
 #include <SM_Calc.h>
-#include <SM_Ray.h>
 #include <SM_RayIntersect.h>
-#include <painting2/PrimitiveDraw.h>
 #include <painting2/OrthoCamera.h>
-#include <painting3/PerspCam.h>
+#include <painting2/PrimitiveDraw.h>
 #include <painting3/Viewport.h>
 #include <painting3/PrimitiveDraw.h>
+#include <painting3/PerspCam.h>
 #ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
 #include <node3/CompAABB.h>
 #endif // GAME_OBJ_ECS
 
-namespace
-{
-
-static const float ARC_RADIUS = 5;
-static const float NODE_RADIUS = 5;
-
-}
-
 namespace ee3
 {
 
-NodeTranslate3State::NodeTranslate3State(const std::shared_ptr<pt0::Camera>& camera,
-	                                     const pt3::Viewport& vp,
-	                                     const ee0::SubjectMgrPtr& sub_mgr,
-	                                     const ee0::SelectionSet<ee0::GameObjWithPos>& selection)
+TranslateAxisState::TranslateAxisState(const std::shared_ptr<pt0::Camera>& camera,
+	                                   const pt3::Viewport& vp,
+	                                   const ee0::SubjectMgrPtr& sub_mgr,
+	                                   const Callback& cb, 
+	                                   const Config& cfg)
 	: ee0::EditOpState(camera)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
-	, m_selection(selection)
+	, m_cb(cb)
+	, m_cfg(cfg)
 	, m_cam2d(std::make_shared<pt2::OrthoCamera>())
 	, m_op_type(POINT_QUERY_NULL)
 {
@@ -46,7 +39,7 @@ NodeTranslate3State::NodeTranslate3State(const std::shared_ptr<pt0::Camera>& cam
 	m_cam2d->OnSize(m_vp.Width(), m_vp.Height());
 }
 
-bool NodeTranslate3State::OnMousePress(int x, int y)
+bool TranslateAxisState::OnMousePress(int x, int y)
 {
 	m_op_type = PointQuery(x, y);
 	if (m_op_type == POINT_QUERY_NULL) {
@@ -84,14 +77,14 @@ bool NodeTranslate3State::OnMousePress(int x, int y)
 	return true;
 }
 
-bool NodeTranslate3State::OnMouseRelease(int x, int y)
+bool TranslateAxisState::OnMouseRelease(int x, int y)
 {
 	m_op_type = POINT_QUERY_NULL;
 
 	return false;
 }
 
-bool NodeTranslate3State::OnMouseDrag(int x, int y)
+bool TranslateAxisState::OnMouseDrag(int x, int y)
 {
 	if (m_op_type == POINT_QUERY_NULL) {
 		return false;
@@ -107,16 +100,19 @@ bool NodeTranslate3State::OnMouseDrag(int x, int y)
 	return false;
 }
 
-bool NodeTranslate3State::OnActive(bool active)
+bool TranslateAxisState::OnActive(bool active)
 {
 	UpdateSelectionSetInfo();
 
 	return false;
 }
 
-bool NodeTranslate3State::OnDraw() const
+bool TranslateAxisState::OnDraw() const
 {
-	if (m_selection.IsEmpty()) {
+	//if (m_selection.IsEmpty()) {
+	//	return false;
+	//}
+	if (!m_cb.is_need_draw()) {
 		return false;
 	}
 
@@ -129,7 +125,7 @@ bool NodeTranslate3State::OnDraw() const
 	return false;
 }
 
-NodeTranslate3State::PointQueryType NodeTranslate3State::PointQuery(int x, int y) const
+TranslateAxisState::PointQueryType TranslateAxisState::PointQuery(int x, int y) const
 {
 	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 
@@ -137,24 +133,24 @@ NodeTranslate3State::PointQueryType NodeTranslate3State::PointQuery(int x, int y
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 	// x, red
 	auto pos2d = GetCtrlPos2D(cam_mat, AXIS_X);
-	if (sm::dis_pos_to_pos(pos2d, proj2d) < NODE_RADIUS) {
+	if (sm::dis_pos_to_pos(pos2d, proj2d) < m_cfg.node_radius) {
 		return POINT_QUERY_X;
 	}
 	// y, green
 	pos2d = GetCtrlPos2D(cam_mat, AXIS_Y);
-	if (sm::dis_pos_to_pos(pos2d, proj2d) < NODE_RADIUS) {
+	if (sm::dis_pos_to_pos(pos2d, proj2d) < m_cfg.node_radius) {
 		return POINT_QUERY_Y;
 	}
 	// z, blue
 	pos2d = GetCtrlPos2D(cam_mat, AXIS_Z);
-	if (sm::dis_pos_to_pos(pos2d, proj2d) < NODE_RADIUS) {
+	if (sm::dis_pos_to_pos(pos2d, proj2d) < m_cfg.node_radius) {
 		return POINT_QUERY_Z;
 	}
 
 	return POINT_QUERY_NULL;
 }
 
-void NodeTranslate3State::UpdateSelectionSetInfo()
+void TranslateAxisState::UpdateSelectionSetInfo()
 {
 	//sm::cube tot_aabb;
 	//m_selection.Traverse([&](const ee0::GameObjWithPos& opw)->bool
@@ -168,26 +164,28 @@ void NodeTranslate3State::UpdateSelectionSetInfo()
 
 	//m_center = tot_aabb.Center();
 
-	int count = 0;
-	m_center.Set(0, 0, 0);
-	m_selection.Traverse([&](const ee0::GameObjWithPos& opw)->bool
-	{
-		++count;
-		auto node = opw.GetNode();
-		auto aabb = node->GetUniqueComp<n3::CompAABB>().GetAABB();
-		auto& ctrans = node->GetUniqueComp<n3::CompTransform>();
-		m_rot_mat = sm::mat4(ctrans.GetAngle());
-		auto pos = ctrans.GetTransformMat() * aabb.Cube().Center();
-		m_center += pos;
-		return false;
-	});
-	m_center /= static_cast<float>(count);
+	m_cb.get_origin_transform(m_center, m_rot_mat);
+
+	//int count = 0;
+	//m_center.Set(0, 0, 0);
+	//m_selection.Traverse([&](const ee0::GameObjWithPos& opw)->bool
+	//{
+	//	++count;
+	//	auto node = opw.GetNode();
+	//	auto aabb = node->GetUniqueComp<n3::CompAABB>().GetAABB();
+	//	auto& ctrans = node->GetUniqueComp<n3::CompTransform>();
+	//	m_rot_mat = sm::mat4(ctrans.GetAngle());
+	//	auto pos = ctrans.GetTransformMat() * aabb.Cube().Center();
+	//	m_center += pos;
+	//	return false;
+	//});
+	//m_center /= static_cast<float>(count);
 
 	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 	m_center2d = m_vp.TransPosProj3ToProj2(m_center, cam_mat);
 }
 
-void NodeTranslate3State::Translate(const sm::vec2& start, const sm::vec2& end)
+void TranslateAxisState::Translate(const sm::vec2& start, const sm::vec2& end)
 {
 	if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
 	{
@@ -210,56 +208,58 @@ void NodeTranslate3State::Translate(const sm::vec2& start, const sm::vec2& end)
 			m_last_pos3 = cross;
 		}
 
-		m_selection.Traverse([&](const ee0::GameObjWithPos& nwp)->bool
-		{
-	#ifndef GAME_OBJ_ECS
-			auto& ctrans = nwp.GetNode()->GetUniqueComp<n3::CompTransform>();
-			ctrans.Translate(offset);
-	#endif // GAME_OBJ_ECS
-			return true;
-		});
+		m_cb.translate(offset);
+
+	//	m_selection.Traverse([&](const ee0::GameObjWithPos& nwp)->bool
+	//	{
+	//#ifndef GAME_OBJ_ECS
+	//		auto& ctrans = nwp.GetNode()->GetUniqueComp<n3::CompTransform>();
+	//		ctrans.Translate(offset);
+	//#endif // GAME_OBJ_ECS
+	//		return true;
+	//	});
 
 		m_center += offset;
 	}
 }
 
-void NodeTranslate3State::DrawEdges() const
+void TranslateAxisState::DrawEdges() const
 {
 	// axis
 	pt3::PrimitiveDraw::SetColor(0xff0000ff);
-	sm::vec3 pos_x = m_rot_mat * sm::vec3(ARC_RADIUS, 0, 0) + m_center;
+	sm::vec3 pos_x = m_rot_mat * sm::vec3(m_cfg.arc_radius, 0, 0) + m_center;
 	pt3::PrimitiveDraw::Line(m_center, pos_x);
 	pt3::PrimitiveDraw::SetColor(0xff00ff00);
-	sm::vec3 pos_y = m_rot_mat * sm::vec3(0, ARC_RADIUS, 0) + m_center;
+	sm::vec3 pos_y = m_rot_mat * sm::vec3(0, m_cfg.arc_radius, 0) + m_center;
 	pt3::PrimitiveDraw::Line(m_center, pos_y);
 	pt3::PrimitiveDraw::SetColor(0xffff0000);
-	sm::vec3 pos_z = m_rot_mat * sm::vec3(0, 0, -ARC_RADIUS) + m_center;
+	sm::vec3 pos_z = m_rot_mat * sm::vec3(0, 0, -m_cfg.arc_radius) + m_center;
 	pt3::PrimitiveDraw::Line(m_center, pos_z);
 }
 
-void NodeTranslate3State::DrawNodes() const
+void TranslateAxisState::DrawNodes() const
 {
 	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 	// x, red
 	auto pos2d = GetCtrlPos2D(cam_mat, AXIS_X);
 	pt2::PrimitiveDraw::SetColor(0xff0000ff);
-	pt2::PrimitiveDraw::Circle(nullptr, pos2d, NODE_RADIUS, true);
+	pt2::PrimitiveDraw::Circle(nullptr, pos2d, m_cfg.node_radius, true);
 	// y, green
 	pos2d = GetCtrlPos2D(cam_mat, AXIS_Y);
 	pt2::PrimitiveDraw::SetColor(0xff00ff00);
-	pt2::PrimitiveDraw::Circle(nullptr, pos2d, NODE_RADIUS, true);
+	pt2::PrimitiveDraw::Circle(nullptr, pos2d, m_cfg.node_radius, true);
 	// z, blue
 	pos2d = GetCtrlPos2D(cam_mat, AXIS_Z);
 	pt2::PrimitiveDraw::SetColor(0xffff0000);
-	pt2::PrimitiveDraw::Circle(nullptr, pos2d, NODE_RADIUS, true);
+	pt2::PrimitiveDraw::Circle(nullptr, pos2d, m_cfg.node_radius, true);
 }
 
-sm::vec2 NodeTranslate3State::GetCtrlPos2D(const sm::mat4& cam_mat, AxisNodeType type) const
+sm::vec2 TranslateAxisState::GetCtrlPos2D(const sm::mat4& cam_mat, AxisNodeType type) const
 {
 	return m_vp.TransPosProj3ToProj2(m_rot_mat * GetCtrlPos3D(type) + m_center, cam_mat);
 }
 
-sm::vec3 NodeTranslate3State::GetCtrlPos3D(AxisNodeType type) const
+sm::vec3 TranslateAxisState::GetCtrlPos3D(AxisNodeType type) const
 {
 	sm::vec3 pos;
 	switch (type)
@@ -268,13 +268,13 @@ sm::vec3 NodeTranslate3State::GetCtrlPos3D(AxisNodeType type) const
 		pos.Set(0, 0, 0);
 		break;
 	case AXIS_X:
-		pos.Set(ARC_RADIUS, 0, 0);
+		pos.Set(m_cfg.arc_radius, 0, 0);
 		break;
 	case AXIS_Y:
-		pos.Set(0, ARC_RADIUS, 0);
+		pos.Set(0, m_cfg.arc_radius, 0);
 		break;
 	case AXIS_Z:
-		pos.Set(0, 0, -ARC_RADIUS);
+		pos.Set(0, 0, -m_cfg.arc_radius);
 		break;
 	}
 	return pos;

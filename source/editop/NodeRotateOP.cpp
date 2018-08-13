@@ -92,6 +92,8 @@ void NodeRotateOP::InitRotateState(ee0::WxStagePage& stage,
 
 		//m_center = tot_aabb.Center();
 
+		//////////////////////////////////////////////////////////////////////////
+
 		sm::vec3 center;
 		int count = 0;
 		stage.GetSelection().Traverse([&](const ee0::GameObjWithPos& opw)->bool

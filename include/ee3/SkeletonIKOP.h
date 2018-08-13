@@ -14,10 +14,10 @@ namespace model { class ModelInstance; }
 namespace ee3
 {
 
-class EditSkeletonOP : public ee0::EditOP
+class SkeletonIKOP : public ee0::EditOP
 {
 public:
-	EditSkeletonOP(const std::shared_ptr<pt0::Camera>& camera,
+	SkeletonIKOP(const std::shared_ptr<pt0::Camera>& camera,
 		const pt3::Viewport& vp, const ee0::SubjectMgrPtr& sub_mgr);
 
 	virtual bool OnMouseLeftDown(int x, int y) override;
@@ -25,7 +25,6 @@ public:
 	virtual bool OnMouseMove(int x, int y) override;
 	virtual bool OnMouseDrag(int x, int y) override;
 
-	virtual bool OnActive() override;
 	virtual bool OnDraw() const override;
 
 	void SetModel(model::ModelInstance* model) {
@@ -33,8 +32,6 @@ public:
 	}
 
 private:
-	void InitRotateState();
-
 	int QueryJointByPos(int x, int y) const;
 
 private:
@@ -43,13 +40,11 @@ private:
 
 	std::shared_ptr<pt2::OrthoCamera> m_cam2d;
 
-	ee0::EditOpStatePtr m_rotate_state = nullptr;
-
 	model::ModelInstance* m_model = nullptr;
 
 	int m_selecting = -1;
 	int m_selected  = -1;
 
-}; // EditSkeletonOP
+}; // SkeletonIKOP
 
 }

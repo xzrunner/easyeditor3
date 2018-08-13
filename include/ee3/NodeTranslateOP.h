@@ -23,6 +23,10 @@ public:
 	virtual bool OnDraw() const override;
 
 private:
+	void InitTranslateState(ee0::WxStagePage& stage,
+		const pt3::Viewport& vp);
+
+private:
 	ee0::SubjectMgrPtr m_sub_mgr;
 
 	ee0::EditOpStatePtr m_translate_state = nullptr;
