@@ -1,21 +1,19 @@
 #pragma once
 
+#include "ee3/SkeletonOpImpl.h"
+
 #include <ee0/EditOP.h>
 #include <ee0/typedef.h>
 
 #include <SM_Plane.h>
-#include <model/SkeletalAnim.h>
+#include <SM_Matrix.h>
 
 #include <memory>
-
-namespace pt2 { class OrthoCamera; }
-namespace pt3 { class Viewport; }
-namespace model { class ModelInstance; }
 
 namespace ee3
 {
 
-class SkeletonIKOP : public ee0::EditOP
+class SkeletonIKOP : public ee0::EditOP, private SkeletonOpImpl
 {
 public:
 	SkeletonIKOP(const std::shared_ptr<pt0::Camera>& camera,
@@ -33,8 +31,6 @@ public:
 	}
 
 private:
-	int QueryJointByPos(int x, int y) const;
-
 	bool OneBone(int x, int y);
 	bool TwoBones(int x, int y);
 
@@ -44,16 +40,6 @@ private:
 		const sm::vec3& base, const sm::vec3& from, const sm::vec3& to);
 
 private:
-	const pt3::Viewport& m_vp;
-	ee0::SubjectMgrPtr   m_sub_mgr;
-
-	std::shared_ptr<pt2::OrthoCamera> m_cam2d;
-
-	model::ModelInstance* m_model = nullptr;
-
-	int m_selecting = -1;
-	int m_selected  = -1;
-
 	bool m_active = false;
 
 	// debug draw

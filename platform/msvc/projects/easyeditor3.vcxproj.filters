@@ -195,6 +195,9 @@
     <ClInclude Include="..\..\..\include\ee3\SkeletonIKOP.h">
       <Filter>editop\3.model</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\SkeletonOpImpl.h">
+      <Filter>editop\3.model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\editop\NodeRotateState.cpp">
@@ -309,6 +312,9 @@
       <Filter>editop\3.model</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\SkeletonIKOP.cpp">
+      <Filter>editop\3.model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\SkeletonOpImpl.cpp">
       <Filter>editop\3.model</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,20 +1,16 @@
 #pragma once
 
+#include "ee3/SkeletonOpImpl.h"
+
 #include <ee0/EditOP.h>
 #include <ee0/typedef.h>
 
-#include <model/SkeletalAnim.h>
-
 #include <memory>
-
-namespace pt2 { class OrthoCamera; }
-namespace pt3 { class Viewport; }
-namespace model { class ModelInstance; }
 
 namespace ee3
 {
 
-class SkeletonJointOP : public ee0::EditOP
+class SkeletonJointOP : public ee0::EditOP, private SkeletonOpImpl
 {
 public:
 	SkeletonJointOP(const std::shared_ptr<pt0::Camera>& camera,
@@ -39,21 +35,9 @@ private:
 	void InitRotateState();
 	void InitTranslateState();
 
-	int QueryJointByPos(int x, int y) const;
-
 private:
-	const pt3::Viewport& m_vp;
-	ee0::SubjectMgrPtr   m_sub_mgr;
-
-	std::shared_ptr<pt2::OrthoCamera> m_cam2d;
-
 	ee0::EditOpStatePtr m_rotate_state    = nullptr;
 	ee0::EditOpStatePtr m_translate_state = nullptr;
-
-	model::ModelInstance* m_model = nullptr;
-
-	int m_selecting = -1;
-	int m_selected  = -1;
 
 }; // SkeletonJointOP
 
