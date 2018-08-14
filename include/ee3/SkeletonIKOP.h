@@ -3,6 +3,7 @@
 #include <ee0/EditOP.h>
 #include <ee0/typedef.h>
 
+#include <SM_Plane.h>
 #include <model/SkeletalAnim.h>
 
 #include <memory>
@@ -34,6 +35,14 @@ public:
 private:
 	int QueryJointByPos(int x, int y) const;
 
+	bool OneBone(int x, int y);
+	bool TwoBones(int x, int y);
+
+	sm::Plane GetRotatePlane(const sm::mat4& world_mat,
+		const sm::vec3& pos, const sm::vec3& rot_axis = sm::vec3(0, 0, -1));
+	static float GetRotateAngle(const sm::mat4& world_mat,
+		const sm::vec3& base, const sm::vec3& from, const sm::vec3& to);
+
 private:
 	const pt3::Viewport& m_vp;
 	ee0::SubjectMgrPtr   m_sub_mgr;
@@ -44,6 +53,11 @@ private:
 
 	int m_selecting = -1;
 	int m_selected  = -1;
+
+	bool m_active = false;
+
+	// debug draw
+	sm::vec3 m_debug[3];
 
 }; // SkeletonIKOP
 
