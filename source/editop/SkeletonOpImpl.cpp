@@ -65,7 +65,7 @@ void SkeletonOpImpl::OnDraw() const
 	{
 		// point
 		auto p_pos = g_trans[i] * sm::vec3(0, 0, 0);
-		if (i == m_selecting) {
+		if (i == m_selecting || i == m_selected) {
 			// FIXME: set color will no use here, if not flush shader by call PointSize()
 			pt2::PrimitiveDraw::PointSize(NODE_DRAW_RADIUS * 2);
 			pt3::PrimitiveDraw::SetColor(0xff00ffff);
