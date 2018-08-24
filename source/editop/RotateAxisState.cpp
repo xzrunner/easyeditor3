@@ -82,7 +82,7 @@ bool RotateAxisState::OnActive(bool active)
 
 bool RotateAxisState::OnDraw() const
 {
-	if (m_active && !m_cb.is_need_draw()) {
+	if (!m_cb.is_need_draw()) {
 		return false;
 	}
 
@@ -102,17 +102,17 @@ RotateAxisState::PointQueryType RotateAxisState::PointQuery(int x, int y) const
 	auto proj2d = m_cam2d->TransPosScreenToProject(x, y,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 	// x, green
-	auto pos2d = m_vp.TransPosProj3ToProj2(m_rotate * sm::vec3(m_cfg.arc_radius, 0, 0), cam_mat);
+	auto pos2d = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(m_cfg.arc_radius, 0, 0), cam_mat);
 	if (sm::dis_pos_to_pos(pos2d, proj2d) < m_cfg.node_radius) {
 		return POINT_QUERY_Y;
 	}
 	// y, blue
-	pos2d = m_vp.TransPosProj3ToProj2(m_rotate * sm::vec3(0, m_cfg.arc_radius, 0), cam_mat);
+	pos2d = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(0, m_cfg.arc_radius, 0), cam_mat);
 	if (sm::dis_pos_to_pos(pos2d, proj2d) < m_cfg.node_radius) {
 		return POINT_QUERY_Z;
 	}
 	// z, red
-	pos2d = m_vp.TransPosProj3ToProj2(m_rotate * sm::vec3(0, 0, -m_cfg.arc_radius), cam_mat);
+	pos2d = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(0, 0, -m_cfg.arc_radius), cam_mat);
 	if (sm::dis_pos_to_pos(pos2d, proj2d) < m_cfg.node_radius) {
 		return POINT_QUERY_X;
 	}
@@ -122,10 +122,17 @@ RotateAxisState::PointQueryType RotateAxisState::PointQuery(int x, int y) const
 
 void RotateAxisState::UpdateSelectionSetInfo()
 {
-	m_cb.get_origin_transform(m_pos, m_rotate);
+	sm::mat4 wmat = m_cb.get_origin_wmat();
+
+	sm::vec3 trans, rotate, scale;
+	wmat.Decompose(trans, rotate, scale);
+
+	auto rot_mat = sm::mat4::Rotated(rotate.x, rotate.y, rotate.z);
+	auto trans_mat = sm::mat4::Translated(trans.x, trans.y, trans.z);
+	m_ori_wmat_no_scale = rot_mat * trans_mat;
 
 	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
-	m_pos2d = m_vp.TransPosProj3ToProj2(m_pos, cam_mat);
+	m_pos2d = m_vp.TransPosProj3ToProj2(trans, cam_mat);
 }
 
 void RotateAxisState::Rotate(const sm::vec2& start, const sm::vec2& end)
@@ -170,34 +177,34 @@ void RotateAxisState::DrawEdges() const
 
 	// axis
 	pt3::PrimitiveDraw::SetColor(0xff0000ff);
-	pt3::PrimitiveDraw::Line(m_rotate * sm::vec3(), m_rotate * sm::vec3(m_cfg.arc_radius, 0, 0));
+	pt3::PrimitiveDraw::Line(m_ori_wmat_no_scale * sm::vec3(), m_ori_wmat_no_scale * sm::vec3(m_cfg.arc_radius, 0, 0));
 	pt3::PrimitiveDraw::SetColor(0xff00ff00);
-	pt3::PrimitiveDraw::Line(m_rotate * sm::vec3(), m_rotate * sm::vec3(0, m_cfg.arc_radius, 0));
+	pt3::PrimitiveDraw::Line(m_ori_wmat_no_scale * sm::vec3(), m_ori_wmat_no_scale * sm::vec3(0, m_cfg.arc_radius, 0));
 	pt3::PrimitiveDraw::SetColor(0xffff0000);
-	pt3::PrimitiveDraw::Line(m_rotate * sm::vec3(), m_rotate * sm::vec3(0, 0, -m_cfg.arc_radius));
+	pt3::PrimitiveDraw::Line(m_ori_wmat_no_scale * sm::vec3(), m_ori_wmat_no_scale * sm::vec3(0, 0, -m_cfg.arc_radius));
 
 	// arc
 	pt3::PrimitiveDraw::SetColor(0xff0000ff);
-	pt3::PrimitiveDraw::Arc(sm::mat4::RotatedAxis(sm::vec3(0, 1, 0), SM_PI * 0.5f) * m_rotate, m_cfg.arc_radius, 0, SM_PI * 0.5f);
+	pt3::PrimitiveDraw::Arc(sm::mat4::RotatedAxis(sm::vec3(0, 1, 0), SM_PI * 0.5f) * m_ori_wmat_no_scale, m_cfg.arc_radius, 0, SM_PI * 0.5f);
 	pt3::PrimitiveDraw::SetColor(0xff00ff00);
-	pt3::PrimitiveDraw::Arc(sm::mat4::RotatedAxis(sm::vec3(1, 0, 0), - SM_PI * 0.5f) * m_rotate, m_cfg.arc_radius, 0, SM_PI * 0.5f);
+	pt3::PrimitiveDraw::Arc(sm::mat4::RotatedAxis(sm::vec3(1, 0, 0), - SM_PI * 0.5f) * m_ori_wmat_no_scale, m_cfg.arc_radius, 0, SM_PI * 0.5f);
 	pt3::PrimitiveDraw::SetColor(0xffff0000);
-	pt3::PrimitiveDraw::Arc(m_rotate, m_cfg.arc_radius, 0, SM_PI * 0.5f);
+	pt3::PrimitiveDraw::Arc(m_ori_wmat_no_scale, m_cfg.arc_radius, 0, SM_PI * 0.5f);
 }
 
 void RotateAxisState::DrawNodes() const
 {
 	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
 	// x, green
-	auto pos2d = m_vp.TransPosProj3ToProj2(m_rotate * sm::vec3(m_cfg.arc_radius, 0, 0), cam_mat);
+	auto pos2d = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(m_cfg.arc_radius, 0, 0), cam_mat);
 	pt2::PrimitiveDraw::SetColor(0xff00ff00);
 	pt2::PrimitiveDraw::Circle(nullptr, pos2d, m_cfg.node_radius, true);
 	// y, blue
-	pos2d = m_vp.TransPosProj3ToProj2(m_rotate * sm::vec3(0, m_cfg.arc_radius, 0), cam_mat);
+	pos2d = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(0, m_cfg.arc_radius, 0), cam_mat);
 	pt2::PrimitiveDraw::SetColor(0xffff0000);
 	pt2::PrimitiveDraw::Circle(nullptr, pos2d, m_cfg.node_radius, true);
 	// z, red
-	pos2d = m_vp.TransPosProj3ToProj2(m_rotate * sm::vec3(0, 0, - m_cfg.arc_radius), cam_mat);
+	pos2d = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(0, 0, - m_cfg.arc_radius), cam_mat);
 	pt2::PrimitiveDraw::SetColor(0xff0000ff);
 	pt2::PrimitiveDraw::Circle(nullptr, pos2d, m_cfg.node_radius, true);
 }

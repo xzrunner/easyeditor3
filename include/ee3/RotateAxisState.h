@@ -22,7 +22,7 @@ public:
 	struct Callback
 	{
 		std::function<bool()>                      is_need_draw;
-		std::function<void(sm::vec3&, sm::mat4&)>  get_origin_transform;
+		std::function<sm::mat4()>                  get_origin_wmat;
 		std::function<void(const sm::Quaternion&)> rotate;
 	};
 
@@ -77,9 +77,8 @@ private:
 
 	PointQueryType m_op_type;
 
-	sm::vec3 m_pos;
 	sm::vec2 m_pos2d;
-	sm::mat4 m_rotate;
+	sm::mat4 m_ori_wmat_no_scale;
 
 	bool m_active = true;
 

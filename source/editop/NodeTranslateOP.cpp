@@ -78,7 +78,7 @@ void NodeTranslateOP::InitTranslateState(ee0::WxStagePage& stage, const pt3::Vie
 	cb.is_need_draw = [&]() {
 		return !stage.GetSelection().IsEmpty();
 	};
-	cb.get_origin_transform = [&](sm::vec3& pos, sm::mat4& rot_mat) {
+	cb.get_origin_wmat = [&]()->sm::mat4 {
 		//sm::cube tot_aabb;
 		//m_selection.Traverse([&](const ee0::GameObjWithPos& opw)->bool
 		//{
@@ -89,11 +89,12 @@ void NodeTranslateOP::InitTranslateState(ee0::WxStagePage& stage, const pt3::Vie
 		//	return false;
 		//});
 
-		//m_center = tot_aabb.Center();		
+		//m_center = tot_aabb.Center();
 
 		//////////////////////////////////////////////////////////////////////////
 
 		sm::vec3 center;
+		sm::Quaternion angle;
 		int count = 0;
 		stage.GetSelection().Traverse([&](const ee0::GameObjWithPos& opw)->bool
 		{
@@ -101,13 +102,15 @@ void NodeTranslateOP::InitTranslateState(ee0::WxStagePage& stage, const pt3::Vie
 			auto node = opw.GetNode();
 			auto aabb = opw.GetNode()->GetUniqueComp<n3::CompAABB>().GetAABB();
 			auto& ctrans = opw.GetNode()->GetUniqueComp<n3::CompTransform>();
-			rot_mat = sm::mat4(ctrans.GetAngle());
+			angle = ctrans.GetAngle();
 			auto pos = ctrans.GetTransformMat() * aabb.Cube().Center();
 			center += pos;
 			return false;
 		});
-		center /= static_cast<float>(count);		
-		pos = center;
+		center /= static_cast<float>(count);
+		auto trans_mat = sm::mat4::Translated(center.x, center.y, center.z);
+		auto rot_mat = sm::mat4(angle);
+		return trans_mat * rot_mat;
 	};
 	cb.translate = [&](const sm::vec3& offset) {
 		stage.GetSelection().Traverse([&](const ee0::GameObjWithPos& nwp)->bool
@@ -117,7 +120,7 @@ void NodeTranslateOP::InitTranslateState(ee0::WxStagePage& stage, const pt3::Vie
 			ctrans.Translate(offset);
 #endif // GAME_OBJ_ECS
 			return true;
-		});		
+		});
 	};
 
 	assert(m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>());

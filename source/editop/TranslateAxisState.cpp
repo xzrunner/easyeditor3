@@ -23,7 +23,7 @@ namespace ee3
 TranslateAxisState::TranslateAxisState(const std::shared_ptr<pt0::Camera>& camera,
 	                                   const pt3::Viewport& vp,
 	                                   const ee0::SubjectMgrPtr& sub_mgr,
-	                                   const Callback& cb, 
+	                                   const Callback& cb,
 	                                   const Config& cfg)
 	: ee0::EditOpState(camera)
 	, m_vp(vp)
@@ -64,7 +64,7 @@ bool TranslateAxisState::OnMousePress(int x, int y)
 	m_last_pos2 = GetCtrlPos2D(cam_mat, axis);
 	m_first_pos2 = m_last_pos2;
 
-	m_last_pos3 = m_rot_mat * GetCtrlPos3D(axis) + m_center;
+	m_last_pos3 = m_ori_wmat_no_scale * GetCtrlPos3D(axis);
 
 	m_first_pos2 = m_last_pos2;
 
@@ -164,7 +164,16 @@ void TranslateAxisState::UpdateSelectionSetInfo()
 
 	//m_center = tot_aabb.Center();
 
-	m_cb.get_origin_transform(m_center, m_rot_mat);
+	sm::mat4 wmat = m_cb.get_origin_wmat();
+
+	sm::vec3 trans, rotate, scale;
+	wmat.Decompose(trans, rotate, scale);
+
+	m_ori_wmat_scale = sm::mat4::Scaled(scale.x, scale.y, scale.z);
+
+	auto rot_mat = sm::mat4::Rotated(rotate.x, rotate.y, rotate.z);
+	auto trans_mat = sm::mat4::Translated(trans.x, trans.y, trans.z);
+	m_ori_wmat_no_scale = rot_mat * trans_mat;
 
 	//int count = 0;
 	//m_center.Set(0, 0, 0);
@@ -180,9 +189,6 @@ void TranslateAxisState::UpdateSelectionSetInfo()
 	//	return false;
 	//});
 	//m_center /= static_cast<float>(count);
-
-	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
-	m_center2d = m_vp.TransPosProj3ToProj2(m_center, cam_mat);
 }
 
 void TranslateAxisState::Translate(const sm::vec2& start, const sm::vec2& end)
@@ -208,7 +214,8 @@ void TranslateAxisState::Translate(const sm::vec2& start, const sm::vec2& end)
 			m_last_pos3 = cross;
 		}
 
-		m_cb.translate(offset);
+		// world pos to local
+		m_cb.translate(m_ori_wmat_scale.Inverted() * offset);
 
 	//	m_selection.Traverse([&](const ee0::GameObjWithPos& nwp)->bool
 	//	{
@@ -219,22 +226,23 @@ void TranslateAxisState::Translate(const sm::vec2& start, const sm::vec2& end)
 	//		return true;
 	//	});
 
-		m_center += offset;
+		m_ori_wmat_no_scale = sm::mat4::Translated(offset.x, offset.y, offset.z) * m_ori_wmat_no_scale;
 	}
 }
 
 void TranslateAxisState::DrawEdges() const
 {
 	// axis
+	auto center = m_ori_wmat_no_scale * sm::vec3(0, 0, 0);
 	pt3::PrimitiveDraw::SetColor(0xff0000ff);
-	sm::vec3 pos_x = m_rot_mat * sm::vec3(m_cfg.arc_radius, 0, 0) + m_center;
-	pt3::PrimitiveDraw::Line(m_center, pos_x);
+	sm::vec3 pos_x = m_ori_wmat_no_scale * sm::vec3(m_cfg.arc_radius, 0, 0);
+	pt3::PrimitiveDraw::Line(center, pos_x);
 	pt3::PrimitiveDraw::SetColor(0xff00ff00);
-	sm::vec3 pos_y = m_rot_mat * sm::vec3(0, m_cfg.arc_radius, 0) + m_center;
-	pt3::PrimitiveDraw::Line(m_center, pos_y);
+	sm::vec3 pos_y = m_ori_wmat_no_scale * sm::vec3(0, m_cfg.arc_radius, 0);
+	pt3::PrimitiveDraw::Line(center, pos_y);
 	pt3::PrimitiveDraw::SetColor(0xffff0000);
-	sm::vec3 pos_z = m_rot_mat * sm::vec3(0, 0, -m_cfg.arc_radius) + m_center;
-	pt3::PrimitiveDraw::Line(m_center, pos_z);
+	sm::vec3 pos_z = m_ori_wmat_no_scale * sm::vec3(0, 0, -m_cfg.arc_radius);
+	pt3::PrimitiveDraw::Line(center, pos_z);
 }
 
 void TranslateAxisState::DrawNodes() const
@@ -256,7 +264,7 @@ void TranslateAxisState::DrawNodes() const
 
 sm::vec2 TranslateAxisState::GetCtrlPos2D(const sm::mat4& cam_mat, AxisNodeType type) const
 {
-	return m_vp.TransPosProj3ToProj2(m_rot_mat * GetCtrlPos3D(type) + m_center, cam_mat);
+	return m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * GetCtrlPos3D(type), cam_mat);
 }
 
 sm::vec3 TranslateAxisState::GetCtrlPos3D(AxisNodeType type) const

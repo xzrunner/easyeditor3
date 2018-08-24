@@ -79,7 +79,7 @@ void NodeRotateOP::InitRotateState(ee0::WxStagePage& stage,
 	cb.is_need_draw = [&]() {
 		return !stage.GetSelection().IsEmpty();
 	};
-	cb.get_origin_transform = [&](sm::vec3& pos, sm::mat4& mat) {
+	cb.get_origin_wmat = [&]()->sm::mat4 {
 		//sm::cube tot_aabb;
 		//m_selection.Traverse([&](const ee0::GameObjWithPos& opw)->bool
 		//{
@@ -95,17 +95,22 @@ void NodeRotateOP::InitRotateState(ee0::WxStagePage& stage,
 		//////////////////////////////////////////////////////////////////////////
 
 		sm::vec3 center;
+		sm::Quaternion angle;
 		int count = 0;
 		stage.GetSelection().Traverse([&](const ee0::GameObjWithPos& opw)->bool
 		{
 			++count;
 			auto aabb = opw.GetNode()->GetUniqueComp<n3::CompAABB>().GetAABB();
+			auto& ctrans = opw.GetNode()->GetUniqueComp<n3::CompTransform>();
+			angle = ctrans.GetAngle();
 			auto pos = opw.GetNode()->GetUniqueComp<n3::CompTransform>().GetTransformMat() * aabb.Cube().Center();
 			center += pos;
 			return false;
 		});
 		center /= static_cast<float>(count);
-		pos = center;
+		auto trans_mat = sm::mat4::Translated(center.x, center.y, center.z);
+		auto rot_mat = sm::mat4(angle);
+		return trans_mat * rot_mat;
 	};
 	cb.rotate = [&](const sm::Quaternion& delta) {
 		stage.GetSelection().Traverse([&](const ee0::GameObjWithPos& nwp)->bool

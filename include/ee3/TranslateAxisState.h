@@ -22,9 +22,9 @@ class TranslateAxisState : public ee0::EditOpState
 public:
 	struct Callback
 	{
-		std::function<bool()>                      is_need_draw;
-		std::function<void(sm::vec3&, sm::mat4&)>  get_origin_transform;
-		std::function<void(const sm::vec3&)>       translate;
+		std::function<bool()>                is_need_draw;
+		std::function<sm::mat4()>            get_origin_wmat;
+		std::function<void(const sm::vec3&)> translate;
 	};
 
 	struct Config
@@ -96,12 +96,8 @@ private:
 
 	PointQueryType m_op_type;
 
-	// selection set info
-
-	sm::vec3 m_center;
-	sm::vec2 m_center2d;
-
-	sm::mat4 m_rot_mat;
+	sm::mat4 m_ori_wmat_scale;
+	sm::mat4 m_ori_wmat_no_scale;
 
 }; // TranslateAxisState
 

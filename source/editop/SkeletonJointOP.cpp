@@ -25,19 +25,20 @@ SkeletonJointOP::SkeletonJointOP(const std::shared_ptr<pt0::Camera>& camera,
 
 bool SkeletonJointOP::OnMouseLeftDown(int x, int y)
 {
-	if (ee0::EditOP::OnMouseLeftDown(x, y)) {
-		return true;
-	}
-
 	if (m_op_state->OnMousePress(x, y))
 	{
 		return true;
 	}
 	else
 	{
+		if (ee0::EditOP::OnMouseLeftDown(x, y)) {
+			return true;
+		}
+
 		int selected = QueryJointByPos(*m_camera, x, y);
-		m_op_state->OnActive(selected > 0);
-		if (selected != m_selected) {
+		if (selected >= 0 && selected != m_selected)
+		{
+			m_op_state->OnActive(true);
 			m_selected = selected;
 			m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 		}
@@ -128,12 +129,15 @@ void SkeletonJointOP::InitRotateState()
 	cb.is_need_draw = [&]() {
 		return m_selected >= 0;
 	};
-	cb.get_origin_transform = [&](sm::vec3& pos, sm::mat4& mat) {
+	cb.get_origin_wmat = [&]()->const sm::mat4& {
 		if (m_model && m_selecting >= 0)
 		{
 			auto& g_trans = m_model->GetGlobalTrans();
-			pos = g_trans[m_selecting] * sm::vec3(0, 0, 0);
-			mat = g_trans[m_selecting];
+			return g_trans[m_selecting];
+		}
+		else
+		{
+			return sm::mat4();
 		}
 	};
 	cb.rotate = [&](const sm::Quaternion& delta) {
@@ -158,13 +162,15 @@ void SkeletonJointOP::InitTranslateState()
 	cb.is_need_draw = [&]() {
 		return m_selected >= 0;
 	};
-	cb.get_origin_transform = [&](sm::vec3& pos, sm::mat4& rot_mat) {
+	cb.get_origin_wmat = [&]()->const sm::mat4& {
 		if (m_model && m_selecting >= 0)
 		{
 			auto& g_trans = m_model->GetGlobalTrans();
-			pos = g_trans[m_selecting] * sm::vec3(0, 0, 0);
-			rot_mat = g_trans[m_selecting];
-			rot_mat.x[12] = rot_mat.x[13] = rot_mat.x[14] = 0;
+			return g_trans[m_selecting];
+		}
+		else
+		{
+			return sm::mat4();
 		}
 	};
 	cb.translate = [&](const sm::vec3& offset) {
