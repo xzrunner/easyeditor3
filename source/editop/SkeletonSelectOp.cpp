@@ -1,4 +1,7 @@
-#include "ee3/SkeletonOpImpl.h"
+#include "ee3/SkeletonSelectOp.h"
+
+#include <ee0/SubjectMgr.h>
+#include <ee0/MessageID.h>
 
 #include <SM_Calc.h>
 #include <model/SkeletalAnim.h>
@@ -21,41 +24,20 @@ static const float NODE_QUERY_RADIUS = 20;
 namespace ee3
 {
 
-SkeletonOpImpl::SkeletonOpImpl(const pt3::Viewport& vp,
-	                           const ee0::SubjectMgrPtr& sub_mgr)
-	: m_vp(vp)
+SkeletonSelectOp::SkeletonSelectOp(const std::shared_ptr<pt0::Camera>& camera,
+	                               const pt3::Viewport& vp,
+	                               const ee0::SubjectMgrPtr& sub_mgr)
+	: ee0::EditOP(camera)
+	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 	, m_cam2d(std::make_shared<pt2::OrthoCamera>())
 {
 }
 
-int SkeletonOpImpl::QueryJointByPos(const pt0::Camera& cam, int x, int y) const
+bool SkeletonSelectOp::OnDraw() const
 {
 	if (!m_model) {
-		return -1;
-	}
-
-	auto pos = m_cam2d->TransPosScreenToProject(x, y,
-		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
-	auto cam_mat = cam.GetModelViewMat() * cam.GetProjectionMat();
-
-	auto& g_trans = m_model->GetGlobalTrans();
-	auto& bones = (static_cast<::model::SkeletalAnim*>(m_model->GetModel()->ext.get())->GetAllNodes());
-	for (int i = 0, n = bones.size(); i < n; ++i)
-	{
-		auto b_pos = g_trans[i] * sm::vec3(0, 0, 0);
-		auto p = m_vp.TransPosProj3ToProj2(b_pos, cam_mat);
-		if (sm::dis_pos_to_pos(p, pos) < NODE_QUERY_RADIUS) {
-			return i;
-		}
-	}
-	return -1;
-}
-
-void SkeletonOpImpl::OnDraw() const
-{
-	if (!m_model) {
-		return;
+		return false;
 	}
 
 	auto& bones = (static_cast<::model::SkeletalAnim*>(m_model->GetModel()->ext.get())->GetAllNodes());
@@ -84,6 +66,41 @@ void SkeletonOpImpl::OnDraw() const
 			pt3::PrimitiveDraw::Line(p_pos, c_pos);
 		}
 	}
+
+	return false;
+}
+
+void SkeletonSelectOp::SetSelected(int selected)
+{
+	m_selected = selected;
+	m_selecting = m_selected;
+
+	OnActive();
+
+	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+}
+
+int SkeletonSelectOp::QueryJointByPos(const pt0::Camera& cam, int x, int y) const
+{
+	if (!m_model) {
+		return -1;
+	}
+
+	auto pos = m_cam2d->TransPosScreenToProject(x, y,
+		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
+	auto cam_mat = cam.GetModelViewMat() * cam.GetProjectionMat();
+
+	auto& g_trans = m_model->GetGlobalTrans();
+	auto& bones = (static_cast<::model::SkeletalAnim*>(m_model->GetModel()->ext.get())->GetAllNodes());
+	for (int i = 0, n = bones.size(); i < n; ++i)
+	{
+		auto b_pos = g_trans[i] * sm::vec3(0, 0, 0);
+		auto p = m_vp.TransPosProj3ToProj2(b_pos, cam_mat);
+		if (sm::dis_pos_to_pos(p, pos) < NODE_QUERY_RADIUS) {
+			return i;
+		}
+	}
+	return -1;
 }
 
 }

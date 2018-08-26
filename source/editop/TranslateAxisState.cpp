@@ -102,7 +102,9 @@ bool TranslateAxisState::OnMouseDrag(int x, int y)
 
 bool TranslateAxisState::OnActive(bool active)
 {
-	UpdateSelectionSetInfo();
+	if (active) {
+		UpdateSelectionSetInfo();
+	}
 
 	return false;
 }

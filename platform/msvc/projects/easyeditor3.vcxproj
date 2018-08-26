@@ -26,9 +26,10 @@
     <ClInclude Include="..\..\..\include\ee3\MeshRayIntersect.h" />
     <ClInclude Include="..\..\..\include\ee3\MeshSelectBaseOP.h" />
     <ClInclude Include="..\..\..\include\ee3\MeshTranslateBaseOP.h" />
+    <ClInclude Include="..\..\..\include\ee3\MessageID.h" />
     <ClInclude Include="..\..\..\include\ee3\PolyBuildState.h" />
     <ClInclude Include="..\..\..\include\ee3\PolyTranslateState.h" />
-    <ClInclude Include="..\..\..\include\ee3\SkeletonOpImpl.h" />
+    <ClInclude Include="..\..\..\include\ee3\SkeletonSelectOp.h" />
     <ClInclude Include="..\..\..\include\ee3\SkeletonIKOP.h" />
     <ClInclude Include="..\..\..\include\ee3\SkeletonJointOP.h" />
     <ClInclude Include="..\..\..\include\ee3\RotateAxisState.h" />
@@ -50,6 +51,7 @@
     <ClInclude Include="..\..\..\include\ee3\NodeSelectOP.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeTranslateState.h" />
     <ClInclude Include="..\..\..\include\ee3\Serializer.h" />
+    <ClInclude Include="..\..\..\include\ee3\WxSkeletalTreeCtrl.h" />
     <ClInclude Include="..\..\..\include\ee3\WxStageCanvas.h" />
     <ClInclude Include="..\..\..\include\ee3\WxStageDropTarget.h" />
     <ClInclude Include="..\..\..\include\ee3\WxTransformCtrl.h" />
@@ -69,7 +71,7 @@
     <ClCompile Include="..\..\..\source\editop\MeshRayIntersect.cpp" />
     <ClCompile Include="..\..\..\source\editop\PolyBuildState.cpp" />
     <ClCompile Include="..\..\..\source\editop\PolyTranslateState.cpp" />
-    <ClCompile Include="..\..\..\source\editop\SkeletonOpImpl.cpp" />
+    <ClCompile Include="..\..\..\source\editop\SkeletonSelectOp.cpp" />
     <ClCompile Include="..\..\..\source\editop\SkeletonIKOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\SkeletonJointOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\RotateAxisState.cpp" />
@@ -92,6 +94,7 @@
     <ClCompile Include="..\..\..\source\tools\Serializer.cpp" />
     <ClCompile Include="..\..\..\source\view\WxCompTransformPanel.cpp" />
     <ClCompile Include="..\..\..\source\view\WxLibGeoPage.cpp" />
+    <ClCompile Include="..\..\..\source\view\WxSkeletalTreeCtrl.cpp" />
     <ClCompile Include="..\..\..\source\view\WxStageCanvas.cpp" />
     <ClCompile Include="..\..\..\source\view\WxStageDropTarget.cpp" />
   </ItemGroup>

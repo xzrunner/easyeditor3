@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ee3/SkeletonOpImpl.h"
+#include "ee3/SkeletonSelectOp.h"
 
 #include <ee0/EditOP.h>
 #include <ee0/typedef.h>
@@ -10,7 +10,7 @@
 namespace ee3
 {
 
-class SkeletonJointOP : public ee0::EditOP, private SkeletonOpImpl
+class SkeletonJointOP : public SkeletonSelectOp
 {
 public:
 	SkeletonJointOP(const std::shared_ptr<pt0::Camera>& camera,
@@ -24,9 +24,7 @@ public:
 	virtual bool OnActive() override;
 	virtual bool OnDraw() const override;
 
-	void SetModel(model::ModelInstance* model) {
-		m_model = model;
-	}
+
 
 	void ChangeToOpRotate();
 	void ChangeToOpTranslate();

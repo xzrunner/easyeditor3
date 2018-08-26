@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ee0/typedef.h>
+#include <ee0/EditOP.h>
 
 #include <memory>
 
@@ -12,16 +13,23 @@ namespace pt3 { class Viewport; }
 namespace ee3
 {
 
-class SkeletonOpImpl
+class SkeletonSelectOp : public ee0::EditOP
 {
 public:
-	SkeletonOpImpl(const pt3::Viewport& vp,
-		const ee0::SubjectMgrPtr& sub_mgr);
+	SkeletonSelectOp(const std::shared_ptr<pt0::Camera>& camera,
+		const pt3::Viewport& vp, const ee0::SubjectMgrPtr& sub_mgr);
 
+	virtual bool OnDraw() const override;
+
+	void SetModel(model::ModelInstance* model) {
+		m_model = model;
+	}
+
+	void SetSelected(int selected);
+
+protected:
 	int QueryJointByPos(const pt0::Camera& cam,
 		int x, int y) const;
-
-	void OnDraw() const;
 
 protected:
 	const pt3::Viewport& m_vp;
@@ -34,6 +42,6 @@ protected:
 	int m_selecting = -1;
 	int m_selected = -1;
 
-}; // SkeletonOpImpl
+}; // SkeletonSelectOp
 
 }

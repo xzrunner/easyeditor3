@@ -1,9 +1,6 @@
 #pragma once
 
-#include "ee3/SkeletonOpImpl.h"
-
-#include <ee0/EditOP.h>
-#include <ee0/typedef.h>
+#include "ee3/SkeletonSelectOp.h"
 
 #include <SM_Plane.h>
 #include <SM_Matrix.h>
@@ -13,7 +10,7 @@
 namespace ee3
 {
 
-class SkeletonIKOP : public ee0::EditOP, private SkeletonOpImpl
+class SkeletonIKOP : public SkeletonSelectOp
 {
 public:
 	SkeletonIKOP(const std::shared_ptr<pt0::Camera>& camera,
@@ -25,10 +22,6 @@ public:
 	virtual bool OnMouseDrag(int x, int y) override;
 
 	virtual bool OnDraw() const override;
-
-	void SetModel(model::ModelInstance* model) {
-		m_model = model;
-	}
 
 private:
 	bool OneBone(int x, int y);

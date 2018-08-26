@@ -14,8 +14,7 @@ namespace ee3
 SkeletonJointOP::SkeletonJointOP(const std::shared_ptr<pt0::Camera>& camera,
 	                           const pt3::Viewport& vp,
 	                           const ee0::SubjectMgrPtr& sub_mgr)
-	: ee0::EditOP(camera)
-	, SkeletonOpImpl(vp, sub_mgr)
+	: SkeletonSelectOp(camera, vp, sub_mgr)
 {
 	InitRotateState();
 	InitTranslateState();
@@ -104,7 +103,7 @@ bool SkeletonJointOP::OnDraw() const
 		return true;
 	}
 
-	SkeletonOpImpl::OnDraw();
+	SkeletonSelectOp::OnDraw();
 
 	if (m_op_state->OnDraw()) {
 		return true;
@@ -129,7 +128,7 @@ void SkeletonJointOP::InitRotateState()
 	cb.is_need_draw = [&]() {
 		return m_selected >= 0;
 	};
-	cb.get_origin_wmat = [&]()->const sm::mat4& {
+	cb.get_origin_wmat = [&]()->sm::mat4 {
 		if (m_model && m_selecting >= 0)
 		{
 			auto& g_trans = m_model->GetGlobalTrans();
@@ -162,7 +161,7 @@ void SkeletonJointOP::InitTranslateState()
 	cb.is_need_draw = [&]() {
 		return m_selected >= 0;
 	};
-	cb.get_origin_wmat = [&]()->const sm::mat4& {
+	cb.get_origin_wmat = [&]()->sm::mat4 {
 		if (m_model && m_selecting >= 0)
 		{
 			auto& g_trans = m_model->GetGlobalTrans();

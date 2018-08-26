@@ -28,8 +28,7 @@ namespace ee3
 SkeletonIKOP::SkeletonIKOP(const std::shared_ptr<pt0::Camera>& camera,
 	                       const pt3::Viewport& vp,
 	                       const ee0::SubjectMgrPtr& sub_mgr)
-	: ee0::EditOP(camera)
-	, SkeletonOpImpl(vp, sub_mgr)
+	: SkeletonSelectOp(camera, vp, sub_mgr)
 {
 }
 
@@ -102,7 +101,7 @@ bool SkeletonIKOP::OnDraw() const
 		return false;
 	}
 
-	SkeletonOpImpl::OnDraw();
+	SkeletonSelectOp::OnDraw();
 
 	//// debug draw
 	//pt2::PrimitiveDraw::LineWidth(3);
