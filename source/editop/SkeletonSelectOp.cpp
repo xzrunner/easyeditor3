@@ -40,30 +40,52 @@ bool SkeletonSelectOp::OnDraw() const
 		return false;
 	}
 
+	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
+
 	auto& bones = (static_cast<::model::SkeletalAnim*>(m_model->GetModel()->ext.get())->GetAllNodes());
 
 	auto& g_trans = m_model->GetGlobalTrans();
+
+	std::vector<sm::vec2> pos2;
+	pos2.reserve(g_trans.size());
+	for (auto& t : g_trans)
+	{
+		auto p3 = t * sm::vec3(0, 0, 0);
+		auto p2 = m_vp.TransPosProj3ToProj2(p3, cam_mat);
+		pos2.push_back(p2);
+	}
+
 	for (int i = 0, n = bones.size(); i < n; ++i)
 	{
+		auto& p_pos2 = pos2[i];
+
 		// point
-		auto p_pos = g_trans[i] * sm::vec3(0, 0, 0);
 		if (i == m_selecting || i == m_selected) {
 			// FIXME: set color will no use here, if not flush shader by call PointSize()
 			pt2::PrimitiveDraw::PointSize(NODE_DRAW_RADIUS * 2);
-			pt3::PrimitiveDraw::SetColor(0xff00ffff);
+			pt2::PrimitiveDraw::SetColor(0xff00ffff);
 		} else {
 			pt2::PrimitiveDraw::PointSize(NODE_DRAW_RADIUS);
-			pt3::PrimitiveDraw::SetColor(0xffffff00);
+			pt2::PrimitiveDraw::SetColor(0xffffff00);
 		}
-		pt3::PrimitiveDraw::Point(p_pos);
+		pt2::PrimitiveDraw::Point(nullptr, p_pos2);
 
 		// edge
-		pt2::PrimitiveDraw::LineWidth(3);
+		pt2::PrimitiveDraw::LineWidth(2);
 		for (auto& child : bones[i]->children)
 		{
-			auto c_pos = g_trans[child] * sm::vec3(0, 0, 0);
-			pt3::PrimitiveDraw::SetColor(0xffff00ff);
-			pt3::PrimitiveDraw::Line(p_pos, c_pos);
+			auto& c_pos2 = pos2[child];
+
+			auto dir = (c_pos2 - p_pos2).Normalized();
+			float len = sm::dis_pos_to_pos(c_pos2, p_pos2) * 0.05f;
+			auto p_pos2_l = sm::rotate_vector_right_angle(dir, true) * len + p_pos2;
+			auto p_pos2_r = sm::rotate_vector_right_angle(dir, false) * len + p_pos2;
+			std::vector<sm::vec2> triangle = {
+				p_pos2_l, p_pos2_r, c_pos2
+			};
+
+			pt2::PrimitiveDraw::SetColor(0xffff00ff);
+			pt2::PrimitiveDraw::Polyline(nullptr, triangle, true);
 		}
 	}
 
