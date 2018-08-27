@@ -4,6 +4,7 @@
 
 #include <ee0/SubjectMgr.h>
 #include <ee0/MessageID.h>
+#include <ee3/MsgHelper.h>
 
 #include <model/ModelInstance.h>
 #include <painting3/PerspCam.h>
@@ -40,6 +41,8 @@ bool SkeletonJointOP::OnMouseLeftDown(int x, int y)
 			m_op_state->OnActive(true);
 			m_selected = selected;
 			m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+
+			ee3::MsgHelper::SelectSkeletalJoint(*m_sub_mgr, m_selected);
 		}
 	}
 

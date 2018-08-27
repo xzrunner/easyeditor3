@@ -14,6 +14,9 @@ class WxSkeletalTreeCtrl : public wxTreeCtrl, public ee0::Observer
 {
 public:
 	WxSkeletalTreeCtrl(wxWindow* parent, const ee0::SubjectMgrPtr& sub_mgr);
+	virtual ~WxSkeletalTreeCtrl();
+
+	virtual void OnNotify(uint32_t msg, const ee0::VariantSet& variants) override;
 
 	void LoadFromSkeletal(const ::model::SkeletalAnim& skeletal);
 

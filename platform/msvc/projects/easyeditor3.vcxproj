@@ -27,6 +27,7 @@
     <ClInclude Include="..\..\..\include\ee3\MeshSelectBaseOP.h" />
     <ClInclude Include="..\..\..\include\ee3\MeshTranslateBaseOP.h" />
     <ClInclude Include="..\..\..\include\ee3\MessageID.h" />
+    <ClInclude Include="..\..\..\include\ee3\MsgHelper.h" />
     <ClInclude Include="..\..\..\include\ee3\PolyBuildState.h" />
     <ClInclude Include="..\..\..\include\ee3\PolyTranslateState.h" />
     <ClInclude Include="..\..\..\include\ee3\SkeletonSelectOp.h" />
@@ -58,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\dataset\CameraMgr.cpp" />
+    <ClCompile Include="..\..\..\source\dataset\MsgHelper.cpp" />
     <ClCompile Include="..\..\..\source\editop\BrushEdge.cpp" />
     <ClCompile Include="..\..\..\source\editop\CameraDriveOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\CameraFlyOP.cpp" />

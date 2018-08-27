@@ -1,5 +1,6 @@
 #include "ee3/WxSkeletalTreeCtrl.h"
 #include "ee3/MessageID.h"
+#include "ee3/MsgHelper.h"
 
 #include <ee0/SubjectMgr.h>
 
@@ -13,10 +14,36 @@ END_EVENT_TABLE()
 
 WxSkeletalTreeCtrl::WxSkeletalTreeCtrl(wxWindow* parent, const ee0::SubjectMgrPtr& sub_mgr)
 	: wxTreeCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-	wxTR_EDIT_LABELS | wxTR_MULTIPLE | wxTR_NO_LINES | wxTR_DEFAULT_STYLE)
+	wxTR_EDIT_LABELS | wxTR_SINGLE | wxTR_NO_LINES | wxTR_DEFAULT_STYLE)
 	, m_sub_mgr(sub_mgr)
 {
 	Bind(wxEVT_TREE_SEL_CHANGED, &WxSkeletalTreeCtrl::OnSelChanged, this, GetId());
+
+	m_sub_mgr->RegisterObserver(ee3::MSG_SKELETAL_TREE_ON_SELECT, this);
+}
+
+WxSkeletalTreeCtrl::~WxSkeletalTreeCtrl()
+{
+	m_sub_mgr->UnregisterObserver(ee3::MSG_SKELETAL_TREE_ON_SELECT, this);
+}
+
+void WxSkeletalTreeCtrl::OnNotify(uint32_t msg, const ee0::VariantSet& variants)
+{
+	switch (msg)
+	{
+	case ee3::MSG_SKELETAL_TREE_ON_SELECT:
+		{
+			int joint_id = variants.GetVariant("joint_id").m_val.l;
+			for (auto& i : m_items)
+			{
+				if (i.m_node_id == joint_id) {
+					SelectItem(i.GetId());
+					break;
+				}
+			}
+		}
+	break;
+	}
 }
 
 void WxSkeletalTreeCtrl::LoadFromSkeletal(const ::model::SkeletalAnim& skeletal)
@@ -59,15 +86,7 @@ void WxSkeletalTreeCtrl::OnSelChanged(wxTreeEvent& event)
 	}
 
 	auto pdata = (Item*)GetItemData(id);
-
-	ee0::VariantSet vars;
-
-	ee0::Variant var_joint;
-	var_joint.m_type = ee0::VT_INT;
-	var_joint.m_val.l = pdata->m_node_id;
-	vars.SetVariant("joint_id", var_joint);
-
-	m_sub_mgr->NotifyObservers(MSG_SKELETAL_TREE_ON_SELECT, vars);
+	MsgHelper::SelectSkeletalJoint(*m_sub_mgr, pdata->m_node_id);
 }
 
 }

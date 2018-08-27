@@ -2,6 +2,7 @@
 
 #include <ee0/SubjectMgr.h>
 #include <ee0/MessageID.h>
+#include <ee3/MsgHelper.h>
 
 #include <SM_Calc.h>
 #include <SM_Ray.h>
@@ -44,6 +45,8 @@ bool SkeletonIKOP::OnMouseLeftDown(int x, int y)
 	if (selected != m_selected) {
 		m_selected = selected;
 		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+
+		ee3::MsgHelper::SelectSkeletalJoint(*m_sub_mgr, m_selected);
 	}
 
 	return false;
