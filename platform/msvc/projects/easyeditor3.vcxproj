@@ -52,6 +52,7 @@
     <ClInclude Include="..\..\..\include\ee3\NodeSelectOP.h" />
     <ClInclude Include="..\..\..\include\ee3\NodeTranslateState.h" />
     <ClInclude Include="..\..\..\include\ee3\Serializer.h" />
+    <ClInclude Include="..\..\..\include\ee3\WxMaterialPreview.h" />
     <ClInclude Include="..\..\..\include\ee3\WxSkeletalTreeCtrl.h" />
     <ClInclude Include="..\..\..\include\ee3\WxStageCanvas.h" />
     <ClInclude Include="..\..\..\include\ee3\WxStageDropTarget.h" />
@@ -96,6 +97,7 @@
     <ClCompile Include="..\..\..\source\tools\Serializer.cpp" />
     <ClCompile Include="..\..\..\source\view\WxCompTransformPanel.cpp" />
     <ClCompile Include="..\..\..\source\view\WxLibGeoPage.cpp" />
+    <ClCompile Include="..\..\..\source\view\WxMaterialPreview.cpp" />
     <ClCompile Include="..\..\..\source\view\WxSkeletalTreeCtrl.cpp" />
     <ClCompile Include="..\..\..\source\view\WxStageCanvas.cpp" />
     <ClCompile Include="..\..\..\source\view\WxStageDropTarget.cpp" />
