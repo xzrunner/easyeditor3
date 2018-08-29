@@ -151,7 +151,7 @@ void WxStageCanvas::DrawForeground() const
 	DrawNodes();
 }
 
-void WxStageCanvas::DrawNodes(n3::RenderParams::DrawType type) const
+void WxStageCanvas::DrawNodes(pt3::RenderParams::DrawType type) const
 {
 	ee0::VariantSet vars;
 	ee0::Variant var;
@@ -159,7 +159,7 @@ void WxStageCanvas::DrawNodes(n3::RenderParams::DrawType type) const
 	var.m_val.l = ee0::WxStagePage::TRAV_DRAW;
 	vars.SetVariant("type", var);
 
-	n3::RenderParams params;
+	pt3::RenderParams params;
 	params.mt = m_camera->GetModelViewMat();
 	params.type = type;
 

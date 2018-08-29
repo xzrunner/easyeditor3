@@ -6,7 +6,7 @@
 
 #include <painting0/Camera.h>
 #include <painting3/Viewport.h>
-#include <node3/RenderSystem.h>
+#include <painting3/RenderSystem.h>
 
 namespace ee0 { class WxLibraryPanel; class RenderContext; class WxStagePage; }
 
@@ -34,7 +34,7 @@ protected:
 	virtual void DrawBackground() const;
 	virtual void DrawForeground() const;
 
-	void DrawNodes(n3::RenderParams::DrawType type = n3::RenderParams::DRAW_MESH) const;
+	void DrawNodes(pt3::RenderParams::DrawType type = pt3::RenderParams::DRAW_MESH) const;
 
 protected:
 	ee0::WxStagePage* m_stage;
