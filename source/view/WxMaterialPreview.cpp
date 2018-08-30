@@ -3,14 +3,11 @@
 #include <ee0/RenderContext.h>
 
 #include <unirender/RenderContext.h>
-#include <painting3/Material.h>
 #include <painting3/RenderSystem.h>
 #include <painting3/PerspCam.h>
 #include <painting3/Blackboard.h>
 #include <painting3/WindowContext.h>
 #include <facade/RenderContext.h>
-
-#include <painting3/PrimitiveDraw.h>
 
 #include <wx/sizer.h>
 
@@ -21,9 +18,14 @@ WxMaterialPreview::WxMaterialPreview(wxWindow* parent, const sm::ivec2& size)
 	: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(size.x, size.y))
 	, m_edit_impl(this, m_sub_mgr)
 {
-	m_canvas = std::make_unique<Canvas>(this, m_edit_impl);
+	m_canvas = std::make_unique<Canvas>(this, m_edit_impl, m_material);
 
 	Bind(wxEVT_SIZE, &WxMaterialPreview::OnSize, this, GetId());
+}
+
+void WxMaterialPreview::RefreshCanvas()
+{
+	m_canvas->SetDirty();
 }
 
 void WxMaterialPreview::OnSize(wxSizeEvent& event)
@@ -35,8 +37,9 @@ void WxMaterialPreview::OnSize(wxSizeEvent& event)
 // class WxMaterialPreview::Canvas
 //////////////////////////////////////////////////////////////////////////
 
-WxMaterialPreview::Canvas::Canvas(wxWindow* parent, ee0::EditPanelImpl& edit_impl)
+WxMaterialPreview::Canvas::Canvas(wxWindow* parent, ee0::EditPanelImpl& edit_impl, const pt3::Material& material)
 	: ee0::WxStageCanvas(parent, edit_impl, std::make_shared<pt3::PerspCam>(sm::vec3(0, 2, -2), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0)), nullptr, nullptr, HAS_3D)
+	, m_material(material)
 {
 }
 
@@ -68,12 +71,9 @@ void WxMaterialPreview::Canvas::OnDrawSprites() const
 	}
 	wc->SetModelView(m_camera->GetModelViewMat());
 
-	pt3::Material mat;
-	mat.ambient = sm::vec3(1, 0, 0);
-	mat.shininess = 150;
 	pt3::RenderParams params;
 	params.mt = sm::mat4::Translated(0, 0, 2);
-	pt3::RenderSystem::Instance()->DrawMaterial(mat, params);
+	pt3::RenderSystem::Instance()->DrawMaterial(m_material, params);
 }
 
 }
