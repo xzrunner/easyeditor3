@@ -18,7 +18,7 @@
 #else
 #include <es/EntityFactory.h>
 #endif // GAME_OBJ_ECS
-#include <sx/StringHelper.h>
+#include <cpputil/StringHelper.h>
 
 #include <boost/filesystem.hpp>
 
@@ -35,7 +35,7 @@ WxStageDropTarget::WxStageDropTarget(ECS_WORLD_PARAM ee0::WxLibraryPanel* librar
 void WxStageDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& text)
 {
 	std::vector<std::string> keys;
-	sx::StringHelper::Split(text.ToStdString().c_str(), ",", keys);
+	cpputil::StringHelper::Split(text.ToStdString().c_str(), ",", keys);
 
 	if (keys.size() <= 1) {
 		return;
