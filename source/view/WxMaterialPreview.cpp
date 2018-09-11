@@ -16,8 +16,10 @@ namespace ee3
 {
 
 WxMaterialPreview::WxMaterialPreview(wxWindow* parent, const sm::ivec2& size,
+	                                 const ee0::SubjectMgrPtr& sub_mgr,
 	                                 const ee0::RenderContext* rc)
 	: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(size.x, size.y))
+	, m_sub_mgr(sub_mgr)
 	, m_edit_impl(this, m_sub_mgr)
 {
 	m_canvas = std::make_unique<Canvas>(this, m_edit_impl, rc, m_sub_mgr, m_material);

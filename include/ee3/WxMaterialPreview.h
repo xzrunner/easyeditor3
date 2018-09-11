@@ -18,7 +18,8 @@ class WxMaterialPreview : public wxPanel
 {
 public:
 	WxMaterialPreview(wxWindow* parent, const sm::ivec2& size,
-		const ee0::RenderContext* rc);
+		const ee0::SubjectMgrPtr& sub_mgr, const ee0::RenderContext* rc);
+
 
 	pt3::Material& GetMaterial() { return m_material; }
 
@@ -53,7 +54,7 @@ private:
 	}; // Canvas
 
 private:
-	ee0::SubjectMgrPtr      m_sub_mgr = std::make_shared<ee0::SubjectMgr>();
+	ee0::SubjectMgrPtr      m_sub_mgr = nullptr;
 	ee0::EditPanelImpl      m_edit_impl;
 	std::unique_ptr<Canvas> m_canvas = nullptr;
 
