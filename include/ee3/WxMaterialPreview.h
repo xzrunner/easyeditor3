@@ -20,10 +20,11 @@ public:
 	WxMaterialPreview(wxWindow* parent, const sm::ivec2& size,
 		const ee0::SubjectMgrPtr& sub_mgr, const ee0::RenderContext* rc);
 
-
 	pt3::Material& GetMaterial() { return m_material; }
 
 	void RefreshCanvas();
+
+	auto& GetCanvas() const { return m_canvas; }
 
 private:
 	void OnSize(wxSizeEvent& event);
