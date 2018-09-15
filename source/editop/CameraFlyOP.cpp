@@ -5,12 +5,17 @@
 
 #include <painting3/PerspCam.h>
 
+#include <Windows.h>
+//#include <WinUser.h>
+#include <wx/window.h>
+
 namespace ee3
 {
 
-CameraFlyOP::CameraFlyOP(const std::shared_ptr<pt0::Camera>& camera,
+CameraFlyOP::CameraFlyOP(wxWindow* wnd, const std::shared_ptr<pt0::Camera>& camera,
 	                     const ee0::SubjectMgrPtr& sub_mgr)
 	: CameraMoveOP(camera, sub_mgr)
+	, m_wnd(wnd)
 	, m_sub_mgr(sub_mgr)
 {
 	m_last_pos.MakeInvalid();
@@ -18,6 +23,8 @@ CameraFlyOP::CameraFlyOP(const std::shared_ptr<pt0::Camera>& camera,
 
 bool CameraFlyOP::OnMouseMove(int x, int y)
 {
+	ShowCursor(0);
+
 	if (CameraMoveOP::OnMouseMove(x, y)) {
 		return true;
 	}
@@ -42,6 +49,12 @@ bool CameraFlyOP::OnMouseMove(int x, int y)
 
 		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 	}
+
+	// force set cursor to center
+	auto sz = m_wnd->GetSize();
+	x = sz.x * 0.5f;
+	y = sz.y * 0.5f;
+	SetCursorPos(x + m_wnd->GetScreenPosition().x, y + m_wnd->GetScreenPosition().y);
 
 	m_last_pos.Set(x, y);
 
