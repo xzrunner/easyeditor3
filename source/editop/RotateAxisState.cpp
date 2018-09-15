@@ -97,7 +97,7 @@ bool RotateAxisState::OnDraw() const
 
 RotateAxisState::PointQueryType RotateAxisState::PointQuery(int x, int y) const
 {
-	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
+	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
 
 	auto proj2d = m_cam2d->TransPosScreenToProject(x, y,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
@@ -131,13 +131,13 @@ void RotateAxisState::UpdateSelectionSetInfo()
 	auto trans_mat = sm::mat4::Translated(trans.x, trans.y, trans.z);
 	m_ori_wmat_no_scale = rot_mat * trans_mat;
 
-	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
+	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
 	m_pos2d = m_vp.TransPosProj3ToProj2(trans, cam_mat);
 }
 
 void RotateAxisState::Rotate(const sm::vec2& start, const sm::vec2& end)
 {
-	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
+	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
 	auto raidus = m_vp.TransPosProj3ToProj2(sm::vec3(m_cfg.arc_radius, 0, 0), cam_mat);
 	float angle = atan(sm::dis_pos_to_pos(start, end) / raidus.Length());
 	if ((start - m_pos2d).Cross(end - m_pos2d) < 0) {
@@ -194,7 +194,7 @@ void RotateAxisState::DrawEdges() const
 
 void RotateAxisState::DrawNodes() const
 {
-	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
+	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
 	// x, green
 	auto pos2d = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(m_cfg.arc_radius, 0, 0), cam_mat);
 	pt2::PrimitiveDraw::SetColor(0xff00ff00);

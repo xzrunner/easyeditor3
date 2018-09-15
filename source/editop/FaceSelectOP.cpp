@@ -54,7 +54,7 @@ quake::BrushFacePtr FaceSelectOP::QueryByPos(int x, int y) const
 	auto pos = m_cam2d->TransPosScreenToProject(x, y,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 
-	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
+	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
 	for (auto& f : brush->faces) {
 		auto center = CalcFaceCenter(*f, cam_mat);
 		if (sm::dis_pos_to_pos(center, pos) < NODE_QUERY_RADIUS) {
@@ -78,7 +78,7 @@ void FaceSelectOP::QueryByRect(const sm::irect& rect, std::vector<quake::BrushFa
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 	sm::rect s_rect(r_min, r_max);
 
-	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
+	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
 	for (auto& f : brush->faces) {
 		auto center = CalcFaceCenter(*f, cam_mat);
 		if (sm::is_point_in_rect(center, s_rect)) {

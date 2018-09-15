@@ -60,7 +60,7 @@ bool TranslateAxisState::OnMousePress(int x, int y)
 		break;
 	}
 
-	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
+	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
 	m_last_pos2 = GetCtrlPos2D(cam_mat, axis);
 	m_first_pos2 = m_last_pos2;
 
@@ -129,7 +129,7 @@ bool TranslateAxisState::OnDraw() const
 
 TranslateAxisState::PointQueryType TranslateAxisState::PointQuery(int x, int y) const
 {
-	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
+	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
 
 	auto proj2d = m_cam2d->TransPosScreenToProject(x, y,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
@@ -249,7 +249,7 @@ void TranslateAxisState::DrawEdges() const
 
 void TranslateAxisState::DrawNodes() const
 {
-	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
+	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
 	// x, red
 	auto pos2d = GetCtrlPos2D(cam_mat, AXIS_X);
 	pt2::PrimitiveDraw::SetColor(0xff0000ff);

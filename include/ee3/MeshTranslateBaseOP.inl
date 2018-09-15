@@ -95,7 +95,7 @@ bool MeshTranslateBaseOP<T>::OnMouseLeftDown(int x, int y)
 
 	auto pos = m_cam2d->TransPosScreenToProject(x, y,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
-	auto cam_mat = m_camera->GetModelViewMat() * m_camera->GetProjectionMat();
+	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
 	m_selection.Traverse([&](const T& data)->bool {
 		return !QueryByPos(pos, data, cam_mat);
 	});

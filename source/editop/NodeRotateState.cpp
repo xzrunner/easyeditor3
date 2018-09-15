@@ -88,7 +88,7 @@ sm::vec2 NodeRotateState::TransPos3ProjectToScreen(const sm::vec3& proj) const
 		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 
 		// todo proj mat
-		return m_vp.TransPos3ProjectToScreen(/*m_mat_projection * */m_camera->GetModelViewMat() * proj, *p_cam);
+		return m_vp.TransPos3ProjectToScreen(/*m_mat_projection * */m_camera->GetViewMat() * proj, *p_cam);
 	}
 	else
 	{

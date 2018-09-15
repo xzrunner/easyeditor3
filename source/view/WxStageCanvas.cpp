@@ -61,7 +61,7 @@ void WxStageCanvas::OnNotify(uint32_t msg, const ee0::VariantSet& variants)
 
 //sm::vec2 WxStageCanvas::TransPos3ProjectToScreen(const sm::vec3& proj) const
 //{
-//	return m_viewport.TransPos3ProjectToScreen(m_mat_projection * GetCamera().GetModelViewMat() * proj, m_camera);
+//	return m_viewport.TransPos3ProjectToScreen(m_mat_projection * GetCamera().GetViewMat() * proj, m_camera);
 //}
 //
 //sm::vec3 WxStageCanvas::TransPos3ScreenToDir(const sm::vec2& screen) const
@@ -106,13 +106,13 @@ void WxStageCanvas::OnDrawSprites() const
 	if (!wc) {
 		return;
 	}
-	wc->SetModelView(m_camera->GetModelViewMat());
+	wc->SetView(m_camera->GetViewMat());
 
 	if (m_has2d)
 	{
 		auto& wc = pt2::Blackboard::Instance()->GetWindowContext();
 		if (wc) {
-			wc->SetModelView(sm::vec2(0, 0), 1);
+			wc->SetView(sm::vec2(0, 0), 1);
 		}
 	}
 
@@ -160,7 +160,7 @@ void WxStageCanvas::DrawNodes(pt3::RenderParams::DrawType type) const
 	vars.SetVariant("type", var);
 
 	pt3::RenderParams params;
-	params.mt = m_camera->GetModelViewMat();
+	params.mt = m_camera->GetViewMat();
 	params.type = type;
 
 	m_stage->Traverse([&](const ee0::GameObj& obj)->bool {
