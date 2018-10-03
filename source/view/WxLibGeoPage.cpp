@@ -32,7 +32,7 @@ void WxLibGeoPage::LoadDefaultSymbol()
 void WxLibGeoPage::LoadGeometric(const std::string& name)
 {
 	std::string filepath = name + ".param";
-	m_list->Insert(std::make_shared<ee0::WxLibraryItem>(filepath));
+	m_list->Insert(std::make_shared<ee0::WxLibraryItem>(filepath, name));
 }
 
 }
