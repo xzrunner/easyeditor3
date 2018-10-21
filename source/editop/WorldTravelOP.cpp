@@ -15,7 +15,7 @@ namespace ee3
 
 static const float MOUSE_SENSITIVITY = 0.3f;
 
-WorldTravelOP::WorldTravelOP(const std::shared_ptr<pt0::Camera>& camera, 
+WorldTravelOP::WorldTravelOP(const std::shared_ptr<pt0::Camera>& camera,
 	                         const pt3::Viewport& vp,
 	                         const ee0::SubjectMgrPtr& sub_mgr)
 	: ee0::EditOP(camera)

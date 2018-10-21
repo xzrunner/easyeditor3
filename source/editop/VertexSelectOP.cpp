@@ -24,7 +24,7 @@ void VertexSelectOP::DrawImpl(const quake::MapBrush& brush, const sm::mat4& cam_
 		pt2::PrimitiveDraw::Circle(nullptr, pos, NODE_DRAW_RADIUS, true);
 	}
 	// selecting
-	if (m_selecting) 
+	if (m_selecting)
 	{
 		pt2::PrimitiveDraw::SetColor(SELECT_COLOR);
 		auto pos = m_vp.TransPosProj3ToProj2(m_selecting->pos * model::MapLoader::VERTEX_SCALE, cam_mat);

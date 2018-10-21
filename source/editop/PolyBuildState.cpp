@@ -14,7 +14,7 @@ namespace ee3
 namespace mesh
 {
 
-PolyBuildState::PolyBuildState(const std::shared_ptr<pt0::Camera>& camera, 
+PolyBuildState::PolyBuildState(const std::shared_ptr<pt0::Camera>& camera,
 	                           const pt3::Viewport& vp,
 	                           const ee0::SubjectMgrPtr& sub_mgr)
 	: ee0::EditOpState(camera)

@@ -511,7 +511,7 @@ bool PolyTranslateState::IsMoveAnyDirection() const
 
 void PolyTranslateState::CalcTranslatePlane(const sm::Ray& ray, sm::Plane& plane) const
 {
-	if (m_move_fixed_xz) 
+	if (m_move_fixed_xz)
 	{
 		float doty = ray.dir.Dot(sm::vec3(0, 1, 0));
 		if (doty > 0) {

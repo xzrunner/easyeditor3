@@ -112,13 +112,13 @@ bool PolySelectOP::OnMouseLeftUp(int x, int y)
 	// select
 	if (!PRESS_SELECT)
 	{
-		if (m_first_pos == sm::ivec2(x, y)) 
+		if (m_first_pos == sm::ivec2(x, y))
 		{
 			SelectByPos(m_first_pos, m_selected);
 			m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 		}
 	}
-	
+
 	m_first_pos.MakeInvalid();
 
 	return false;

@@ -10,7 +10,7 @@ namespace ee3
 
 class NodeSelectOP : public ee0::NodeSelectOP
 {
-public:	
+public:
 	NodeSelectOP(const std::shared_ptr<pt0::Camera>& camera,
 		ee0::WxStagePage& stage, const pt3::Viewport& vp);
 

@@ -24,7 +24,7 @@ private:
 		const std::string& filepath);
 
 	sm::vec3 TransPosScrToProj3d(int x, int y) const;
-	
+
 private:
 	ee0::WxLibraryPanel* m_library;
 	ee0::WxStagePage*    m_stage;

@@ -15,7 +15,7 @@ namespace mesh
 class PolyBuildState : public ee0::EditOpState
 {
 public:
-	PolyBuildState(const std::shared_ptr<pt0::Camera>& camera, 
+	PolyBuildState(const std::shared_ptr<pt0::Camera>& camera,
 		const pt3::Viewport& vp, const ee0::SubjectMgrPtr& sub_mgr);
 
 	virtual bool OnKeyPress(int key_code) override;

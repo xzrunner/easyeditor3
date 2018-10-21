@@ -11,7 +11,7 @@ namespace ee3
 class CamRotateState : public ee0::EditOpState
 {
 public:
-	CamRotateState(const std::shared_ptr<pt0::Camera>& camera, 
+	CamRotateState(const std::shared_ptr<pt0::Camera>& camera,
 		const ee0::SubjectMgrPtr& sub_mgr);
 
 	virtual bool OnMousePress(int x, int y) override;

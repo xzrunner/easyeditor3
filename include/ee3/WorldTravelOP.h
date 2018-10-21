@@ -11,7 +11,7 @@ namespace ee3
 class WorldTravelOP : public ee0::EditOP
 {
 public:
-	WorldTravelOP(const std::shared_ptr<pt0::Camera>& camera, 
+	WorldTravelOP(const std::shared_ptr<pt0::Camera>& camera,
 		const pt3::Viewport& vp, const ee0::SubjectMgrPtr& sub_mgr);
 
 	virtual bool OnKeyDown(int key_code) override;

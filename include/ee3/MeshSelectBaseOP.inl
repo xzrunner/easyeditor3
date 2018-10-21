@@ -133,7 +133,7 @@ bool MeshSelectBaseOP<T>::OnDraw() const
 	}
 
 	auto brush = m_base_selected.GetBrush();
-	if (!brush || m_base_selected.brush_idx < 0) 
+	if (!brush || m_base_selected.brush_idx < 0)
 	{
 		if (m_draw_state_enable) {
 			m_draw_state->OnDraw();
@@ -159,17 +159,17 @@ void MeshSelectBaseOP<T>::SelectByPos(const sm::ivec2& pos)
 		m_draw_state_enable = false;
 	}
 
-	if (!selected) 
+	if (!selected)
 	{
 		m_selected.Clear();
-	} 
-	else 
+	}
+	else
 	{
-		if (m_selected.IsEmpty()) 
+		if (m_selected.IsEmpty())
 		{
 			m_selected.Add(selected);
-		} 
-		else 
+		}
+		else
 		{
 			if (wxGetKeyState(WXK_CONTROL))
 			{
@@ -197,7 +197,7 @@ void MeshSelectBaseOP<T>::SelectByRect(const sm::irect& rect)
 	QueryByRect(rect, selection);
 	if (wxGetKeyState(WXK_CONTROL))
 	{
-		for (auto& v : selection) 
+		for (auto& v : selection)
 		{
 			if (m_selected.IsExist(v)) {
 				m_selected.Remove(v);

@@ -13,7 +13,7 @@
 namespace ee3
 {
 
-NodeRotateState::NodeRotateState(const std::shared_ptr<pt0::Camera>& camera, 
+NodeRotateState::NodeRotateState(const std::shared_ptr<pt0::Camera>& camera,
 	                             const pt3::Viewport& vp,
 	                             const ee0::SubjectMgrPtr& sub_mgr,
 	                             const ee0::SelectionSet<ee0::GameObjWithPos>& selection)
@@ -71,7 +71,7 @@ void NodeRotateState::Rotate(const sm::ivec2& start, const sm::ivec2& end)
 			auto cam_mat = p_cam->GetRotateMat().Inverted();
 			start3 = cam_mat * start3;
 			end3   = cam_mat * end3;
-		
+
    			sm::Quaternion delta = sm::Quaternion::CreateFromVectors(start3, end3);
 			ctrans.Rotate(-delta);
 	#endif // GAME_OBJ_ECS

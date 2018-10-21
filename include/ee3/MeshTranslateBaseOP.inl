@@ -141,7 +141,7 @@ bool MeshTranslateBaseOP<T>::OnMouseDrag(int x, int y)
 			sm::vec3 n = p_cam->GetPos() - m_last_pos3;
 			n.y = 0;
 			n.Normalize();
-			
+
 			// n.x * m_last_pos3.x + n.z * m_last_pos3.z + d = 0
 			plane.Build(n, -m_last_pos3.x * n.x - m_last_pos3.z * n.z);
 		}

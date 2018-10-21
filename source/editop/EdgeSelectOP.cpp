@@ -6,8 +6,8 @@ namespace mesh
 {
 
 EdgeSelectOP::EdgeSelectOP(const std::shared_ptr<pt0::Camera>& camera,
-	                       const pt3::Viewport& vp, 
-	                       const ee0::SubjectMgrPtr& sub_mgr, 
+	                       const pt3::Viewport& vp,
+	                       const ee0::SubjectMgrPtr& sub_mgr,
 	                       const MeshPointQuery::Selected& selected)
 	: MeshSelectBaseOP<BrushEdge>(camera, vp, sub_mgr, selected)
 {
@@ -17,7 +17,7 @@ void EdgeSelectOP::DrawImpl(const quake::MapBrush& brush, const sm::mat4& cam_ma
 {
 	// all edges
 	pt2::PrimitiveDraw::SetColor(UNSELECT_COLOR);
-	for (auto& face : brush.faces) 
+	for (auto& face : brush.faces)
 	{
 		auto& vs = face->vertices;
 		for (int i = 0, n = vs.size(); i < n; ++i) {
@@ -29,7 +29,7 @@ void EdgeSelectOP::DrawImpl(const quake::MapBrush& brush, const sm::mat4& cam_ma
 		}
 	}
 	// selecting
-	if (m_selecting) 
+	if (m_selecting)
 	{
 		m_selecting.Project(m_vp, cam_mat,
 			[&](const sm::vec2& b, const sm::vec2& e, const sm::vec2& mid) {

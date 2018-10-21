@@ -9,7 +9,7 @@
 namespace ee3
 {
 
-CamZoomState::CamZoomState(const std::shared_ptr<pt0::Camera>& camera, 
+CamZoomState::CamZoomState(const std::shared_ptr<pt0::Camera>& camera,
 	                       const pt3::Viewport& vp,
 	                       const ee0::SubjectMgrPtr& sub_mgr)
 	: ee0::EditOpState(camera)
@@ -32,7 +32,7 @@ bool CamZoomState::OnMouseWheelRotation(int x, int y, int direction)
 		} else {
 			p_cam->Move(dir, -p_cam->GetDistance() * OFFSET);
 		}
-	
+
 		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 	}
 

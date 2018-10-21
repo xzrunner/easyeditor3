@@ -15,7 +15,7 @@
 namespace ee3
 {
 
-NodeTranslateState::NodeTranslateState(const std::shared_ptr<pt0::Camera>& camera, 
+NodeTranslateState::NodeTranslateState(const std::shared_ptr<pt0::Camera>& camera,
 	                                   const pt3::Viewport& vp,
 	                                   const ee0::SubjectMgrPtr& sub_mgr,
 	                                   const ee0::SelectionSet<ee0::GameObjWithPos>& selection)

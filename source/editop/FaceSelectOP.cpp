@@ -19,7 +19,7 @@ FaceSelectOP::FaceSelectOP(const std::shared_ptr<pt0::Camera>& camera, const pt3
 void FaceSelectOP::DrawImpl(const quake::MapBrush& brush, const sm::mat4& cam_mat) const
 {
 	// all nodes
-	for (auto& f : brush.faces) 
+	for (auto& f : brush.faces)
 	{
 		auto center = CalcFaceCenter(*f, cam_mat);
 		DrawFace(*f, LIGHT_UNSELECT_COLOR, cam_mat);
@@ -27,14 +27,14 @@ void FaceSelectOP::DrawImpl(const quake::MapBrush& brush, const sm::mat4& cam_ma
 		pt2::PrimitiveDraw::Circle(nullptr, center, NODE_DRAW_RADIUS, true);
 	}
 	// selecting
-	if (m_selecting) 
+	if (m_selecting)
 	{
 		pt2::PrimitiveDraw::SetColor(SELECT_COLOR);
 		auto center = CalcFaceCenter(*m_selecting, cam_mat);
 		pt2::PrimitiveDraw::Circle(nullptr, center, NODE_QUERY_RADIUS, false);
 	}
 	// selected
-	m_selected.Traverse([&](const quake::BrushFacePtr& face)->bool 
+	m_selected.Traverse([&](const quake::BrushFacePtr& face)->bool
 	{
 		DrawFace(*face, LIGHT_SELECT_COLOR, cam_mat);
 		pt2::PrimitiveDraw::SetColor(SELECT_COLOR);

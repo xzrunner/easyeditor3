@@ -42,7 +42,7 @@ bool PolyArrangeOP::OnKeyDown(int key_code)
 	}
 
 	// create FacePushPullState
-	if (key_code == WXK_SHIFT && 
+	if (key_code == WXK_SHIFT &&
 		!m_mouse_pressing &&
 		m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
 	{
@@ -122,7 +122,7 @@ bool PolyArrangeOP::OnMouseDrag(int x, int y)
 	}
 
 	if (m_op_state != m_poly_build_state &&
-		!m_selected.poly) 
+		!m_selected.poly)
 	{
 		ChangeEditOpState(m_poly_build_state);
 		m_op_state->OnMousePress(m_first_pos2.x, m_first_pos2.y);
