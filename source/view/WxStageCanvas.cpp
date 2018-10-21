@@ -119,6 +119,8 @@ void WxStageCanvas::OnDrawSprites() const
 	DrawBackground();
 	DrawForeground();
 
+	ur_rc.SetCull(ur::CULL_DISABLE);
+
 	auto edit_op = m_stage->GetImpl().GetEditOP();
 	if (edit_op) {
 		edit_op->OnDraw();

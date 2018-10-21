@@ -102,6 +102,8 @@ void WxMaterialPreview::Canvas::OnDrawSprites() const
 	pt3::RenderParams params;
 	params.mt = m_camera->GetViewMat();
 	pt3::RenderSystem::Instance()->DrawMaterial(m_material, params);
+
+	ur_rc.SetCull(ur::CULL_DISABLE);
 }
 
 }
