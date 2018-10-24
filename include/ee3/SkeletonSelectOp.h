@@ -26,6 +26,7 @@ public:
 	}
 
 	void SetSelected(int selected);
+	int GetSelected() const { return m_selected; }
 
 protected:
 	int QueryJointByPos(const pt0::Camera& cam,
