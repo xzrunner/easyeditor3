@@ -6,6 +6,7 @@
 #include <SM_Matrix.h>
 
 #include <memory>
+#include <vector>
 
 namespace ee3
 {
@@ -24,6 +25,10 @@ public:
 	virtual bool OnDraw() const override;
 
 private:
+	virtual void OnModelChanged() override;
+
+	void InitTPoseTrans();
+
 	bool OneBone(int x, int y);
 	bool TwoBones(int x, int y);
 
@@ -34,6 +39,9 @@ private:
 
 private:
 	bool m_active = false;
+
+	std::vector<sm::mat4> m_tpose_local_trans;
+	std::vector<sm::mat4> m_tpose_world_trans;
 
 	// debug draw
 	sm::vec3 m_debug[3];

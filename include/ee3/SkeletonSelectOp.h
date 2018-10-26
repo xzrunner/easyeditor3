@@ -23,6 +23,7 @@ public:
 
 	void SetModel(model::ModelInstance* model) {
 		m_model = model;
+		OnModelChanged();
 	}
 
 	void SetSelected(int selected);
@@ -31,6 +32,9 @@ public:
 protected:
 	int QueryJointByPos(const pt0::Camera& cam,
 		int x, int y) const;
+
+private:
+	virtual void OnModelChanged() {}
 
 protected:
 	const pt3::Viewport& m_vp;
