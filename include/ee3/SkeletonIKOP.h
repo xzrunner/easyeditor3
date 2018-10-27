@@ -43,9 +43,6 @@ private:
 	std::vector<sm::mat4> m_tpose_local_trans;
 	std::vector<sm::mat4> m_tpose_world_trans;
 
-	// debug draw
-	sm::vec3 m_debug[3];
-
 }; // SkeletonIKOP
 
 }

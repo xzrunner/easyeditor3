@@ -9,15 +9,43 @@
 #include <SM_RayIntersect.h>
 #include <model/Model.h>
 #include <model/ModelInstance.h>
+#include <tessellation/Painter.h>
 #include <painting2/OrthoCamera.h>
+#include <painting2/RenderSystem.h>
 #include <painting3/Viewport.h>
 #include <painting3/PerspCam.h>
+
+#include <array>
+
+#define DEBUG_DRAW
 
 namespace
 {
 
 static const float NODE_DRAW_RADIUS  = 5;
 static const float NODE_QUERY_RADIUS = 10;
+
+#ifdef DEBUG_DRAW
+std::array<sm::vec3, 3> debug_pos;
+void DebugDraw(const pt0::Camera& cam, const pt3::Viewport& vp)
+{
+	tess::Painter pt;
+
+	auto cam_mat = cam.GetViewMat() * cam.GetProjectionMat();
+	auto trans3d = [&](const sm::vec3& pos3)->sm::vec2 {
+		return vp.TransPosProj3ToProj2(pos3, cam_mat);
+	};
+
+	pt.AddPolygon3D(debug_pos.data(), debug_pos.size(), trans3d, 0xff00ffff);
+
+	const float radius = 5.0f;
+	pt.AddCircleFilled(trans3d(debug_pos[0]), radius, 0xff0000ff);
+	pt.AddCircleFilled(trans3d(debug_pos[1]), radius, 0xff00ff00);
+	pt.AddCircleFilled(trans3d(debug_pos[2]), radius, 0xffff0000);
+
+	pt2::RenderSystem::DrawPainter(pt);
+}
+#endif // DEBUG_DRAW
 
 }
 
@@ -108,17 +136,9 @@ bool SkeletonIKOP::OnDraw() const
 
 	SkeletonSelectOp::OnDraw();
 
-	// debug draw
-	pt2::PrimitiveDraw::LineWidth(3);
-	pt3::PrimitiveDraw::SetColor(0xff00ffff);
-	pt3::PrimitiveDraw::TriLine(m_debug[0], m_debug[1], m_debug[2]);
-
-	pt3::PrimitiveDraw::SetColor(0xff0000ff);
-	pt3::PrimitiveDraw::Point(m_debug[0]);
-	pt3::PrimitiveDraw::SetColor(0xff00ff00);
-	pt3::PrimitiveDraw::Point(m_debug[1]);
-	pt3::PrimitiveDraw::SetColor(0xffff0000);
-	pt3::PrimitiveDraw::Point(m_debug[2]);
+#ifdef DEBUG_DRAW
+	DebugDraw(*m_camera, m_vp);
+#endif // DEBUG_DRAW
 
 	return false;
 }
@@ -138,7 +158,7 @@ void SkeletonIKOP::InitTPoseTrans()
 
 	// to T-pose
 	m_tpose_local_trans.resize(bones.size());
-	for (size_t i = 0; i < bones.size(); ++i) 
+	for (size_t i = 0; i < bones.size(); ++i)
 	{
 		sm::vec3 pos, rot, scale;
 		bones[i]->local_trans.Decompose(pos, rot, scale);
@@ -209,10 +229,11 @@ bool SkeletonIKOP::OneBone(int x, int y)
 	auto u = (m_tpose_world_trans[m_selected] * sm::vec3(0, 0, 0) - m_tpose_world_trans[p] * sm::vec3(0, 0, 0)).Normalized();
 	auto v = (pp_inv * (cross - p_pos)).Normalized();
 
-	//// debug draw
-	//m_debug[0] = p_pos;
-	//m_debug[1] = p_pos + u;
-	//m_debug[2] = p_pos + v;
+#ifdef DEBUG_DRAW
+	debug_pos[0] = p_pos;
+	debug_pos[1] = p_pos + u;
+	debug_pos[2] = p_pos + v;
+#endif // DEBUG_DRAW
 
 	m_model->SetJointRotate(p, sm::Quaternion::CreateFromVectors(u, v));
 
@@ -268,10 +289,11 @@ bool SkeletonIKOP::TwoBones(int x, int y)
 	rot_ppp.x[12] = rot_ppp.x[13] = rot_ppp.x[14] = 0;
 	auto pp_other = pp_pos + rot_ppp * sm::vec3(1, 0, 0);
 
-	// debug draw
-	m_debug[0] = pp_pos;
-	m_debug[1] = pp_other;
-	m_debug[2] = cross;
+#ifdef DEBUG_DRAW
+	debug_pos[0] = pp_pos;
+	debug_pos[1] = pp_other;
+	debug_pos[2] = cross;
+#endif // DEBUG_DRAW
 
 	float angle = GetRotateAngle(g_trans[pparent], pp_pos, pp_other, cross);
 
