@@ -11,10 +11,11 @@
 #include <node3/CompTransform.h>
 #include <unirender/Blackboard.h>
 #include <unirender/RenderContext.h>
+#include <tessellation/Painter.h>
+#include <painting2/RenderSystem.h>
 #include <painting3/PerspCam.h>
 #include <painting3/OrthoCam.h>
 #include <painting3/Viewport.h>
-#include <painting3/PrimitiveDraw.h>
 
 namespace
 {
@@ -186,17 +187,32 @@ bool PolySelectOP::OnDraw() const
 	ur_rc.SetDepthTest(ur::DEPTH_DISABLE);
 	ur_rc.EnableDepthMask(false);
 
+	tess::Painter pt;
+
+	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
+	auto trans3d = [&](std::vector<sm::vec2>& dst, const std::vector<sm::vec3>& src) {
+		dst.clear();
+		dst.reserve(src.size());
+		for (auto& v : src) {
+			dst.push_back(m_vp.TransPosProj3ToProj2(v, cam_mat));
+		}
+	};
+
+	std::vector<sm::vec2> vs2;
+
 	// poly
-	pt3::PrimitiveDraw::SetColor(ee0::LIGHT_RED.ToABGR());
 	for (auto& face : m_selected_poly) {
-		pt3::PrimitiveDraw::Polyline(face, true);
+		trans3d(vs2, face);
+		pt.AddPolygon(vs2.data(), vs2.size(), ee0::LIGHT_RED.ToABGR());
 	}
 
 	// face
-	pt3::PrimitiveDraw::SetColor(ee0::LIGHT_RED.ToABGR());
 	if (m_move_select && m_selected.face && !m_selected_face.empty()) {
-		pt3::PrimitiveDraw::Polygon(m_selected_face);
+		trans3d(vs2, m_selected_face);
+		pt.AddPolygonFilled(vs2.data(), vs2.size(), ee0::LIGHT_RED.ToABGR());
 	}
+
+	pt2::RenderSystem::DrawPainter(pt);
 
 	ur_rc.SetDepthTest(ur::DEPTH_LESS_EQUAL);
 	ur_rc.EnableDepthMask(true);

@@ -8,7 +8,8 @@
 #include <guard/check.h>
 #include <SM_Ray.h>
 #include <SM_RayIntersect.h>
-#include <painting3/PrimitiveDraw.h>
+#include <tessellation/Painter.h>
+#include <painting2/RenderSystem.h>
 #include <painting3/PerspCam.h>
 #ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
@@ -32,10 +33,11 @@ bool NodeSelectOP::OnDraw() const
 		return true;
 	}
 
-	m_stage.GetSelection().Traverse([](const ee0::GameObjWithPos& nwp)->bool
-	{
-		pt3::PrimitiveDraw::SetColor(ee0::MID_RED.ToABGR());
+	tess::Painter pt;
 
+	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
+	m_stage.GetSelection().Traverse([&](const ee0::GameObjWithPos& nwp)->bool
+	{
 #ifndef GAME_OBJ_ECS
 		auto& caabb = nwp.GetNode()->GetUniqueComp<n3::CompAABB>();
 		auto& ctrans = nwp.GetNode()->GetUniqueComp<n3::CompTransform>();
@@ -50,11 +52,16 @@ bool NodeSelectOP::OnDraw() const
 		//	parent = parent->GetParent();
 		//}
 
-		pt3::PrimitiveDraw::Cube(prev_mt * ctrans.GetTransformMat(), caabb.GetAABB());
+		pt.AddCube(caabb.GetAABB().Cube(), [&](const sm::vec3& pos3)->sm::vec2 {
+			auto fix = prev_mt * ctrans.GetTransformMat() * pos3;
+			return m_vp.TransPosProj3ToProj2(fix, cam_mat);
+		}, ee0::MID_RED.ToABGR());
 #endif // GAME_OBJ_ECS
 
 		return true;
 	});
+
+	pt2::RenderSystem::DrawPainter(pt);
 
 	return false;
 }

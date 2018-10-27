@@ -6,10 +6,11 @@
 #include <ee0/SubjectMgr.h>
 
 #include <unirender/RenderContext.h>
+#include <tessellation/Painter.h>
 #include <painting2/Blackboard.h>
 #include <painting2/RenderContext.h>
 #include <painting2/WindowContext.h>
-#include <painting3/PrimitiveDraw.h>
+#include <painting2/RenderSystem.h>
 #include <painting3/Blackboard.h>
 #include <painting3/WindowContext.h>
 #include <painting3/PerspCam.h>
@@ -129,23 +130,40 @@ void WxStageCanvas::OnDrawSprites() const
 
 void WxStageCanvas::DrawBackground() const
 {
-	pt3::PrimitiveDraw::SetColor(0xff000088);
-	pt3::PrimitiveDraw::Cross(sm::vec3(0, 0, 0), sm::vec3(100, 100, 100));
+	tess::Painter pt;
+
+	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
+	auto trans3d = [&](const sm::vec3& pos3)->sm::vec2 {
+		return m_viewport.TransPosProj3ToProj2(pos3, cam_mat);
+	};
+
+	// draw cross
+	uint32_t col = 0xff000088;
+	const float len = 50.0f;
+	pt.AddLine3D({ -len, 0, 0 }, { len, 0, 0 }, trans3d, col);
+	pt.AddLine3D({ 0, -len, 0 }, { 0, len, 0 }, trans3d, col);
+	pt.AddLine3D({ 0, 0, -len }, { 0, 0, len }, trans3d, col);
 
 	static const int TOT_LEN = 100;
 	static const int GRID_EDGE = 5;
 	for (int z = -TOT_LEN; z < TOT_LEN; z += GRID_EDGE) {
 		for (int x = -TOT_LEN; x < TOT_LEN; x += GRID_EDGE) {
 			if ((x + z) % (GRID_EDGE * 2) == 0) {
-				pt3::PrimitiveDraw::SetColor(0xff444444);
+				col = 0xff444444;
 			} else {
-				pt3::PrimitiveDraw::SetColor(0xff888888);
+				col = 0xff888888;
 			}
-			pt3::PrimitiveDraw::Rect(
+			sm::vec3 polygon[4] = {
 				sm::vec3(x, 0, z),
-				sm::vec3(x + GRID_EDGE, 0, z + GRID_EDGE));
+				sm::vec3(x + GRID_EDGE, 0, z),
+				sm::vec3(x + GRID_EDGE, 0, z + GRID_EDGE),
+				sm::vec3(x, 0, z + GRID_EDGE)
+			};
+			pt.AddPolygonFilled3D(polygon, 4, trans3d, col);
 		}
 	}
+
+	pt2::RenderSystem::DrawPainter(pt);
 }
 
 void WxStageCanvas::DrawForeground() const

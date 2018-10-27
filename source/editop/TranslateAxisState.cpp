@@ -7,15 +7,15 @@
 #include <SM_Calc.h>
 #include <SM_RayIntersect.h>
 #include <painting2/OrthoCamera.h>
-#include <painting2/PrimitiveDraw.h>
+#include <painting2/RenderSystem.h>
 #include <painting3/Viewport.h>
-#include <painting3/PrimitiveDraw.h>
 #include <painting3/PerspCam.h>
 #ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
 #include <node3/CompAABB.h>
 #endif // GAME_OBJ_ECS
+#include <tessellation/Painter.h>
 
 namespace ee3
 {
@@ -118,11 +118,32 @@ bool TranslateAxisState::OnDraw() const
 		return false;
 	}
 
-	// 3d
-	DrawEdges();
+	tess::Painter pt;
 
-	// 2d
-	DrawNodes();
+	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
+
+	const float line_width = 2.0f;
+
+	auto c = GetCtrlPos2D(cam_mat, AXIS_CENTER);
+	auto x = GetCtrlPos2D(cam_mat, AXIS_X);
+	auto y = GetCtrlPos2D(cam_mat, AXIS_Y);
+	auto z = GetCtrlPos2D(cam_mat, AXIS_Z);
+
+	// draw edges
+	// axis
+	pt.AddLine(c, x, 0xff0000ff, line_width);
+	pt.AddLine(c, y, 0xff00ff00, line_width);
+	pt.AddLine(c, z, 0xffff0000, line_width);
+
+	// draw nodes
+	// x, red
+	pt.AddCircleFilled(x, m_cfg.node_radius, 0xff0000ff);
+	// y, green
+	pt.AddCircleFilled(y, m_cfg.node_radius, 0xff00ff00);
+	// z, blue
+	pt.AddCircleFilled(z, m_cfg.node_radius, 0xffff0000);
+
+	pt2::RenderSystem::DrawPainter(pt);
 
 	return false;
 }
@@ -230,38 +251,6 @@ void TranslateAxisState::Translate(const sm::vec2& start, const sm::vec2& end)
 
 		m_ori_wmat_no_scale = sm::mat4::Translated(offset.x, offset.y, offset.z) * m_ori_wmat_no_scale;
 	}
-}
-
-void TranslateAxisState::DrawEdges() const
-{
-	// axis
-	auto center = m_ori_wmat_no_scale * sm::vec3(0, 0, 0);
-	pt3::PrimitiveDraw::SetColor(0xff0000ff);
-	sm::vec3 pos_x = m_ori_wmat_no_scale * sm::vec3(m_cfg.arc_radius, 0, 0);
-	pt3::PrimitiveDraw::Line(center, pos_x);
-	pt3::PrimitiveDraw::SetColor(0xff00ff00);
-	sm::vec3 pos_y = m_ori_wmat_no_scale * sm::vec3(0, m_cfg.arc_radius, 0);
-	pt3::PrimitiveDraw::Line(center, pos_y);
-	pt3::PrimitiveDraw::SetColor(0xffff0000);
-	sm::vec3 pos_z = m_ori_wmat_no_scale * sm::vec3(0, 0, -m_cfg.arc_radius);
-	pt3::PrimitiveDraw::Line(center, pos_z);
-}
-
-void TranslateAxisState::DrawNodes() const
-{
-	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
-	// x, red
-	auto pos2d = GetCtrlPos2D(cam_mat, AXIS_X);
-	pt2::PrimitiveDraw::SetColor(0xff0000ff);
-	pt2::PrimitiveDraw::Circle(nullptr, pos2d, m_cfg.node_radius, true);
-	// y, green
-	pos2d = GetCtrlPos2D(cam_mat, AXIS_Y);
-	pt2::PrimitiveDraw::SetColor(0xff00ff00);
-	pt2::PrimitiveDraw::Circle(nullptr, pos2d, m_cfg.node_radius, true);
-	// z, blue
-	pos2d = GetCtrlPos2D(cam_mat, AXIS_Z);
-	pt2::PrimitiveDraw::SetColor(0xffff0000);
-	pt2::PrimitiveDraw::Circle(nullptr, pos2d, m_cfg.node_radius, true);
 }
 
 sm::vec2 TranslateAxisState::GetCtrlPos2D(const sm::mat4& cam_mat, AxisNodeType type) const

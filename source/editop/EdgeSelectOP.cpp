@@ -1,5 +1,8 @@
 #include "ee3/EdgeSelectOP.h"
 
+#include <tessellation/Painter.h>
+#include <painting2/RenderSystem.h>
+
 namespace ee3
 {
 namespace mesh
@@ -15,16 +18,17 @@ EdgeSelectOP::EdgeSelectOP(const std::shared_ptr<pt0::Camera>& camera,
 
 void EdgeSelectOP::DrawImpl(const quake::MapBrush& brush, const sm::mat4& cam_mat) const
 {
+	tess::Painter pt;
+
 	// all edges
-	pt2::PrimitiveDraw::SetColor(UNSELECT_COLOR);
 	for (auto& face : brush.faces)
 	{
 		auto& vs = face->vertices;
 		for (int i = 0, n = vs.size(); i < n; ++i) {
 			BrushEdge(vs[i], vs[(i + 1) % n]).Project(m_vp, cam_mat,
 				[&](const sm::vec2& b, const sm::vec2& e, const sm::vec2& mid) {
-				pt2::PrimitiveDraw::Line(nullptr, b, e);
-				pt2::PrimitiveDraw::Circle(nullptr, mid, NODE_DRAW_RADIUS, true);
+				pt.AddLine(b, e, UNSELECT_COLOR);
+				pt.AddCircleFilled(mid, NODE_DRAW_RADIUS, UNSELECT_COLOR);
 			});
 		}
 	}
@@ -33,22 +37,21 @@ void EdgeSelectOP::DrawImpl(const quake::MapBrush& brush, const sm::mat4& cam_ma
 	{
 		m_selecting.Project(m_vp, cam_mat,
 			[&](const sm::vec2& b, const sm::vec2& e, const sm::vec2& mid) {
-			pt2::PrimitiveDraw::SetColor(SELECT_COLOR);
-			pt2::PrimitiveDraw::Line(nullptr, b, e);
-			pt2::PrimitiveDraw::Circle(nullptr, mid, NODE_QUERY_RADIUS, false);
+			pt.AddLine(b, e, SELECT_COLOR);
+			pt.AddCircle(mid, NODE_QUERY_RADIUS, SELECT_COLOR);
 		});
 	}
 	// selected
-	pt2::PrimitiveDraw::SetColor(SELECT_COLOR);
 	m_selected.Traverse([&](const BrushEdge& edge)->bool {
 		edge.Project(m_vp, cam_mat,
 			[&](const sm::vec2& b, const sm::vec2& e, const sm::vec2& mid) {
-			pt2::PrimitiveDraw::SetColor(SELECT_COLOR);
-			pt2::PrimitiveDraw::Line(nullptr, b, e);
-			pt2::PrimitiveDraw::Circle(nullptr, mid, NODE_DRAW_RADIUS, true);
+			pt.AddLine(b, e, SELECT_COLOR);
+			pt.AddCircleFilled(mid, NODE_DRAW_RADIUS, SELECT_COLOR);
 		});
 		return true;
 	});
+
+	pt2::RenderSystem::DrawPainter(pt);
 }
 
 BrushEdge EdgeSelectOP::QueryByPos(int x, int y) const

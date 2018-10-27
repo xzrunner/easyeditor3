@@ -61,9 +61,6 @@ private:
 
 	void Translate(const sm::vec2& start, const sm::vec2& end);
 
-	void DrawEdges() const;
-	void DrawNodes() const;
-
 	enum AxisNodeType
 	{
 		AXIS_CENTER = 0,

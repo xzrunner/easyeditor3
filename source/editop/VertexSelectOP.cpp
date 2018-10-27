@@ -1,6 +1,8 @@
 #include "ee3/VertexSelectOP.h"
 
+#include <tessellation/Painter.h>
 #include <painting2/OrthoCamera.h>
+#include <painting2/RenderSystem.h>
 
 namespace ee3
 {
@@ -17,26 +19,28 @@ VertexSelectOP::VertexSelectOP(const std::shared_ptr<pt0::Camera>& camera, const
 
 void VertexSelectOP::DrawImpl(const quake::MapBrush& brush, const sm::mat4& cam_mat) const
 {
+	tess::Painter pt;
+
 	// all nodes
-	pt2::PrimitiveDraw::SetColor(UNSELECT_COLOR);
 	for (auto& v : brush.vertices) {
 		auto pos = m_vp.TransPosProj3ToProj2(v->pos * model::MapLoader::VERTEX_SCALE, cam_mat);
-		pt2::PrimitiveDraw::Circle(nullptr, pos, NODE_DRAW_RADIUS, true);
+		pt.AddCircleFilled(pos, NODE_DRAW_RADIUS, UNSELECT_COLOR);
 	}
 	// selecting
 	if (m_selecting)
 	{
-		pt2::PrimitiveDraw::SetColor(SELECT_COLOR);
 		auto pos = m_vp.TransPosProj3ToProj2(m_selecting->pos * model::MapLoader::VERTEX_SCALE, cam_mat);
-		pt2::PrimitiveDraw::Circle(nullptr, pos, NODE_QUERY_RADIUS, false);
+		pt.AddCircle(pos, NODE_QUERY_RADIUS, SELECT_COLOR);
 	}
 	// selected
-	pt2::PrimitiveDraw::SetColor(SELECT_COLOR);
 	m_selected.Traverse([&](const quake::BrushVertexPtr& vert)->bool {
 		auto pos = m_vp.TransPosProj3ToProj2(vert->pos * model::MapLoader::VERTEX_SCALE, cam_mat);
-		pt2::PrimitiveDraw::Circle(nullptr, pos, NODE_DRAW_RADIUS, true);
+		pt.AddCircleFilled(pos, NODE_DRAW_RADIUS, SELECT_COLOR);
 		return true;
 	});
+
+
+	pt2::RenderSystem::DrawPainter(pt);
 }
 
 quake::BrushVertexPtr VertexSelectOP::QueryByPos(int x, int y) const

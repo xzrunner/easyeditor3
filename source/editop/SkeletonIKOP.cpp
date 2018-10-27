@@ -9,10 +9,8 @@
 #include <SM_RayIntersect.h>
 #include <model/Model.h>
 #include <model/ModelInstance.h>
-#include <painting2/PrimitiveDraw.h>
 #include <painting2/OrthoCamera.h>
 #include <painting3/Viewport.h>
-#include <painting3/PrimitiveDraw.h>
 #include <painting3/PerspCam.h>
 
 namespace

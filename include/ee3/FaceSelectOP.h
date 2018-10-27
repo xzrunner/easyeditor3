@@ -2,6 +2,8 @@
 
 #include "ee3/MeshSelectBaseOP.h"
 
+namespace tess { class Painter; }
+
 namespace ee3
 {
 namespace mesh
@@ -22,7 +24,7 @@ protected:
 private:
 	sm::vec2 CalcFaceCenter(const quake::BrushFace& face, const sm::mat4& cam_mat) const;
 
-	void DrawFace(const quake::BrushFace& face, uint32_t color, const sm::mat4& cam_mat) const;
+	void DrawFace(tess::Painter& pt, const quake::BrushFace& face, uint32_t color, const sm::mat4& cam_mat) const;
 
 }; // FaceSelectOP
 

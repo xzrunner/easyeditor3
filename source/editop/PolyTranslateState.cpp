@@ -5,10 +5,11 @@
 #include <ee0/SubjectMgr.h>
 
 #include <SM_RayIntersect.h>
+#include <tessellation/Painter.h>
+#include <painting2/RenderSystem.h>
 #include <painting3/PerspCam.h>
 #include <painting3/OrthoCam.h>
 #include <painting3/Viewport.h>
-#include <painting3/PrimitiveDraw.h>
 #include <model/MapLoader.h>
 #include <model/QuakeMapEntity.h>
 #include <model/Model.h>
@@ -391,6 +392,13 @@ bool PolyTranslateState::OnMouseDrag(int x, int y)
 
 bool PolyTranslateState::OnDraw() const
 {
+	tess::Painter pt;
+
+	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
+	auto trans3d = [&](const sm::vec3& pos3)->sm::vec2 {
+		return m_vp.TransPosProj3ToProj2(pos3, cam_mat);
+	};
+
 	// draw auxiliary line
 	auto cam_type = m_camera->TypeID();
 	if (cam_type == pt0::GetCamTypeID<pt3::PerspCam>())
@@ -402,30 +410,24 @@ bool PolyTranslateState::OnDraw() const
 			switch (m_move_type)
 			{
 			case MOVE_ANY:
-				pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
-				pt3::PrimitiveDraw::Line(first, sm::vec3(last.x, first.y, first.z));
-				pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
-				pt3::PrimitiveDraw::Line(sm::vec3(last.x, first.y, first.z), sm::vec3(last.x, last.y, first.z));
-				pt3::PrimitiveDraw::SetColor(0x0ffff0000);
-				pt3::PrimitiveDraw::Line(sm::vec3(last.x, last.y, first.z), m_last_pos3);
+				pt.AddLine3D(first, sm::vec3(last.x, first.y, first.z), trans3d, 0x0ff0000ff);
+				pt.AddLine3D(sm::vec3(last.x, first.y, first.z), sm::vec3(last.x, last.y, first.z), trans3d, 0x0ff00ff00);
+				pt.AddLine3D(sm::vec3(last.x, last.y, first.z), m_last_pos3, trans3d, 0x0ffff0000);
 				break;
 			case MOVE_X:
 				last.y = first.y;
 				last.z = first.z;
-				pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
-				pt3::PrimitiveDraw::Line(first, last);
+				pt.AddLine3D(first, last, trans3d, 0x0ff0000ff);
 				break;
 			case MOVE_Y:
 				last.x = first.x;
 				last.z = first.z;
-				pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
-				pt3::PrimitiveDraw::Line(first, last);
+				pt.AddLine3D(first, last, trans3d, 0x0ff00ff00);
 				break;
 			case MOVE_Z:
 				last.x = first.x;
 				last.y = first.y;
-				pt3::PrimitiveDraw::SetColor(0x0ffff0000);
-				pt3::PrimitiveDraw::Line(first, last);
+				pt.AddLine3D(first, last, trans3d, 0x0ffff0000);
 				break;
 			}
 		}
@@ -444,18 +446,14 @@ bool PolyTranslateState::OnDraw() const
 				switch (m_move_type)
 				{
 				case MOVE_ANY:
-					pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
-					pt3::PrimitiveDraw::Line(sm::vec3(0, first.y, first.x), sm::vec3(0, last.y, first.x));
-					pt3::PrimitiveDraw::SetColor(0x0ffff0000);
-					pt3::PrimitiveDraw::Line(sm::vec3(0, last.y, first.x), sm::vec3(0, last.y, last.x));
+					pt.AddLine3D(sm::vec3(0, first.y, first.x), sm::vec3(0, last.y, first.x), trans3d, 0x0ff00ff00);
+					pt.AddLine3D(sm::vec3(0, last.y, first.x), sm::vec3(0, last.y, last.x), trans3d, 0x0ffff0000);
 					break;
 				case MOVE_Z:
-					pt3::PrimitiveDraw::SetColor(0x0ffff0000);
-					pt3::PrimitiveDraw::Line(sm::vec3(0, first.y, first.x), sm::vec3(0, first.y, last.x));
+					pt.AddLine3D(sm::vec3(0, first.y, first.x), sm::vec3(0, first.y, last.x), trans3d, 0x0ffff0000);
 					break;
 				case MOVE_Y:
-					pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
-					pt3::PrimitiveDraw::Line(sm::vec3(0, first.y, first.x), sm::vec3(0, last.y, first.x));
+					pt.AddLine3D(sm::vec3(0, first.y, first.x), sm::vec3(0, last.y, first.x), trans3d, 0x0ff00ff00);
 					break;
 				}
 				break;
@@ -463,18 +461,14 @@ bool PolyTranslateState::OnDraw() const
 				switch (m_move_type)
 				{
 				case MOVE_ANY:
-					pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
-					pt3::PrimitiveDraw::Line(sm::vec3(first.x, 0, first.y), sm::vec3(last.x, 0, first.y));
-					pt3::PrimitiveDraw::SetColor(0x0ffff0000);
-					pt3::PrimitiveDraw::Line(sm::vec3(last.x, 0, first.y), sm::vec3(last.x, 0, last.y));
+					pt.AddLine3D(sm::vec3(first.x, 0, first.y), sm::vec3(last.x, 0, first.y), trans3d, 0x0ff0000ff);
+					pt.AddLine3D(sm::vec3(last.x, 0, first.y), sm::vec3(last.x, 0, last.y), trans3d, 0x0ffff0000);
 					break;
 				case MOVE_X:
-					pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
-					pt3::PrimitiveDraw::Line(sm::vec3(first.x, 0, first.y), sm::vec3(last.x, 0, first.y));
+					pt.AddLine3D(sm::vec3(first.x, 0, first.y), sm::vec3(last.x, 0, first.y), trans3d, 0x0ff0000ff);
 					break;
 				case MOVE_Z:
-					pt3::PrimitiveDraw::SetColor(0x0ffff0000);
-					pt3::PrimitiveDraw::Line(sm::vec3(first.x, 0, first.y), sm::vec3(first.x, 0, last.y));
+					pt.AddLine3D(sm::vec3(first.x, 0, first.y), sm::vec3(first.x, 0, last.y), trans3d, 0x0ffff0000);
 					break;
 				}
 				break;
@@ -482,24 +476,21 @@ bool PolyTranslateState::OnDraw() const
 				switch (m_move_type)
 				{
 				case MOVE_ANY:
-					pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
-					pt3::PrimitiveDraw::Line(sm::vec3(first.x, first.y, 0), sm::vec3(last.x, first.y, 0));
-					pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
-					pt3::PrimitiveDraw::Line(sm::vec3(last.x, first.y, 0), sm::vec3(last.x, last.y, 0));
+					pt.AddLine3D(sm::vec3(first.x, first.y, 0), sm::vec3(last.x, first.y, 0), trans3d, 0x0ff0000ff);
+					pt.AddLine3D(sm::vec3(last.x, first.y, 0), sm::vec3(last.x, last.y, 0), trans3d, 0x0ff00ff00);
 					break;
 				case MOVE_X:
-					pt3::PrimitiveDraw::SetColor(0x0ff0000ff);
-					pt3::PrimitiveDraw::Line(sm::vec3(first.x, first.y, 0), sm::vec3(last.x, first.y, 0));
+					pt.AddLine3D(sm::vec3(first.x, first.y, 0), sm::vec3(last.x, first.y, 0), trans3d, 0x0ff0000ff);
 					break;
 				case MOVE_Y:
-					pt3::PrimitiveDraw::SetColor(0x0ff00ff00);
-					pt3::PrimitiveDraw::Line(sm::vec3(first.x, first.y, 0), sm::vec3(first.x, last.y, 0));
+					pt.AddLine3D(sm::vec3(first.x, first.y, 0), sm::vec3(first.x, last.y, 0), trans3d, 0x0ff00ff00);
 					break;
 				}
 				break;
 			}
 		}
 	}
+	pt2::RenderSystem::DrawPainter(pt);
 
 	return false;
 }
@@ -571,7 +562,7 @@ void PolyTranslateState::TranslateSelected(const sm::vec3& offset)
 	assert(m_selected.model->ext && m_selected.model->ext->Type() == model::EXT_QUAKE_MAP);
 	auto map_entity = static_cast<model::QuakeMapEntity*>(m_selected.model->ext.get());
 	auto& brushes = map_entity->GetMapEntity()->brushes;
-	assert(m_selected.brush_idx >= 0 && m_selected.brush_idx < brushes.size());
+	assert(m_selected.brush_idx >= 0 && m_selected.brush_idx < static_cast<int>(brushes.size()));
 	auto& brush = brushes[m_selected.brush_idx];
 	for (auto& vert : brush.vertices) {
 		vert->pos += offset / model::MapLoader::VERTEX_SCALE;

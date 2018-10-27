@@ -8,7 +8,6 @@
 #include <ee2/DrawSelectRectState.h>
 
 #include <painting2/OrthoCamera.h>
-#include <painting2/PrimitiveDraw.h>
 #include <painting3/Viewport.h>
 #include <SM_Calc.h>
 #include <model/Model.h>

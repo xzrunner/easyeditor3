@@ -5,9 +5,10 @@
 
 #include <SM_Ray.h>
 #include <SM_RayIntersect.h>
+#include <tessellation/Painter.h>
+#include <painting2/RenderSystem.h>
 #include <painting3/PerspCam.h>
 #include <painting3/Viewport.h>
-#include <painting3/PrimitiveDraw.h>
 
 namespace ee3
 {
@@ -63,10 +64,15 @@ bool PolyBuildState::OnMouseDrag(int x, int y)
 
 bool PolyBuildState::OnDraw() const
 {
-	if (m_first_pos.IsValid() && m_last_pos.IsValid()) {
-		pt3::PrimitiveDraw::Cube(sm::cube(m_first_pos, m_last_pos));
+	if (m_first_pos.IsValid() && m_last_pos.IsValid())
+	{
+		tess::Painter pt;
+		auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
+		pt.AddCube(sm::cube(m_first_pos, m_last_pos), [&](const sm::vec3& pos3)->sm::vec2 {
+			return m_vp.TransPosProj3ToProj2(pos3, cam_mat);
+		}, 0xffffffff);
+		pt2::RenderSystem::DrawPainter(pt);
 	}
-
 	return false;
 }
 

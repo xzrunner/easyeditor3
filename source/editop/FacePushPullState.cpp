@@ -5,9 +5,10 @@
 #include <ee0/MessageID.h>
 
 #include <SM_RayIntersect.h>
+#include <tessellation/Painter.h>
 #include <painting2/OrthoCamera.h>
+#include <painting2/RenderSystem.h>
 #include <painting3/Viewport.h>
-#include <painting3/PrimitiveDraw.h>
 #include <painting3/PerspCam.h>
 #include <model/QuakeMapEntity.h>
 #include <model/Model.h>
@@ -103,9 +104,14 @@ bool FacePushPullState::OnMouseDrag(int x, int y)
 bool FacePushPullState::OnDraw() const
 {
 	// debug draw
-	if (m_last_pos3d.IsValid()) {
-		pt3::PrimitiveDraw::SetColor(ee0::LIGHT_RED.ToABGR());
-		pt3::PrimitiveDraw::Line(m_move_path3d.origin, m_last_pos3d);
+	if (m_last_pos3d.IsValid())
+	{
+		auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
+		tess::Painter pt;
+		pt.AddLine3D(m_move_path3d.origin, m_last_pos3d, [&](const sm::vec3& pos3)->sm::vec2 {
+			return m_vp.TransPosProj3ToProj2(pos3, cam_mat);
+		}, 0xffffffff);
+		pt2::RenderSystem::DrawPainter(pt);
 	}
 
 	return false;

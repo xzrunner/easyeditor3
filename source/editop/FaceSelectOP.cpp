@@ -1,7 +1,8 @@
 #include "ee3/FaceSelectOP.h"
 
+#include <tessellation/Painter.h>
 #include <painting2/OrthoCamera.h>
-#include <painting3/PrimitiveDraw.h>
+#include <painting2/RenderSystem.h>
 
 namespace ee3
 {
@@ -18,30 +19,29 @@ FaceSelectOP::FaceSelectOP(const std::shared_ptr<pt0::Camera>& camera, const pt3
 
 void FaceSelectOP::DrawImpl(const quake::MapBrush& brush, const sm::mat4& cam_mat) const
 {
+	tess::Painter pt;
 	// all nodes
 	for (auto& f : brush.faces)
 	{
 		auto center = CalcFaceCenter(*f, cam_mat);
-		DrawFace(*f, LIGHT_UNSELECT_COLOR, cam_mat);
-		pt2::PrimitiveDraw::SetColor(UNSELECT_COLOR);
-		pt2::PrimitiveDraw::Circle(nullptr, center, NODE_DRAW_RADIUS, true);
+		DrawFace(pt, *f, LIGHT_UNSELECT_COLOR, cam_mat);
+		pt.AddCircleFilled(center, NODE_DRAW_RADIUS, UNSELECT_COLOR);
 	}
 	// selecting
 	if (m_selecting)
 	{
-		pt2::PrimitiveDraw::SetColor(SELECT_COLOR);
 		auto center = CalcFaceCenter(*m_selecting, cam_mat);
-		pt2::PrimitiveDraw::Circle(nullptr, center, NODE_QUERY_RADIUS, false);
+		pt.AddCircle(center, NODE_QUERY_RADIUS, SELECT_COLOR);
 	}
 	// selected
 	m_selected.Traverse([&](const quake::BrushFacePtr& face)->bool
 	{
-		DrawFace(*face, LIGHT_SELECT_COLOR, cam_mat);
-		pt2::PrimitiveDraw::SetColor(SELECT_COLOR);
+		DrawFace(pt, *face, LIGHT_SELECT_COLOR, cam_mat);
 		auto center = CalcFaceCenter(*face, cam_mat);
-		pt2::PrimitiveDraw::Circle(nullptr, center, NODE_DRAW_RADIUS, true);
+		pt.AddCircleFilled(center, NODE_DRAW_RADIUS, SELECT_COLOR);
 		return true;
 	});
+	pt2::RenderSystem::DrawPainter(pt);
 }
 
 quake::BrushFacePtr FaceSelectOP::QueryByPos(int x, int y) const
@@ -102,14 +102,15 @@ sm::vec2 FaceSelectOP::CalcFaceCenter(const quake::BrushFace& face, const sm::ma
 	return m_vp.TransPosProj3ToProj2(center * model::MapLoader::VERTEX_SCALE, cam_mat);
 }
 
-void FaceSelectOP::DrawFace(const quake::BrushFace& face, uint32_t color, const sm::mat4& cam_mat) const
+void FaceSelectOP::DrawFace(tess::Painter& pt, const quake::BrushFace& face, uint32_t color, const sm::mat4& cam_mat) const
 {
-	std::vector<sm::vec3> polygon;
+	std::vector<sm::vec2> polygon;
+	polygon.reserve(face.vertices.size());
 	for (auto& v : face.vertices) {
-		polygon.push_back(v->pos * model::MapLoader::VERTEX_SCALE);
+		auto p3 = v->pos * model::MapLoader::VERTEX_SCALE;
+		polygon.push_back(m_vp.TransPosProj3ToProj2(p3, cam_mat));
 	}
-	pt3::PrimitiveDraw::SetColor(color);
-	pt3::PrimitiveDraw::Polygon(polygon);
+	pt.AddPolygonFilled(polygon.data(), polygon.size(), color);
 }
 
 }
