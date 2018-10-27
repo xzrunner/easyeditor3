@@ -127,9 +127,9 @@ void FacePushPullState::TranslateFace(const sm::vec3& offset)
 	assert(m_selected.model->ext && m_selected.model->ext->Type() == model::EXT_QUAKE_MAP);
 	auto map_entity = static_cast<model::QuakeMapEntity*>(m_selected.model->ext.get());
 	auto& brushes = map_entity->GetMapEntity()->brushes;
-	assert(m_selected.brush_idx >= 0 && m_selected.brush_idx < brushes.size());
+	assert(m_selected.brush_idx >= 0 && m_selected.brush_idx < static_cast<int>(brushes.size()));
 	auto& brush = brushes[m_selected.brush_idx];
-	assert(m_selected.face_idx < brush.faces.size());
+	assert(m_selected.face_idx < static_cast<int>(brush.faces.size()));
 	auto& face = brush.faces[m_selected.face_idx];
 	for (auto& vert : face->vertices) {
 		vert->pos += offset / model::MapLoader::VERTEX_SCALE;
