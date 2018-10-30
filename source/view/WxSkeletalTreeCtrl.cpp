@@ -48,7 +48,7 @@ void WxSkeletalTreeCtrl::OnNotify(uint32_t msg, const ee0::VariantSet& variants)
 
 void WxSkeletalTreeCtrl::LoadFromSkeletal(const ::model::SkeletalAnim& skeletal)
 {
-	auto& nodes = skeletal.GetAllNodes();
+	auto& nodes = skeletal.GetNodes();
 	if (nodes.empty()) {
 		return;
 	}
@@ -69,7 +69,7 @@ void WxSkeletalTreeCtrl::LoadFromSkeletal(const ::model::SkeletalAnim& skeletal)
 
 void WxSkeletalTreeCtrl::InsertNode(wxTreeItemId parent, const ::model::SkeletalAnim& skeletal, int child)
 {
-	auto& nodes = skeletal.GetAllNodes();
+	auto& nodes = skeletal.GetNodes();
 	auto& node = nodes[child];
 	auto id = InsertItem(parent, 0, node->name);
 	SetItemData(id, &m_items[child]);

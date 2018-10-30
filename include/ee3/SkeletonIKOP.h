@@ -25,23 +25,16 @@ public:
 	virtual bool OnDraw() const override;
 
 private:
-	virtual void OnModelChanged() override;
-
-	void InitTPoseTrans();
-
 	bool OneBone(int x, int y);
 	bool TwoBones(int x, int y);
 
 	sm::Plane GetRotatePlane(const sm::mat4& world_mat,
-		const sm::vec3& pos, const sm::vec3& rot_axis = sm::vec3(0, 0, -1));
+		const sm::vec3& pos, const sm::vec3& rot_axis);
 	static float GetRotateAngle(const sm::mat4& world_mat,
 		const sm::vec3& base, const sm::vec3& from, const sm::vec3& to);
 
 private:
 	bool m_active = false;
-
-	std::vector<sm::mat4> m_tpose_local_trans;
-	std::vector<sm::mat4> m_tpose_world_trans;
 
 }; // SkeletonIKOP
 

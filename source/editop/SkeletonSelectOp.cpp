@@ -45,7 +45,7 @@ bool SkeletonSelectOp::OnDraw() const
 
 	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
 
-	auto& bones = (static_cast<::model::SkeletalAnim*>(m_model->GetModel()->ext.get())->GetAllNodes());
+	auto& bones = (static_cast<::model::SkeletalAnim*>(m_model->GetModel()->ext.get())->GetNodes());
 
 	auto& g_trans = m_model->GetGlobalTrans();
 
@@ -118,7 +118,7 @@ int SkeletonSelectOp::QueryJointByPos(const pt0::Camera& cam, int x, int y) cons
 	auto cam_mat = cam.GetViewMat() * cam.GetProjectionMat();
 
 	auto& g_trans = m_model->GetGlobalTrans();
-	auto& bones = (static_cast<::model::SkeletalAnim*>(m_model->GetModel()->ext.get())->GetAllNodes());
+	auto& bones = (static_cast<::model::SkeletalAnim*>(m_model->GetModel()->ext.get())->GetNodes());
 	for (int i = 0, n = bones.size(); i < n; ++i)
 	{
 		auto b_pos = g_trans[i] * sm::vec3(0, 0, 0);

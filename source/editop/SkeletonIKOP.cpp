@@ -9,6 +9,7 @@
 #include <SM_RayIntersect.h>
 #include <model/Model.h>
 #include <model/ModelInstance.h>
+#include <model/AnimIK.h>
 #include <tessellation/Painter.h>
 #include <painting2/OrthoCamera.h>
 #include <painting2/RenderSystem.h>
@@ -116,8 +117,8 @@ bool SkeletonIKOP::OnMouseDrag(int x, int y)
 		return false;
 	}
 
-	if (OneBone(x, y)) {
-//	if (TwoBones(x, y)) {
+//	if (OneBone(x, y)) {
+	if (TwoBones(x, y)) {
 		return true;
 	}
 
@@ -143,46 +144,6 @@ bool SkeletonIKOP::OnDraw() const
 	return false;
 }
 
-void SkeletonIKOP::OnModelChanged()
-{
-	InitTPoseTrans();
-}
-
-void SkeletonIKOP::InitTPoseTrans()
-{
-	// calc src global trans
-	auto anim = static_cast<::model::SkeletalAnim*>(m_model->GetModel()->ext.get());
-	auto& bones = anim->GetAllNodes();
-
-	assert(bones.size() == m_model->GetLocalTrans().size());
-
-	// to T-pose
-	m_tpose_local_trans.resize(bones.size());
-	for (size_t i = 0; i < bones.size(); ++i)
-	{
-		sm::vec3 pos, rot, scale;
-		bones[i]->local_trans.Decompose(pos, rot, scale);
-
-		auto& d = m_tpose_local_trans[i];
-		d.c[0][0] = scale.x; d.c[0][1] = 0;       d.c[0][2] = 0;
-		d.c[1][0] = 0;       d.c[1][1] = scale.y; d.c[1][2] = 0;
-		d.c[2][0] = 0;       d.c[2][1] = 0;       d.c[2][2] = scale.z;
-		d.c[3][0] = pos.x;   d.c[3][1] = pos.y;   d.c[3][2] = pos.z;
-	}
-
-	m_tpose_world_trans.resize(bones.size());
-	for (size_t i = 0; i < bones.size(); ++i)
-	{
-		auto g_trans = m_tpose_local_trans[i];
-		int parent = bones[i]->parent;
-		while (parent != -1) {
-			g_trans = g_trans * m_tpose_local_trans[parent];
-			parent = bones[parent]->parent;
-		}
-		m_tpose_world_trans[i] = g_trans;
-	}
-}
-
 // c_world = c_local * p_world;
 // c_world = c_local * (sm::mat4(p_rot_delta) * p_local * pp_world);
 
@@ -192,7 +153,46 @@ bool SkeletonIKOP::OneBone(int x, int y)
 		return false;
 	}
 
-	auto& bones = (static_cast<::model::SkeletalAnim*>(m_model->GetModel()->ext.get())->GetAllNodes());
+	auto sk_anim = static_cast<::model::SkeletalAnim*>(m_model->GetModel()->ext.get());
+	auto& bones = sk_anim->GetNodes();
+	int p = bones[m_selected]->parent;
+	if (p < 0) {
+		return false;
+	}
+
+	auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
+	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(
+		sm::vec2(static_cast<float>(x), static_cast<float>(y)), *p_cam);
+	sm::Ray ray(p_cam->GetPos(), ray_dir);
+
+	auto& g_trans = m_model->GetGlobalTrans();
+	auto c_pos = g_trans[m_selected] * sm::vec3(0, 0, 0);
+	auto p_pos = g_trans[p] * sm::vec3(0, 0, 0);
+
+	auto& tp_wtrans = sk_anim->GetTPWorldTrans();
+
+	sm::vec3 rot_axis = (p_cam->GetPos() - c_pos).Normalized();
+	auto plane = GetRotatePlane(tp_wtrans[p], p_pos, rot_axis);
+	sm::vec3 cross;
+	if (!sm::ray_plane_no_dir_intersect(ray, plane, &cross)) {
+		return false;
+	}
+
+	::model::AnimIK::OneBone(*m_model, m_selected, cross, debug_pos);
+
+	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+
+	return true;
+}
+
+bool SkeletonIKOP::TwoBones(int x, int y)
+{
+	if (m_selected < 0) {
+		return false;
+	}
+
+	auto sk_anim = static_cast<::model::SkeletalAnim*>(m_model->GetModel()->ext.get());
+	auto& bones = sk_anim->GetNodes();
 	int p = bones[m_selected]->parent;
 	if (p < 0) {
 		return false;
@@ -208,110 +208,20 @@ bool SkeletonIKOP::OneBone(int x, int y)
 	sm::Ray ray(p_cam->GetPos(), ray_dir);
 
 	auto& g_trans = m_model->GetGlobalTrans();
-	auto& l_trans = m_model->GetLocalTrans();
-	auto c_pos = g_trans[m_selected] * sm::vec3(0, 0, 0);
-	auto p_pos = g_trans[p] * sm::vec3(0, 0, 0);
-
-	auto plane = GetRotatePlane(m_tpose_world_trans[p], p_pos);
-	sm::vec3 cross;
-	if (!sm::ray_plane_no_dir_intersect(ray, plane, &cross)) {
-		return false;
-	}
-
-	sm::mat4 pp_inv;
-	pp_inv = g_trans[pp];
-	pp_inv.x[12] = pp_inv.x[13] = pp_inv.x[14] = 0;
-	auto x2 = pp_inv * sm::vec3(1, 0, 0);
-	auto y2 = pp_inv * sm::vec3(0, 1, 0);
-	auto z2 = pp_inv * sm::vec3(0, 0, 1);
-	pp_inv = pp_inv.Inverted();
-
-	auto u = (m_tpose_world_trans[m_selected] * sm::vec3(0, 0, 0) - m_tpose_world_trans[p] * sm::vec3(0, 0, 0)).Normalized();
-	auto v = (pp_inv * (cross - p_pos)).Normalized();
-
-#ifdef DEBUG_DRAW
-	debug_pos[0] = p_pos;
-	debug_pos[1] = p_pos + u;
-	debug_pos[2] = p_pos + v;
-#endif // DEBUG_DRAW
-
-	m_model->SetJointRotate(p, sm::Quaternion::CreateFromVectors(u, v));
-
-	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
-
-	return true;
-}
-
-bool SkeletonIKOP::TwoBones(int x, int y)
-{
-	if (m_selected < 0) {
-		return false;
-	}
-
-	auto& bones = (static_cast<::model::SkeletalAnim*>(m_model->GetModel()->ext.get())->GetAllNodes());
-	int parent = bones[m_selected]->parent;
-	if (parent < 0) {
-		return false;
-	}
-	int pparent = bones[parent]->parent;
-	if (pparent < 0) {
-		return false;
-	}
-	int ppparent = bones[pparent]->parent;
-	if (ppparent < 0) {
-		return false;
-	}
-
-	auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
-	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(
-		sm::vec2(static_cast<float>(x), static_cast<float>(y)), *p_cam);
-	sm::Ray ray(p_cam->GetPos(), ray_dir);
-
-	auto& g_trans = m_model->GetGlobalTrans();
 	auto c_pos   = g_trans[m_selected] * sm::vec3(0, 0, 0);
-	auto p_pos   = g_trans[parent]     * sm::vec3(0, 0, 0);
-	auto pp_pos  = g_trans[pparent]    * sm::vec3(0, 0, 0);
-	auto ppp_pos = g_trans[ppparent]   * sm::vec3(0, 0, 0);
+	auto pp_pos  = g_trans[pp]         * sm::vec3(0, 0, 0);
 
-	//auto plane = GetRotatePlane(g_trans[parent], p_pos);
-	//sm::vec3 cross;
-	//if (!sm::ray_plane_no_dir_intersect(ray, plane, &cross)) {
-	//	return false;
-	//}
+	auto& tp_wtrans = sk_anim->GetTPWorldTrans();
 
-	auto plane = GetRotatePlane(g_trans[pparent], pp_pos);
+	sm::vec3 rot_axis = (p_cam->GetPos() - c_pos).Normalized();
+	auto plane = GetRotatePlane(tp_wtrans[pp], pp_pos, rot_axis);
 	sm::vec3 cross;
 	if (!sm::ray_plane_no_dir_intersect(ray, plane, &cross)) {
 		return false;
 	}
 
-	auto rot_ppp = g_trans[ppparent];
-	rot_ppp.x[12] = rot_ppp.x[13] = rot_ppp.x[14] = 0;
-	auto pp_other = pp_pos + rot_ppp * sm::vec3(1, 0, 0);
-
-#ifdef DEBUG_DRAW
-	debug_pos[0] = pp_pos;
-	debug_pos[1] = pp_other;
-	debug_pos[2] = cross;
-#endif // DEBUG_DRAW
-
-	float angle = GetRotateAngle(g_trans[pparent], pp_pos, pp_other, cross);
-
-	float len0 = sm::dis_pos3_to_pos3(pp_pos, p_pos);
-	float len1 = sm::dis_pos3_to_pos3(p_pos, c_pos);
-	float tot_len = sm::dis_pos3_to_pos3(cross, pp_pos);
-	if (tot_len < len0 + len1 && len0 < tot_len + len1 && len1 < tot_len + len0)
-	{
-		float ang0 = acosf((len0 * len0 + tot_len * tot_len - len1 * len1) / (2 * len0 * tot_len));
-		float ang1 = acosf((len1 * len1 + tot_len * tot_len - len0 * len0) / (2 * len1 * tot_len));
-		m_model->SetJointRotate(pparent, bones[pparent]->local_trans, sm::Quaternion::CreateFromEulerAngle(-(angle - ang0), 0, 0));
-		m_model->SetJointRotate(parent, bones[parent]->local_trans, sm::Quaternion::CreateFromEulerAngle(-(ang0 + ang1), 0, 0));
-	}
-	else
-	{
-		m_model->SetJointRotate(pparent, bones[pparent]->local_trans, sm::Quaternion::CreateFromEulerAngle(-angle, 0, 0));
-		m_model->SetJointRotate(parent, bones[parent]->local_trans, sm::Quaternion());
-	}
+//	::model::AnimIK::TwoBones(*m_model, m_selected, cross, rot_axis, debug_pos);
+	::model::AnimIK::TwoBones(*m_model, m_selected, cross, sm::vec3(0, 1, 0), debug_pos);
 
 	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 
