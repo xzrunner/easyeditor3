@@ -24,6 +24,9 @@ public:
 	void SetModel(model::ModelInstance* model) {
 		m_model = model;
 	}
+	const model::ModelInstance* GetModel() const {
+		return m_model;
+	}
 
 	void SetSelected(int selected);
 	int GetSelected() const { return m_selected; }
