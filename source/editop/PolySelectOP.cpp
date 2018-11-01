@@ -10,7 +10,6 @@
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
 #include <unirender/Blackboard.h>
-#include <unirender/RenderContext.h>
 #include <tessellation/Painter.h>
 #include <painting2/RenderSystem.h>
 #include <painting3/PerspCam.h>
@@ -183,10 +182,6 @@ bool PolySelectOP::OnDraw() const
 		return false;
 	}
 
-	auto& ur_rc = ur::Blackboard::Instance()->GetRenderContext();
-	ur_rc.SetDepthTest(ur::DEPTH_DISABLE);
-	ur_rc.EnableDepthMask(false);
-
 	tess::Painter pt;
 
 	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
@@ -213,9 +208,6 @@ bool PolySelectOP::OnDraw() const
 	}
 
 	pt2::RenderSystem::DrawPainter(pt);
-
-	ur_rc.SetDepthTest(ur::DEPTH_LESS_EQUAL);
-	ur_rc.EnableDepthMask(true);
 
 	return false;
 }

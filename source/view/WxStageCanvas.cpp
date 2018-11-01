@@ -4,11 +4,10 @@
 #include <ee0/EditOP.h>
 #include <ee0/WxStagePage.h>
 #include <ee0/SubjectMgr.h>
+#include <ee0/RenderContext.h>
 
-#include <unirender/RenderContext.h>
 #include <tessellation/Painter.h>
 #include <painting2/Blackboard.h>
-#include <painting2/RenderContext.h>
 #include <painting2/WindowContext.h>
 #include <painting2/RenderSystem.h>
 #include <painting3/Blackboard.h>
@@ -17,7 +16,6 @@
 #ifndef GAME_OBJ_ECS
 #include <node3/RenderSystem.h>
 #endif // GAME_OBJ_ECS
-#include <facade/RenderContext.h>
 
 namespace
 {
@@ -95,13 +93,7 @@ void WxStageCanvas::OnSize(int w, int h)
 
 void WxStageCanvas::OnDrawSprites() const
 {
-	auto& ur_rc = const_cast<ee0::RenderContext&>(GetRenderContext()).facade_rc->GetUrRc();
-	ur_rc.SetClearFlag(ur::MASKC | ur::MASKD);
-	ur_rc.Clear(0x88888888);
-	ur_rc.SetDepthTest(ur::DEPTH_LESS_EQUAL);
-	ur_rc.EnableDepthMask(true);
-	ur_rc.SetFrontFace(true);
-	ur_rc.SetCull(ur::CULL_BACK);
+	ee0::RenderContext::Reset3D(true);
 
 	auto& wc = pt3::Blackboard::Instance()->GetWindowContext();
 	if (!wc) {
@@ -120,10 +112,9 @@ void WxStageCanvas::OnDrawSprites() const
 	DrawBackground();
 	DrawForeground();
 
-	ur_rc.SetCull(ur::CULL_DISABLE);
-
 	auto edit_op = m_stage->GetImpl().GetEditOP();
 	if (edit_op) {
+		ee0::RenderContext::Reset2D();
 		edit_op->OnDraw();
 	}
 }

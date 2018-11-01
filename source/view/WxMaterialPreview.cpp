@@ -3,12 +3,10 @@
 #include <ee0/RenderContext.h>
 #include <ee3/WorldTravelOP.h>
 
-#include <unirender/RenderContext.h>
 #include <painting3/RenderSystem.h>
 #include <painting3/PerspCam.h>
 #include <painting3/Blackboard.h>
 #include <painting3/WindowContext.h>
-#include <facade/RenderContext.h>
 
 #include <wx/sizer.h>
 
@@ -86,24 +84,16 @@ void WxMaterialPreview::Canvas::OnSize(int w, int h)
 
 void WxMaterialPreview::Canvas::OnDrawSprites() const
 {
-	auto& ur_rc = const_cast<ee0::RenderContext&>(GetRenderContext()).facade_rc->GetUrRc();
-	ur_rc.SetClearFlag(ur::MASKC | ur::MASKD);
-	ur_rc.Clear(0x88888888);
-	ur_rc.SetDepthTest(ur::DEPTH_LESS_EQUAL);
-	ur_rc.EnableDepthMask(true);
-	ur_rc.SetFrontFace(true);
-	ur_rc.SetCull(ur::CULL_BACK);
-
 	auto& wc = pt3::Blackboard::Instance()->GetWindowContext();
 	if (!wc) {
 		return;
 	}
 
+	ee0::RenderContext::Reset3D();
+
 	pt3::RenderParams params;
 	params.mt = m_camera->GetViewMat();
 	pt3::RenderSystem::Instance()->DrawMaterial(m_material, params);
-
-	ur_rc.SetCull(ur::CULL_DISABLE);
 }
 
 }
