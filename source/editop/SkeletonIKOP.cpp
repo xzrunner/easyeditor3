@@ -220,8 +220,8 @@ bool SkeletonIKOP::TwoBones(int x, int y)
 		return false;
 	}
 
-//	::model::AnimIK::TwoBones(*m_model, m_selected, cross, rot_axis, debug_pos);
-	::model::AnimIK::TwoBones(*m_model, m_selected, cross, sm::vec3(0, 1, 0), debug_pos);
+//	::model::AnimIK::TwoBones(*m_model, m_selected, rot_axis, cross, debug_pos);
+	::model::AnimIK::TwoBones(*m_model, m_selected, sm::vec3(0, 1, 0), cross, debug_pos);
 
 	m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 
