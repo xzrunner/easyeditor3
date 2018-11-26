@@ -15,12 +15,12 @@ namespace ee3
 
 WxMaterialPreview::WxMaterialPreview(wxWindow* parent, const sm::ivec2& size,
 	                                 const ee0::SubjectMgrPtr& sub_mgr,
-	                                 const ee0::RenderContext* rc)
+	                                 const ee0::RenderContext* rc, bool user_effect)
 	: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(size.x, size.y))
 	, m_sub_mgr(sub_mgr)
 	, m_edit_impl(this, m_sub_mgr)
 {
-	m_canvas = std::make_unique<Canvas>(this, m_edit_impl, rc, m_sub_mgr, m_material);
+	m_canvas = std::make_unique<Canvas>(this, m_edit_impl, rc, m_sub_mgr, m_material, user_effect);
 
 	auto op = std::make_shared<ee3::WorldTravelOP>(
 		m_canvas->GetCamera(), m_canvas->GetViewport(), m_sub_mgr
@@ -46,10 +46,11 @@ void WxMaterialPreview::OnSize(wxSizeEvent& event)
 
 WxMaterialPreview::Canvas::Canvas(wxWindow* parent, ee0::EditPanelImpl& edit_impl,
 	                              const ee0::RenderContext* rc, const ee0::SubjectMgrPtr& sub_mgr,
-	                              const pt3::Material& material)
+	                              const pt3::Material& material, bool user_effect)
 	: ee0::WxStageCanvas(parent, edit_impl, std::make_shared<pt3::PerspCam>(sm::vec3(0, 0, -1.5f), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0)), rc, nullptr, HAS_3D)
 	, m_sub_mgr(sub_mgr)
 	, m_material(material)
+	, m_user_effect(user_effect)
 {
 	sub_mgr->RegisterObserver(ee0::MSG_SET_CANVAS_DIRTY, this);
 }
@@ -93,6 +94,7 @@ void WxMaterialPreview::Canvas::OnDrawSprites() const
 
 	pt3::RenderParams params;
 	params.mt = m_camera->GetViewMat();
+	params.user_effect = m_user_effect;
 	pt3::RenderSystem::Instance()->DrawMaterial(m_material, params);
 }
 

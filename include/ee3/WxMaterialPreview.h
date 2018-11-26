@@ -17,8 +17,8 @@ namespace ee3
 class WxMaterialPreview : public wxPanel
 {
 public:
-	WxMaterialPreview(wxWindow* parent, const sm::ivec2& size,
-		const ee0::SubjectMgrPtr& sub_mgr, const ee0::RenderContext* rc);
+	WxMaterialPreview(wxWindow* parent, const sm::ivec2& size, const ee0::SubjectMgrPtr& sub_mgr, 
+		const ee0::RenderContext* rc, bool user_effect = false);
 
 	pt3::Material& GetMaterial() { return m_material; }
 
@@ -35,7 +35,7 @@ private:
 	public:
 		Canvas(wxWindow* parent, ee0::EditPanelImpl& edit_impl,
 			const ee0::RenderContext* rc, const ee0::SubjectMgrPtr& sub_mgr,
-			const pt3::Material& material);
+			const pt3::Material& material, bool user_effect);
 		virtual ~Canvas();
 
 		virtual void OnNotify(uint32_t msg, const ee0::VariantSet& variants) override;
@@ -49,6 +49,8 @@ private:
 	private:
 		ee0::SubjectMgrPtr   m_sub_mgr;
 		const pt3::Material& m_material;
+
+		bool m_user_effect;
 
 		pt3::Viewport m_viewport;
 
