@@ -76,6 +76,9 @@
     <Filter Include="dataset\msg">
       <UniqueIdentifier>{edf06c26-d07b-471f-9995-f65a67a030b2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="editop\2.mesh\5.deform">
+      <UniqueIdentifier>{4405fef7-be21-41f2-8864-0f98684f7aae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\ee3\NodeRotateState.h">
@@ -216,6 +219,9 @@
     <ClInclude Include="..\..\..\include\ee3\WxMaterialPreview.h">
       <Filter>view\toolbar</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\MeshIKOP.h">
+      <Filter>editop\2.mesh\5.deform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\editop\NodeRotateState.cpp">
@@ -343,6 +349,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\view\WxMaterialPreview.cpp">
       <Filter>view\toolbar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\MeshIKOP.cpp">
+      <Filter>editop\2.mesh\5.deform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
