@@ -126,9 +126,6 @@
     <ClInclude Include="..\..\..\include\ee3\CameraDriveOP.h">
       <Filter>editop\1.camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\FacePushPullState.h">
-      <Filter>editop\2.mesh\3.face</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\MeshPointQuery.h">
       <Filter>editop\2.mesh\utility</Filter>
     </ClInclude>
@@ -222,6 +219,9 @@
     <ClInclude Include="..\..\..\include\ee3\MeshIKOP.h">
       <Filter>editop\2.mesh\5.deform</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\FacePushPullState.h">
+      <Filter>editop\2.mesh\4.polyhedron\state</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\editop\NodeRotateState.cpp">
@@ -268,9 +268,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\CameraDriveOP.cpp">
       <Filter>editop\1.camera</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\editop\FacePushPullState.cpp">
-      <Filter>editop\2.mesh\3.face</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\MeshPointQuery.cpp">
       <Filter>editop\2.mesh\utility</Filter>
@@ -352,6 +349,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\MeshIKOP.cpp">
       <Filter>editop\2.mesh\5.deform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\FacePushPullState.cpp">
+      <Filter>editop\2.mesh\4.polyhedron\state</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

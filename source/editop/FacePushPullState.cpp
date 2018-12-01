@@ -56,6 +56,7 @@ bool FacePushPullState::OnMousePress(int x, int y)
 		m_selected.face->GetPlane(plane);
 		bool crossed = false;
 		if (crossed = sm::ray_plane_intersect(ray, plane, &intersect)) {
+			m_last_pos3d = intersect;
 			m_move_path3d.origin = intersect;
 		}
 		assert(crossed);
@@ -81,10 +82,15 @@ bool FacePushPullState::OnMouseDrag(int x, int y)
 		auto screen_fixed_curr_pos2 = m_cam2d->TransPosProjectToScreen(fixed_curr_pos2,
 			static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 
+		auto move_path3d = m_move_path3d;
+		if ((curr_pos2 - m_first_pos2).Dot(m_first_dir2) < 0) {
+			move_path3d.dir = -move_path3d.dir;
+		}
+
 		sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(screen_fixed_curr_pos2, *p_cam);
 		sm::Ray ray(p_cam->GetPos(), ray_dir);
 		sm::vec3 cross;
-		if (sm::ray_ray_intersect(ray, m_move_path3d, &cross)) {
+		if (sm::ray_ray_intersect(ray, move_path3d, &cross)) {
 			if (m_last_pos3d.IsValid()) {
 				TranslateFace(cross - m_last_pos3d);
 			}
