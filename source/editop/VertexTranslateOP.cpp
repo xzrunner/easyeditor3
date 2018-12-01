@@ -20,7 +20,7 @@ VertexTranslateOP::VertexTranslateOP(const std::shared_ptr<pt0::Camera>& camera,
 bool VertexTranslateOP::QueryByPos(const sm::vec2& pos, const quake::BrushVertexPtr& vert,
 	                               const sm::mat4& cam_mat) const
 {
-	auto p3 = vert->pos * model::MapLoader::VERTEX_SCALE;
+	auto p3 = vert->pos * model::MapBuilder::VERTEX_SCALE;
 	auto p2 = m_vp.TransPosProj3ToProj2(p3, cam_mat);
 	if (sm::dis_pos_to_pos(p2, pos) < NODE_QUERY_RADIUS) {
 		m_last_pos3 = p3;
@@ -33,13 +33,13 @@ bool VertexTranslateOP::QueryByPos(const sm::vec2& pos, const quake::BrushVertex
 void VertexTranslateOP::TranslateSelected(const sm::vec3& offset)
 {
 	auto& vertices = m_selected.poly->GetVertices();
-	auto _offset = offset / model::MapLoader::VERTEX_SCALE;
+	auto _offset = offset / model::MapBuilder::VERTEX_SCALE;
 	m_selection.Traverse([&](const quake::BrushVertexPtr& vert)->bool
 	{
 		// update helfedge geo
 		for (auto& v : vertices)
 		{
-			auto d = vert->pos * model::MapLoader::VERTEX_SCALE - v->position;
+			auto d = vert->pos * model::MapBuilder::VERTEX_SCALE - v->position;
 			if (fabs(d.x) < SM_LARGE_EPSILON &&
 				fabs(d.y) < SM_LARGE_EPSILON &&
 				fabs(d.z) < SM_LARGE_EPSILON) {
@@ -63,7 +63,7 @@ void VertexTranslateOP::TranslateSelected(const sm::vec3& offset)
 	m_selected.model->aabb = model_aabb;
 
 	// update vbo
-	model::MapLoader::UpdateVBO(*m_selected.model, m_selected.brush_idx);
+	model::MapBuilder::UpdateVBO(*m_selected.model, m_selected.brush_idx);
 }
 
 }

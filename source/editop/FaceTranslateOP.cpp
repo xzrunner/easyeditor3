@@ -26,7 +26,7 @@ bool FaceTranslateOP::QueryByPos(const sm::vec2& pos, const quake::BrushFacePtr&
 		c3 += v->pos;
 	}
 	c3 /= static_cast<float>(face->vertices.size());
-	c3 *= model::MapLoader::VERTEX_SCALE;
+	c3 *= model::MapBuilder::VERTEX_SCALE;
 	auto c2 = m_vp.TransPosProj3ToProj2(c3, cam_mat);
 	if (sm::dis_pos_to_pos(c2, pos) < NODE_QUERY_RADIUS) {
 		m_last_pos3 = c3;
@@ -39,7 +39,7 @@ bool FaceTranslateOP::QueryByPos(const sm::vec2& pos, const quake::BrushFacePtr&
 void FaceTranslateOP::TranslateSelected(const sm::vec3& offset)
 {
 	auto& faces = m_selected.poly->GetFaces();
-	auto _offset = offset / model::MapLoader::VERTEX_SCALE;
+	auto _offset = offset / model::MapBuilder::VERTEX_SCALE;
 	m_selection.Traverse([&](const quake::BrushFacePtr& face)->bool
 	{
 		// update helfedge geo
@@ -59,7 +59,7 @@ void FaceTranslateOP::TranslateSelected(const sm::vec3& offset)
 				++count;
 			} while (curr != f->start_edge);
 			c1 /= static_cast<float>(count);
-			auto d = c0 * model::MapLoader::VERTEX_SCALE - c1;
+			auto d = c0 * model::MapBuilder::VERTEX_SCALE - c1;
 			if (fabs(d.x) < SM_LARGE_EPSILON &&
 				fabs(d.y) < SM_LARGE_EPSILON &&
 				fabs(d.z) < SM_LARGE_EPSILON)
@@ -90,7 +90,7 @@ void FaceTranslateOP::TranslateSelected(const sm::vec3& offset)
 	m_selected.model->aabb = model_aabb;
 
 	// update vbo
-	model::MapLoader::UpdateVBO(*m_selected.model, m_selected.brush_idx);
+	model::MapBuilder::UpdateVBO(*m_selected.model, m_selected.brush_idx);
 }
 
 }

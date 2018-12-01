@@ -10,7 +10,7 @@
 #include <painting3/PerspCam.h>
 #include <painting3/OrthoCam.h>
 #include <painting3/Viewport.h>
-#include <model/MapLoader.h>
+#include <model/MapBuilder.h>
 #include <model/QuakeMapEntity.h>
 #include <model/Model.h>
 
@@ -565,7 +565,7 @@ void PolyTranslateState::TranslateSelected(const sm::vec3& offset)
 	assert(m_selected.brush_idx >= 0 && m_selected.brush_idx < static_cast<int>(brushes.size()));
 	auto& brush = brushes[m_selected.brush_idx];
 	for (auto& vert : brush.vertices) {
-		vert->pos += offset / model::MapLoader::VERTEX_SCALE;
+		vert->pos += offset / model::MapBuilder::VERTEX_SCALE;
 	}
 
 	// update helfedge geo
@@ -583,7 +583,7 @@ void PolyTranslateState::TranslateSelected(const sm::vec3& offset)
 	m_selected.model->aabb = model_aabb;
 
 	// update vbo
-	model::MapLoader::UpdateVBO(*m_selected.model, m_selected.brush_idx);
+	model::MapBuilder::UpdateVBO(*m_selected.model, m_selected.brush_idx);
 
 	// update m_selected border
 	m_update_cb();

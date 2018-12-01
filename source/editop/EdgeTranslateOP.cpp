@@ -20,8 +20,8 @@ EdgeTranslateOP::EdgeTranslateOP(const std::shared_ptr<pt0::Camera>& camera,
 bool EdgeTranslateOP::QueryByPos(const sm::vec2& pos, const BrushEdge& edge,
 	                             const sm::mat4& cam_mat) const
 {
-	auto b3 = edge.begin->pos * model::MapLoader::VERTEX_SCALE;
-	auto e3 = edge.end->pos * model::MapLoader::VERTEX_SCALE;
+	auto b3 = edge.begin->pos * model::MapBuilder::VERTEX_SCALE;
+	auto e3 = edge.end->pos * model::MapBuilder::VERTEX_SCALE;
 	auto mid3 = (b3 + e3) * 0.5f;
 	auto b2 = m_vp.TransPosProj3ToProj2(b3, cam_mat);
 	auto e2 = m_vp.TransPosProj3ToProj2(e3, cam_mat);
@@ -37,7 +37,7 @@ bool EdgeTranslateOP::QueryByPos(const sm::vec2& pos, const BrushEdge& edge,
 void EdgeTranslateOP::TranslateSelected(const sm::vec3& offset)
 {
 	auto& faces = m_selected.poly->GetFaces();
-	auto _offset = offset / model::MapLoader::VERTEX_SCALE;
+	auto _offset = offset / model::MapBuilder::VERTEX_SCALE;
 	m_selection.Traverse([&](const BrushEdge& edge)->bool
 	{
 		// update helfedge geo
@@ -46,8 +46,8 @@ void EdgeTranslateOP::TranslateSelected(const sm::vec3& offset)
 			auto start = f->start_edge;
 			auto curr = start;
 			do {
-				auto d0 = edge.begin->pos * model::MapLoader::VERTEX_SCALE - curr->origin->position;
-				auto d1 = edge.end->pos * model::MapLoader::VERTEX_SCALE - curr->next->origin->position;
+				auto d0 = edge.begin->pos * model::MapBuilder::VERTEX_SCALE - curr->origin->position;
+				auto d1 = edge.end->pos * model::MapBuilder::VERTEX_SCALE - curr->next->origin->position;
 				if (fabs(d0.x) < SM_LARGE_EPSILON &&
 					fabs(d0.y) < SM_LARGE_EPSILON &&
 					fabs(d0.z) < SM_LARGE_EPSILON &&
@@ -78,7 +78,7 @@ void EdgeTranslateOP::TranslateSelected(const sm::vec3& offset)
 	m_selected.model->aabb = model_aabb;
 
 	// update vbo
-	model::MapLoader::UpdateVBO(*m_selected.model, m_selected.brush_idx);
+	model::MapBuilder::UpdateVBO(*m_selected.model, m_selected.brush_idx);
 }
 
 }

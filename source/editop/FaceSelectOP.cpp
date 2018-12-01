@@ -99,7 +99,7 @@ sm::vec2 FaceSelectOP::CalcFaceCenter(const quake::BrushFace& face, const sm::ma
 	}
 	center /= face.vertices.size();
 
-	return m_vp.TransPosProj3ToProj2(center * model::MapLoader::VERTEX_SCALE, cam_mat);
+	return m_vp.TransPosProj3ToProj2(center * model::MapBuilder::VERTEX_SCALE, cam_mat);
 }
 
 void FaceSelectOP::DrawFace(tess::Painter& pt, const quake::BrushFace& face, uint32_t color, const sm::mat4& cam_mat) const
@@ -107,7 +107,7 @@ void FaceSelectOP::DrawFace(tess::Painter& pt, const quake::BrushFace& face, uin
 	std::vector<sm::vec2> polygon;
 	polygon.reserve(face.vertices.size());
 	for (auto& v : face.vertices) {
-		auto p3 = v->pos * model::MapLoader::VERTEX_SCALE;
+		auto p3 = v->pos * model::MapBuilder::VERTEX_SCALE;
 		polygon.push_back(m_vp.TransPosProj3ToProj2(p3, cam_mat));
 	}
 	pt.AddPolygonFilled(polygon.data(), polygon.size(), color);

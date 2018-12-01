@@ -11,7 +11,7 @@
 #include <painting3/Viewport.h>
 #include <SM_Calc.h>
 #include <model/Model.h>
-#include <model/MapLoader.h>
+#include <model/MapBuilder.h>
 
 #include <wx/utils.h>
 

@@ -23,18 +23,18 @@ void VertexSelectOP::DrawImpl(const quake::MapBrush& brush, const sm::mat4& cam_
 
 	// all nodes
 	for (auto& v : brush.vertices) {
-		auto pos = m_vp.TransPosProj3ToProj2(v->pos * model::MapLoader::VERTEX_SCALE, cam_mat);
+		auto pos = m_vp.TransPosProj3ToProj2(v->pos * model::MapBuilder::VERTEX_SCALE, cam_mat);
 		pt.AddCircleFilled(pos, NODE_DRAW_RADIUS, UNSELECT_COLOR);
 	}
 	// selecting
 	if (m_selecting)
 	{
-		auto pos = m_vp.TransPosProj3ToProj2(m_selecting->pos * model::MapLoader::VERTEX_SCALE, cam_mat);
+		auto pos = m_vp.TransPosProj3ToProj2(m_selecting->pos * model::MapBuilder::VERTEX_SCALE, cam_mat);
 		pt.AddCircle(pos, NODE_QUERY_RADIUS, SELECT_COLOR);
 	}
 	// selected
 	m_selected.Traverse([&](const quake::BrushVertexPtr& vert)->bool {
-		auto pos = m_vp.TransPosProj3ToProj2(vert->pos * model::MapLoader::VERTEX_SCALE, cam_mat);
+		auto pos = m_vp.TransPosProj3ToProj2(vert->pos * model::MapBuilder::VERTEX_SCALE, cam_mat);
 		pt.AddCircleFilled(pos, NODE_DRAW_RADIUS, SELECT_COLOR);
 		return true;
 	});
@@ -56,7 +56,7 @@ quake::BrushVertexPtr VertexSelectOP::QueryByPos(int x, int y) const
 	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
 
 	for (auto& v : brush->vertices) {
-		auto p = m_vp.TransPosProj3ToProj2(v->pos * model::MapLoader::VERTEX_SCALE, cam_mat);
+		auto p = m_vp.TransPosProj3ToProj2(v->pos * model::MapBuilder::VERTEX_SCALE, cam_mat);
 		if (sm::dis_pos_to_pos(p, pos) < NODE_QUERY_RADIUS) {
 			return v;
 		}
@@ -80,7 +80,7 @@ void VertexSelectOP::QueryByRect(const sm::irect& rect, std::vector<quake::Brush
 
 	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
 	for (auto& v : brush->vertices) {
-		auto p = m_vp.TransPosProj3ToProj2(v->pos * model::MapLoader::VERTEX_SCALE, cam_mat);
+		auto p = m_vp.TransPosProj3ToProj2(v->pos * model::MapBuilder::VERTEX_SCALE, cam_mat);
 		if (sm::is_point_in_rect(p, s_rect)) {
 			selection.push_back(v);
 		}

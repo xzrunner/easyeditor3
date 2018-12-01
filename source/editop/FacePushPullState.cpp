@@ -12,7 +12,7 @@
 #include <painting3/PerspCam.h>
 #include <model/QuakeMapEntity.h>
 #include <model/Model.h>
-#include <model/MapLoader.h>
+#include <model/MapBuilder.h>
 
 namespace ee3
 {
@@ -137,7 +137,7 @@ void FacePushPullState::TranslateFace(const sm::vec3& offset)
 	assert(m_selected.face_idx < static_cast<int>(brush.faces.size()));
 	auto& face = brush.faces[m_selected.face_idx];
 	for (auto& vert : face->vertices) {
-		vert->pos += offset / model::MapLoader::VERTEX_SCALE;
+		vert->pos += offset / model::MapBuilder::VERTEX_SCALE;
 	}
 
 	// halfedge geo
@@ -162,7 +162,7 @@ void FacePushPullState::TranslateFace(const sm::vec3& offset)
 	m_selected.model->aabb = model_aabb;
 
 	// update vbo
-	model::MapLoader::UpdateVBO(*m_selected.model, m_selected.brush_idx);
+	model::MapBuilder::UpdateVBO(*m_selected.model, m_selected.brush_idx);
 }
 
 }
