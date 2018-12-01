@@ -23,8 +23,6 @@ CameraFlyOP::CameraFlyOP(wxWindow* wnd, const std::shared_ptr<pt0::Camera>& came
 
 bool CameraFlyOP::OnMouseMove(int x, int y)
 {
-	ShowCursor(0);
-
 	if (CameraMoveOP::OnMouseMove(x, y)) {
 		return true;
 	}
