@@ -17,7 +17,7 @@ public:
 
 	virtual bool OnMouseLeftDown(int x, int y) override;
 	virtual bool OnMouseLeftUp(int x, int y) override;
-	virtual bool OnMouseDrag(int x, int y);
+	virtual bool OnMouseDrag(int x, int y) override;
 
 	virtual bool OnActive() override;
 	virtual bool OnDraw() const override;
