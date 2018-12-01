@@ -4,6 +4,7 @@
 #include <ee0/typedef.h>
 
 #include <SM_Vector.h>
+#include <node0/typedef.h>
 
 namespace pt3 { class Viewport; }
 
@@ -28,6 +29,8 @@ public:
 
 private:
 	bool RayPlaneIntersect(int x, int y, float plane_y, sm::vec3& cross) const;
+
+	n0::SceneNodePtr CreateModelObj();
 
 private:
 	const pt3::Viewport& m_vp;

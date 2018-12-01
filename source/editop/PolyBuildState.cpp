@@ -2,6 +2,7 @@
 
 #include <ee0/SubjectMgr.h>
 #include <ee0/MessageID.h>
+#include <ee0/MsgHelper.h>
 
 #include <SM_Ray.h>
 #include <SM_RayIntersect.h>
@@ -9,6 +10,15 @@
 #include <painting2/RenderSystem.h>
 #include <painting3/PerspCam.h>
 #include <painting3/Viewport.h>
+#include <model/Model.h>
+#include <model/QuakeMapEntity.h>
+#include <model/MapBuilder.h>
+#include <node0/SceneNode.h>
+#include <node0/CompIdentity.h>
+#include <node3/CompModel.h>
+#include <node3/CompModelInst.h>
+#include <node3/CompTransform.h>
+#include <node3/CompAABB.h>
 
 namespace ee3
 {
@@ -48,6 +58,12 @@ bool PolyBuildState::OnMousePress(int x, int y)
 
 bool PolyBuildState::OnMouseRelease(int x, int y)
 {
+	if (m_first_pos.IsValid() && m_last_pos.IsValid())
+	{
+		auto obj = CreateModelObj();
+		 ee0::MsgHelper::InsertNode(*m_sub_mgr, obj, true);
+	}
+
 	return false;
 }
 
@@ -96,6 +112,36 @@ bool PolyBuildState::RayPlaneIntersect(int x, int y, float plane_y, sm::vec3& cr
 	}
 
 	return sm::ray_plane_intersect(ray, plane, &cross);
+}
+
+n0::SceneNodePtr PolyBuildState::CreateModelObj()
+{
+	std::vector<sm::vec3> face;
+	face.reserve(4);
+	face.push_back(m_first_pos);
+	face.push_back({ m_last_pos.x, m_y, m_first_pos.z });
+	face.push_back(m_last_pos);
+	face.push_back({ m_first_pos.x, m_y, m_last_pos.z });
+
+	auto model = model::MapBuilder::Create(face);
+
+	auto node = std::make_shared<n0::SceneNode>();
+
+	// model
+	auto& cmodel = node->AddSharedComp<n3::CompModel>();
+	cmodel.SetModel(model);
+	node->AddUniqueComp<n3::CompModelInst>(model, 0);
+
+	// transform
+	node->AddUniqueComp<n3::CompTransform>();
+
+	// aabb
+	node->AddUniqueComp<n3::CompAABB>(pt3::AABB(model->aabb));
+
+	// id
+	node->AddUniqueComp<n0::CompIdentity>();
+
+	return node;
 }
 
 }
