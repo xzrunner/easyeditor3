@@ -36,6 +36,8 @@ private:
 
 	const MeshPointQuery::Selected& m_selected;
 
+	std::function<void()> m_update_cb;
+
 	ee0::EditOpStatePtr m_face_pp_state    = nullptr;
 	ee0::EditOpStatePtr m_poly_trans_state = nullptr;
 	ee0::EditOpStatePtr m_poly_build_state = nullptr;

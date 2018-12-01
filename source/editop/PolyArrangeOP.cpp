@@ -21,6 +21,7 @@ PolyArrangeOP::PolyArrangeOP(const std::shared_ptr<pt0::Camera>& camera,
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 	, m_selected(selected)
+	, m_update_cb(update_cb)
 {
 	m_poly_trans_state = std::make_shared<PolyTranslateState>(
 		camera, vp, sub_mgr, selected, update_cb);
@@ -48,7 +49,7 @@ bool PolyArrangeOP::OnKeyDown(int key_code)
 	{
 		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 		m_face_pp_state = std::make_shared<FacePushPullState>(
-			p_cam, m_vp, m_sub_mgr, m_selected);
+			p_cam, m_vp, m_sub_mgr, m_selected, m_update_cb);
 		ChangeEditOpState(m_face_pp_state);
 	}
 

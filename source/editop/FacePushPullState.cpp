@@ -22,11 +22,13 @@ namespace mesh
 FacePushPullState::FacePushPullState(const std::shared_ptr<pt0::Camera>& camera,
 	                                 const pt3::Viewport& vp,
 	                                 const ee0::SubjectMgrPtr& sub_mgr,
-	                                 const MeshPointQuery::Selected& selected)
+	                                 const MeshPointQuery::Selected& selected,
+	                                 std::function<void()> update_cb)
 	: ee0::EditOpState(camera)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 	, m_selected(selected)
+	, m_update_cb(update_cb)
 	, m_cam2d(std::make_shared<pt2::OrthoCamera>())
 {
 	m_cam2d->OnSize(m_vp.Width(), m_vp.Height());
@@ -92,6 +94,9 @@ bool FacePushPullState::OnMouseDrag(int x, int y)
 		}
 
 		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+
+		// update m_selected border
+		m_update_cb();
 
 		return true;
 	}

@@ -9,6 +9,8 @@
 #include <SM_Plane.h>
 #include <halfedge/HalfEdge.h>
 
+#include <functional>
+
 namespace pt2 { class OrthoCamera; }
 namespace pt3 { class Viewport; }
 
@@ -21,7 +23,8 @@ class FacePushPullState : public ee0::EditOpState
 {
 public:
 	FacePushPullState(const std::shared_ptr<pt0::Camera>& camera, const pt3::Viewport& vp,
-		const ee0::SubjectMgrPtr& sub_mgr, const MeshPointQuery::Selected& selected);
+		const ee0::SubjectMgrPtr& sub_mgr, const MeshPointQuery::Selected& selected,
+		std::function<void()> update_cb);
 
 	virtual bool OnMousePress(int x, int y) override;
 	virtual bool OnMouseDrag(int x, int y) override;
@@ -37,6 +40,8 @@ private:
 	ee0::SubjectMgrPtr m_sub_mgr;
 
 	const MeshPointQuery::Selected& m_selected;
+
+	std::function<void()> m_update_cb;
 
 	std::shared_ptr<pt2::OrthoCamera> m_cam2d;
 

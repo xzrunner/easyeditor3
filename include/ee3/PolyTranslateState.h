@@ -50,6 +50,8 @@ private:
 
 	const MeshPointQuery::Selected& m_selected;
 
+	std::function<void()> m_update_cb;
+
 	sm::vec3 m_first_pos3;
 	sm::vec3 m_last_pos3;
 
@@ -59,8 +61,6 @@ private:
 	bool m_move_fixed_xz;
 
 	MoveType m_move_type;
-
-	std::function<void()> m_update_cb;
 
 }; // PolyTranslateState
 
