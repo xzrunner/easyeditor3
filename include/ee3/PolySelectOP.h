@@ -32,6 +32,7 @@ public:
 	virtual bool OnDraw() const override;
 
 	auto& GetSelected() const { return m_selected; }
+	void SetSelected(const n0::SceneNodePtr& node);
 
 	void SetCanSelectNull(bool select_null) {
 		m_select_null = select_null;

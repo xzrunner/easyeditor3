@@ -55,9 +55,6 @@
     <Filter Include="editop\2.mesh\4.polyhedron">
       <UniqueIdentifier>{f9138247-2e68-4f55-a932-2dcf9620bb43}</UniqueIdentifier>
     </Filter>
-    <Filter Include="editop\2.mesh\4.polyhedron\state">
-      <UniqueIdentifier>{c569e6e5-3301-4ddb-825c-9ce170fc7f38}</UniqueIdentifier>
-    </Filter>
     <Filter Include="editop\3.model">
       <UniqueIdentifier>{8fab3924-6f57-4a87-aff4-ef8d05e6c911}</UniqueIdentifier>
     </Filter>
@@ -78,6 +75,18 @@
     </Filter>
     <Filter Include="editop\2.mesh\5.deform">
       <UniqueIdentifier>{4405fef7-be21-41f2-8864-0f98684f7aae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="editop\2.mesh\4.polyhedron\arrange">
+      <UniqueIdentifier>{dee2a409-a053-4c58-8802-e197612b6479}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="editop\2.mesh\4.polyhedron\arrange\state">
+      <UniqueIdentifier>{c569e6e5-3301-4ddb-825c-9ce170fc7f38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="editop\2.mesh\4.polyhedron\draw">
+      <UniqueIdentifier>{5ad6c545-bee1-4ad5-9f48-c574ea25505f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="editop\2.mesh\4.polyhedron\draw\state">
+      <UniqueIdentifier>{c7dfab01-e026-4209-b304-c297be1f7743}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -129,12 +138,6 @@
     <ClInclude Include="..\..\..\include\ee3\MeshPointQuery.h">
       <Filter>editop\2.mesh\utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\PolyArrangeOP.h">
-      <Filter>editop\2.mesh\4.polyhedron</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\PolySelectOP.h">
-      <Filter>editop\2.mesh\4.polyhedron</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\VertexTranslateOP.h">
       <Filter>editop\2.mesh\1.vertex</Filter>
     </ClInclude>
@@ -167,12 +170,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\CameraMgr.h">
       <Filter>dataset</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\PolyTranslateState.h">
-      <Filter>editop\2.mesh\4.polyhedron\state</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\PolyBuildState.h">
-      <Filter>editop\2.mesh\4.polyhedron\state</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\MeshRayIntersect.h">
       <Filter>editop\2.mesh\utility</Filter>
@@ -219,8 +216,23 @@
     <ClInclude Include="..\..\..\include\ee3\MeshIKOP.h">
       <Filter>editop\2.mesh\5.deform</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\PolyArrangeOP.h">
+      <Filter>editop\2.mesh\4.polyhedron\arrange</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\PolySelectOP.h">
+      <Filter>editop\2.mesh\4.polyhedron\arrange</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\PolyTranslateState.h">
+      <Filter>editop\2.mesh\4.polyhedron\arrange\state</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\FacePushPullState.h">
-      <Filter>editop\2.mesh\4.polyhedron\state</Filter>
+      <Filter>editop\2.mesh\4.polyhedron\draw\state</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\PolyBuildState.h">
+      <Filter>editop\2.mesh\4.polyhedron\draw\state</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\PolyBuildOP.h">
+      <Filter>editop\2.mesh\4.polyhedron\draw</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -272,12 +284,6 @@
     <ClCompile Include="..\..\..\source\editop\MeshPointQuery.cpp">
       <Filter>editop\2.mesh\utility</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\editop\PolyArrangeOP.cpp">
-      <Filter>editop\2.mesh\4.polyhedron</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\editop\PolySelectOP.cpp">
-      <Filter>editop\2.mesh\4.polyhedron</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\editop\VertexTranslateOP.cpp">
       <Filter>editop\2.mesh\1.vertex</Filter>
     </ClCompile>
@@ -301,12 +307,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\dataset\CameraMgr.cpp">
       <Filter>dataset</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\editop\PolyTranslateState.cpp">
-      <Filter>editop\2.mesh\4.polyhedron\state</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\editop\PolyBuildState.cpp">
-      <Filter>editop\2.mesh\4.polyhedron\state</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\MeshRayIntersect.cpp">
       <Filter>editop\2.mesh\utility</Filter>
@@ -350,8 +350,23 @@
     <ClCompile Include="..\..\..\source\editop\MeshIKOP.cpp">
       <Filter>editop\2.mesh\5.deform</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\PolyArrangeOP.cpp">
+      <Filter>editop\2.mesh\4.polyhedron\arrange</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\PolySelectOP.cpp">
+      <Filter>editop\2.mesh\4.polyhedron\arrange</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\PolyTranslateState.cpp">
+      <Filter>editop\2.mesh\4.polyhedron\arrange\state</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\source\editop\FacePushPullState.cpp">
-      <Filter>editop\2.mesh\4.polyhedron\state</Filter>
+      <Filter>editop\2.mesh\4.polyhedron\draw\state</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\PolyBuildState.cpp">
+      <Filter>editop\2.mesh\4.polyhedron\draw\state</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\PolyBuildOP.cpp">
+      <Filter>editop\2.mesh\4.polyhedron\draw</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

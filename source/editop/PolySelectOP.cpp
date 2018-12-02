@@ -7,8 +7,11 @@
 #include <ee0/color_config.h>
 #include <ee0/MsgHelper.h>
 
+#include <model/Model.h>
+#include <model/QuakeMapEntity.h>
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
+#include <node3/CompModelInst.h>
 #include <unirender/Blackboard.h>
 #include <tessellation/Painter.h>
 #include <painting2/RenderSystem.h>
@@ -210,6 +213,36 @@ bool PolySelectOP::OnDraw() const
 	pt2::RenderSystem::DrawPainter(pt);
 
 	return false;
+}
+
+void PolySelectOP::SetSelected(const n0::SceneNodePtr& node)
+{
+	m_selected.Reset();
+
+	auto& cmodel = node->GetUniqueComp<n3::CompModelInst>();
+	auto& model = cmodel.GetModel();
+	if (!model || !model->GetModel()) {
+		return;
+	}
+
+	auto& ext = model->GetModel()->ext;
+	if (!ext || ext->Type() != model::EXT_QUAKE_MAP) {
+		return;
+	}
+
+	bool find = false;
+	auto map_entity = static_cast<model::QuakeMapEntity*>(ext.get());
+	auto& brushes = map_entity->GetMapEntity()->brushes;
+	assert(brushes.size() == model->GetModel()->meshes.size());
+	if (brushes.empty()) {
+		return;
+	}
+
+	auto& brush = brushes[0];
+	m_selected.poly      = brush.geometry;
+	m_selected.model     = model->GetModel();
+	m_selected.brush_idx = 0;
+	m_selected.node      = node;
 }
 
 void PolySelectOP::UpdateCachedPolyBorder()

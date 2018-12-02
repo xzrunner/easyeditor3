@@ -58,11 +58,12 @@ bool PolyBuildState::OnMousePress(int x, int y)
 
 bool PolyBuildState::OnMouseRelease(int x, int y)
 {
-	if (m_first_pos.IsValid() && m_last_pos.IsValid())
-	{
-		auto obj = CreateModelObj();
-		 ee0::MsgHelper::InsertNode(*m_sub_mgr, obj, true);
+	if (m_first_pos.IsValid() && m_last_pos.IsValid()) {
+		ee0::MsgHelper::InsertNode(*m_sub_mgr, CreateModelObj(), true);
 	}
+
+	m_first_pos.MakeInvalid();
+	m_last_pos.MakeInvalid();
 
 	return false;
 }

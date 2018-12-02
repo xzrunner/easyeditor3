@@ -29,6 +29,7 @@
     <ClInclude Include="..\..\..\include\ee3\MeshTranslateBaseOP.h" />
     <ClInclude Include="..\..\..\include\ee3\MessageID.h" />
     <ClInclude Include="..\..\..\include\ee3\MsgHelper.h" />
+    <ClInclude Include="..\..\..\include\ee3\PolyBuildOP.h" />
     <ClInclude Include="..\..\..\include\ee3\PolyBuildState.h" />
     <ClInclude Include="..\..\..\include\ee3\PolyTranslateState.h" />
     <ClInclude Include="..\..\..\include\ee3\SkeletonSelectOp.h" />
@@ -74,6 +75,7 @@
     <ClCompile Include="..\..\..\source\editop\MeshIKOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\MeshPointQuery.cpp" />
     <ClCompile Include="..\..\..\source\editop\MeshRayIntersect.cpp" />
+    <ClCompile Include="..\..\..\source\editop\PolyBuildOP.cpp" />
     <ClCompile Include="..\..\..\source\editop\PolyBuildState.cpp" />
     <ClCompile Include="..\..\..\source\editop\PolyTranslateState.cpp" />
     <ClCompile Include="..\..\..\source\editop\SkeletonSelectOp.cpp" />
