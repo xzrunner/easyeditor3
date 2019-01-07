@@ -95,6 +95,9 @@ void WxMaterialPreview::Canvas::OnDrawSprites() const
 	pt3::RenderParams params;
 	params.mt = m_camera->GetViewMat();
 	params.user_effect = m_user_effect;
+    auto sz = GetSize();
+    params.resolution.x = sz.x;
+    params.resolution.y = sz.y;
 	pt3::RenderSystem::Instance()->DrawMaterial(m_material, params);
 }
 
