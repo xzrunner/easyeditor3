@@ -8,6 +8,7 @@
 #include <painting2/OrthoCamera.h>
 #include <painting2/RenderSystem.h>
 #include <painting3/Viewport.h>
+#include <painting3/PerspCam.h>
 #ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
@@ -92,10 +93,12 @@ bool RotateAxisState::OnDraw() const
 
 	const float line_width = 2.0f;
 
+    const float len = CalcCoordAxisLen();
+
 	auto c = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(0, 0, 0), cam_mat);
-	auto x = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(m_cfg.arc_radius, 0, 0), cam_mat);
-	auto y = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(0, m_cfg.arc_radius, 0), cam_mat);
-	auto z = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(0, 0, -m_cfg.arc_radius), cam_mat);
+	auto x = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(len, 0, 0), cam_mat);
+	auto y = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(0, len, 0), cam_mat);
+	auto z = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(0, 0, -len), cam_mat);
 
 	// draw edges
 	// axis
@@ -107,11 +110,11 @@ bool RotateAxisState::OnDraw() const
 		return m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * pos3, cam_mat);
 	};
 	pt.AddArc3D(sm::mat4::RotatedAxis(sm::vec3(0, 1, 0), SM_PI * 0.5f),
-		m_cfg.arc_radius, 0, SM_PI * 0.5f, trans_func, 0xff0000ff, line_width);
+		len, 0, SM_PI * 0.5f, trans_func, 0xff0000ff, line_width);
 	pt.AddArc3D(sm::mat4::RotatedAxis(sm::vec3(1, 0, 0), -SM_PI * 0.5f),
-		m_cfg.arc_radius, 0, SM_PI * 0.5f, trans_func, 0xff00ff00, line_width);
+		len, 0, SM_PI * 0.5f, trans_func, 0xff00ff00, line_width);
 	pt.AddArc3D(sm::mat4(),
-		m_cfg.arc_radius, 0, SM_PI * 0.5f, trans_func, 0xffff0000, line_width);
+		len, 0, SM_PI * 0.5f, trans_func, 0xffff0000, line_width);
 
 	// draw nodes
 	// x, green
@@ -130,20 +133,22 @@ RotateAxisState::PointQueryType RotateAxisState::PointQuery(int x, int y) const
 {
 	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
 
+    const float len = CalcCoordAxisLen();
+
 	auto proj2d = m_cam2d->TransPosScreenToProject(x, y,
 		static_cast<int>(m_vp.Width()), static_cast<int>(m_vp.Height()));
 	// x, green
-	auto pos2d = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(m_cfg.arc_radius, 0, 0), cam_mat);
+	auto pos2d = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(len, 0, 0), cam_mat);
 	if (sm::dis_pos_to_pos(pos2d, proj2d) < m_cfg.node_radius) {
 		return POINT_QUERY_Y;
 	}
 	// y, blue
-	pos2d = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(0, m_cfg.arc_radius, 0), cam_mat);
+	pos2d = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(0, len, 0), cam_mat);
 	if (sm::dis_pos_to_pos(pos2d, proj2d) < m_cfg.node_radius) {
 		return POINT_QUERY_Z;
 	}
 	// z, red
-	pos2d = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(0, 0, -m_cfg.arc_radius), cam_mat);
+	pos2d = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * sm::vec3(0, 0, -len), cam_mat);
 	if (sm::dis_pos_to_pos(pos2d, proj2d) < m_cfg.node_radius) {
 		return POINT_QUERY_X;
 	}
@@ -168,8 +173,9 @@ void RotateAxisState::UpdateSelectionSetInfo()
 
 void RotateAxisState::Rotate(const sm::vec2& start, const sm::vec2& end)
 {
+    const float len = CalcCoordAxisLen();
 	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
-	auto raidus = m_vp.TransPosProj3ToProj2(sm::vec3(m_cfg.arc_radius, 0, 0), cam_mat);
+	auto raidus = m_vp.TransPosProj3ToProj2(sm::vec3(len, 0, 0), cam_mat);
 	float angle = atan(sm::dis_pos_to_pos(start, end) / raidus.Length());
 	if ((start - m_pos2d).Cross(end - m_pos2d) < 0) {
 		angle = -angle;
@@ -200,6 +206,13 @@ void RotateAxisState::Rotate(const sm::vec2& start, const sm::vec2& end)
 //	});
 
 	m_cb.rotate(-delta);
+}
+
+float RotateAxisState::CalcCoordAxisLen() const
+{
+    auto& cam_pos = std::static_pointer_cast<pt3::PerspCam>(m_camera)->GetPos();
+    float dis = sm::dis_pos3_to_pos3(m_ori_wmat_no_scale * sm::vec3(0, 0, 0), cam_pos);
+    return dis * m_cfg.arc_radius * 0.5f;
 }
 
 }

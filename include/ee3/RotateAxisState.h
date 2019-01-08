@@ -60,6 +60,8 @@ private:
 
 	void Rotate(const sm::vec2& start, const sm::vec2& end);
 
+    float CalcCoordAxisLen() const;
+
 private:
 	const pt3::Viewport& m_vp;
 

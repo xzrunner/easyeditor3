@@ -261,22 +261,30 @@ sm::vec2 TranslateAxisState::GetCtrlPos2D(const sm::mat4& cam_mat, AxisNodeType 
 sm::vec3 TranslateAxisState::GetCtrlPos3D(AxisNodeType type) const
 {
 	sm::vec3 pos;
+    const float len = CalcCoordAxisLen();
 	switch (type)
 	{
 	case AXIS_CENTER:
 		pos.Set(0, 0, 0);
 		break;
 	case AXIS_X:
-		pos.Set(m_cfg.arc_radius, 0, 0);
+		pos.Set(len, 0, 0);
 		break;
 	case AXIS_Y:
-		pos.Set(0, m_cfg.arc_radius, 0);
+		pos.Set(0, len, 0);
 		break;
 	case AXIS_Z:
-		pos.Set(0, 0, -m_cfg.arc_radius);
+		pos.Set(0, 0, -len);
 		break;
 	}
 	return pos;
+}
+
+float TranslateAxisState::CalcCoordAxisLen() const
+{
+    auto& cam_pos = std::static_pointer_cast<pt3::PerspCam>(m_camera)->GetPos();
+    float dis = sm::dis_pos3_to_pos3(m_ori_wmat_no_scale * sm::vec3(0, 0, 0), cam_pos);
+    return dis * m_cfg.arc_radius * 0.5f;
 }
 
 }

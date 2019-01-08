@@ -72,6 +72,8 @@ private:
 	sm::vec2 GetCtrlPos2D(const sm::mat4& cam_mat, AxisNodeType type) const;
 	sm::vec3 GetCtrlPos3D(AxisNodeType type) const;
 
+    float CalcCoordAxisLen() const;
+
 private:
 	const pt3::Viewport& m_vp;
 
