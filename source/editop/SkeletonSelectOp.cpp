@@ -87,14 +87,14 @@ bool SkeletonSelectOp::OnDraw() const
 			auto& c_pos2 = pos2[child];
 
 			auto dir = (c_pos2 - p_pos2).Normalized();
-			float len = sm::dis_pos_to_pos(c_pos2, p_pos2) * 0.05f;
+			float len = std::min(sm::dis_pos_to_pos(c_pos2, p_pos2) * 0.05f, 10.0f);
 			auto p_pos2_l = sm::rotate_vector_right_angle(dir, true) * len + p_pos2;
 			auto p_pos2_r = sm::rotate_vector_right_angle(dir, false) * len + p_pos2;
 			std::array<sm::vec2, 3> triangle = {
 				p_pos2_l, p_pos2_r, c_pos2
 			};
 
-			pt.AddPolygon(triangle.data(), triangle.size(), 0xffff00ff, 2);
+            pt.AddPolygonFilled(triangle.data(), triangle.size(), 0xffff00ff);
 		}
 	}
 	pt2::RenderSystem::DrawPainter(pt);
