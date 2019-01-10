@@ -95,10 +95,19 @@ void WxMaterialPreview::Canvas::OnDrawSprites() const
 	pt3::RenderParams params;
 	params.mt = m_camera->GetViewMat();
 	params.user_effect = m_user_effect;
+
+    pt3::RenderContext ctx;
     auto sz = GetSize();
-    params.resolution.x = sz.x;
-    params.resolution.y = sz.y;
-	pt3::RenderSystem::Instance()->DrawMaterial(m_material, params);
+    ctx.resolution.x = sz.x;
+    ctx.resolution.y = sz.y;
+    auto cam_type = m_camera->TypeID();
+    if (cam_type == pt0::GetCamTypeID<pt3::PerspCam>())
+    {
+        auto& p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
+        ctx.cam_pos = p_cam->GetPos();
+    }
+
+	pt3::RenderSystem::Instance()->DrawMaterial(m_material, params, ctx);
 }
 
 }
