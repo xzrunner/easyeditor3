@@ -26,6 +26,8 @@ private:
 
 	void OnSelChanged(wxTreeEvent& event);
 
+    void ClearAll();
+
 private:
 	class Item : public wxTreeItemData
 	{
@@ -40,8 +42,8 @@ private:
 private:
 	ee0::SubjectMgrPtr m_sub_mgr;
 
-	wxTreeItemId      m_root;
-	std::vector<Item> m_items;
+	wxTreeItemId       m_root;
+	std::vector<Item*> m_items;
 
 	DECLARE_EVENT_TABLE()
 

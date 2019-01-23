@@ -36,8 +36,8 @@ void WxSkeletalTreeCtrl::OnNotify(uint32_t msg, const ee0::VariantSet& variants)
 			int joint_id = variants.GetVariant("joint_id").m_val.l;
 			for (auto& i : m_items)
 			{
-				if (i.m_node_id == joint_id) {
-					SelectItem(i.GetId());
+				if (i->m_node_id == joint_id) {
+					SelectItem(i->GetId());
 					break;
 				}
 			}
@@ -48,18 +48,17 @@ void WxSkeletalTreeCtrl::OnNotify(uint32_t msg, const ee0::VariantSet& variants)
 
 void WxSkeletalTreeCtrl::LoadFromSkeletal(const ::model::SkeletalAnim& skeletal)
 {
+    ClearAll();
+
 	auto& nodes = skeletal.GetNodes();
 	if (nodes.empty()) {
 		return;
 	}
 
-	m_items.reserve(nodes.size());
-	for (int i = 0, n = nodes.size(); i < n; ++i) {
-		m_items.emplace_back(i);
-	}
-
 	m_root = AddRoot(nodes[0]->name);
-	SetItemData(m_root, &m_items[0]);
+    auto item = new Item(0);
+    m_items.push_back(item);
+	SetItemData(m_root, item);
 	for (auto& c : nodes[0]->children) {
 		InsertNode(m_root, skeletal, c);
 	}
@@ -72,7 +71,9 @@ void WxSkeletalTreeCtrl::InsertNode(wxTreeItemId parent, const ::model::Skeletal
 	auto& nodes = skeletal.GetNodes();
 	auto& node = nodes[child];
 	auto id = InsertItem(parent, 0, node->name);
-	SetItemData(id, &m_items[child]);
+    auto item = new Item(child);
+    m_items.push_back(item);
+	SetItemData(id, item);
 	for (auto& c : node->children) {
 		InsertNode(id, skeletal, c);
 	}
@@ -87,6 +88,14 @@ void WxSkeletalTreeCtrl::OnSelChanged(wxTreeEvent& event)
 
 	auto pdata = (Item*)GetItemData(id);
 	MsgHelper::SelectSkeletalJoint(*m_sub_mgr, pdata->m_node_id);
+}
+
+void WxSkeletalTreeCtrl::ClearAll()
+{
+    DeleteAllItems();
+
+    m_root.Unset();
+    m_items.clear();
 }
 
 }
