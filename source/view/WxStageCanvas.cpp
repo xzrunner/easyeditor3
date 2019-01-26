@@ -119,42 +119,80 @@ void WxStageCanvas::OnDrawSprites() const
 	}
 }
 
+//// use pt2
+//void WxStageCanvas::DrawBackground() const
+//{
+//	tess::Painter pt;
+//
+//	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
+//	auto trans3d = [&](const sm::vec3& pos3)->sm::vec2 {
+//		return m_viewport.TransPosProj3ToProj2(pos3, cam_mat);
+//	};
+//
+//	//// draw cross
+//	//uint32_t col = 0xff000088;
+//	//const float len = 50.0f;
+//	//pt.AddLine3D({ -len, 0, 0 }, { len, 0, 0 }, trans3d, col);
+//	//pt.AddLine3D({ 0, -len, 0 }, { 0, len, 0 }, trans3d, col);
+//	//pt.AddLine3D({ 0, 0, -len }, { 0, 0, len }, trans3d, col);
+//
+// //   // draw grids
+//	//static const int TOT_LEN = 100;
+//	//static const int GRID_EDGE = 5;
+//	//for (int z = -TOT_LEN; z < TOT_LEN; z += GRID_EDGE) {
+//	//	for (int x = -TOT_LEN; x < TOT_LEN; x += GRID_EDGE) {
+//	//		if ((x + z) % (GRID_EDGE * 2) == 0) {
+//	//			col = 0xff444444;
+//	//		} else {
+//	//			col = 0xff888888;
+//	//		}
+//	//		sm::vec3 polygon[4] = {
+//	//			sm::vec3(x, 0, z),
+//	//			sm::vec3(x + GRID_EDGE, 0, z),
+//	//			sm::vec3(x + GRID_EDGE, 0, z + GRID_EDGE),
+//	//			sm::vec3(x, 0, z + GRID_EDGE)
+//	//		};
+//	//		pt.AddPolygonFilled3D(polygon, 4, trans3d, col);
+//	//	}
+//	//}
+//
+//    // draw cross
+//    uint32_t col = 0xff000000;
+//    const float len = 50.0f;
+//    pt.AddLine3D({ -len, 0, 0 }, { len, 0, 0 }, trans3d, col);
+//    pt.AddLine3D({ 0, 0, -len }, { 0, 0, len }, trans3d, col);
+//
+//    // draw grids
+//    col = 0xffaaaaaa;
+//    static const float TOT_LEN = 100;
+//    static const float GRID_EDGE = 5;
+//    for (float z = -TOT_LEN; z <= TOT_LEN; z += GRID_EDGE) {
+//        pt.AddLine3D({ -TOT_LEN, 0, z }, { TOT_LEN, 0, z }, trans3d, col);
+//    }
+//    for (float x = -TOT_LEN; x <= TOT_LEN; x += GRID_EDGE) {
+//        pt.AddLine3D({ x, 0, -TOT_LEN }, { x, 0, TOT_LEN }, trans3d, col);
+//    }
+//
+//	pt2::RenderSystem::DrawPainter(pt);
+//}
+
 void WxStageCanvas::DrawBackground() const
 {
-	tess::Painter pt;
-
-	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
-	auto trans3d = [&](const sm::vec3& pos3)->sm::vec2 {
-		return m_viewport.TransPosProj3ToProj2(pos3, cam_mat);
-	};
-
-	// draw cross
-	uint32_t col = 0xff000088;
-	const float len = 50.0f;
-	pt.AddLine3D({ -len, 0, 0 }, { len, 0, 0 }, trans3d, col);
-	pt.AddLine3D({ 0, -len, 0 }, { 0, len, 0 }, trans3d, col);
-	pt.AddLine3D({ 0, 0, -len }, { 0, 0, len }, trans3d, col);
-
-	static const int TOT_LEN = 100;
-	static const int GRID_EDGE = 5;
-	for (int z = -TOT_LEN; z < TOT_LEN; z += GRID_EDGE) {
-		for (int x = -TOT_LEN; x < TOT_LEN; x += GRID_EDGE) {
-			if ((x + z) % (GRID_EDGE * 2) == 0) {
-				col = 0xff444444;
-			} else {
-				col = 0xff888888;
-			}
-			sm::vec3 polygon[4] = {
-				sm::vec3(x, 0, z),
-				sm::vec3(x + GRID_EDGE, 0, z),
-				sm::vec3(x + GRID_EDGE, 0, z + GRID_EDGE),
-				sm::vec3(x, 0, z + GRID_EDGE)
-			};
-			pt.AddPolygonFilled3D(polygon, 4, trans3d, col);
-		}
-	}
-
-	pt2::RenderSystem::DrawPainter(pt);
+    // draw grids
+    std::vector<sm::vec3> buf;
+    uint32_t col = 0xff000000;
+    const float TOT_LEN = 3.0f;
+    const float GRID_EDGE = 0.1f;
+    buf.reserve(TOT_LEN * 2 / GRID_EDGE * 2);
+    for (float z = -TOT_LEN; z <= TOT_LEN; z += GRID_EDGE) {
+        buf.push_back({ -TOT_LEN, 0, z });
+        buf.push_back({  TOT_LEN, 0, z });
+    }
+    for (float x = -TOT_LEN; x <= TOT_LEN; x += GRID_EDGE) {
+        buf.push_back({ x, 0, -TOT_LEN });
+        buf.push_back({ x, 0, TOT_LEN });
+    }
+    pt3::RenderSystem::DrawLines3D(buf.size(), buf[0].xyz, col);
 }
 
 void WxStageCanvas::DrawForeground() const
