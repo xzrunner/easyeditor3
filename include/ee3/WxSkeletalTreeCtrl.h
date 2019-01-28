@@ -20,6 +20,8 @@ public:
 
 	void LoadFromSkeletal(const ::model::SkeletalAnim& skeletal);
 
+    void ChangeSubjectMgr(const ee0::SubjectMgrPtr& sub_mgr);
+
 private:
 	void InsertNode(wxTreeItemId parent,
 		const ::model::SkeletalAnim& skeletal, int child);
@@ -41,6 +43,8 @@ private:
 
 private:
 	ee0::SubjectMgrPtr m_sub_mgr;
+
+    std::vector<int> m_messages;
 
 	wxTreeItemId       m_root;
 	std::vector<Item*> m_items;

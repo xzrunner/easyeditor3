@@ -19,12 +19,18 @@ WxSkeletalTreeCtrl::WxSkeletalTreeCtrl(wxWindow* parent, const ee0::SubjectMgrPt
 {
 	Bind(wxEVT_TREE_SEL_CHANGED, &WxSkeletalTreeCtrl::OnSelChanged, this, GetId());
 
-	m_sub_mgr->RegisterObserver(ee3::MSG_SKELETAL_TREE_ON_SELECT, this);
+    m_messages.push_back(ee3::MSG_SKELETAL_TREE_ON_SELECT);
+
+    for (auto& m : m_messages) {
+        m_sub_mgr->RegisterObserver(m, this);
+    }
 }
 
 WxSkeletalTreeCtrl::~WxSkeletalTreeCtrl()
 {
-	m_sub_mgr->UnregisterObserver(ee3::MSG_SKELETAL_TREE_ON_SELECT, this);
+    for (auto& m : m_messages) {
+        m_sub_mgr->UnregisterObserver(m, this);
+    }
 }
 
 void WxSkeletalTreeCtrl::OnNotify(uint32_t msg, const ee0::VariantSet& variants)
@@ -64,6 +70,21 @@ void WxSkeletalTreeCtrl::LoadFromSkeletal(const ::model::SkeletalAnim& skeletal)
 	}
 
 	ExpandAll();
+}
+
+void WxSkeletalTreeCtrl::ChangeSubjectMgr(const ee0::SubjectMgrPtr& sub_mgr)
+{
+    if (m_sub_mgr == sub_mgr) {
+        return;
+    }
+
+    for (auto& m : m_messages) {
+        m_sub_mgr->UnregisterObserver(m, this);
+    }
+    m_sub_mgr = sub_mgr;
+    for (auto& m : m_messages) {
+        m_sub_mgr->RegisterObserver(m, this);
+    }
 }
 
 void WxSkeletalTreeCtrl::InsertNode(wxTreeItemId parent, const ::model::SkeletalAnim& skeletal, int child)
