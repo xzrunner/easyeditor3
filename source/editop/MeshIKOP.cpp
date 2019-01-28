@@ -184,11 +184,14 @@ void MeshIKOP::QueryByPos(int x, int y)
 
 void MeshIKOP::DrawGUI() const
 {
+    auto& ctx = m_canvas->GetWidnowContext().egui;
+    if (!ctx) {
+        return;
+    }
+
 	auto& wc = pt3::Blackboard::Instance()->GetWindowContext();
 	auto sz = wc->GetScreenSize();
 	m_canvas->PrepareDrawGui(sz.x, sz.y);
-
-	auto& ctx = m_canvas->GetWidnowContext().egui;
 
 	int uid = 1;
 
