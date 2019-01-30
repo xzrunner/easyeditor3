@@ -6,7 +6,7 @@
 #include <ee0/Observer.h>
 
 #include <SM_Vector.h>
-#include <painting3/PhongMat.h>
+#include <painting0/Material.h>
 #include <painting3/Viewport.h>
 
 #include <wx/panel.h>
@@ -20,7 +20,7 @@ public:
 	WxMaterialPreview(wxWindow* parent, const sm::ivec2& size, const ee0::SubjectMgrPtr& sub_mgr,
 		const ee0::RenderContext* rc, bool user_effect = false);
 
-	pt3::PhongMat& GetMaterial() { return m_material; }
+	pt0::Material& GetMaterial() { return m_material; }
 
 	void RefreshCanvas();
 
@@ -35,7 +35,7 @@ private:
 	public:
 		Canvas(wxWindow* parent, ee0::EditPanelImpl& edit_impl,
 			const ee0::RenderContext* rc, const ee0::SubjectMgrPtr& sub_mgr,
-			const pt3::PhongMat& material, bool user_effect);
+			const pt0::Material& material, bool user_effect);
 		virtual ~Canvas();
 
 		virtual void OnNotify(uint32_t msg, const ee0::VariantSet& variants) override;
@@ -48,7 +48,7 @@ private:
 
 	private:
 		ee0::SubjectMgrPtr   m_sub_mgr;
-		const pt3::PhongMat& m_material;
+		const pt0::Material& m_material;
 
 		bool m_user_effect;
 
@@ -61,7 +61,7 @@ private:
 	ee0::EditPanelImpl      m_edit_impl;
 	std::unique_ptr<Canvas> m_canvas = nullptr;
 
-	pt3::PhongMat m_material;
+	pt0::Material m_material;
 
 }; // WxMaterialPreview
 

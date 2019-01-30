@@ -46,7 +46,7 @@ void WxMaterialPreview::OnSize(wxSizeEvent& event)
 
 WxMaterialPreview::Canvas::Canvas(wxWindow* parent, ee0::EditPanelImpl& edit_impl,
 	                              const ee0::RenderContext* rc, const ee0::SubjectMgrPtr& sub_mgr,
-	                              const pt3::PhongMat& material, bool user_effect)
+	                              const pt0::Material& material, bool user_effect)
 	: ee0::WxStageCanvas(parent, edit_impl, std::make_shared<pt3::PerspCam>(sm::vec3(0, 0, -1.5f), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0)), rc, nullptr, HAS_3D)
 	, m_sub_mgr(sub_mgr)
 	, m_material(material)
