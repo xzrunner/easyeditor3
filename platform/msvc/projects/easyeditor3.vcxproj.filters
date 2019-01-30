@@ -147,6 +147,9 @@
     <ClInclude Include="..\..\..\include\ee3\MeshIKOP.h">
       <Filter>editop\2.mesh</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\WxCompModelPanel.h">
+      <Filter>view\detail\comp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\editop\NodeRotateState.cpp">
@@ -235,6 +238,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\editop\MeshIKOP.cpp">
       <Filter>editop\2.mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\view\WxCompModelPanel.cpp">
+      <Filter>view\detail\comp</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
