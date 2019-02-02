@@ -214,7 +214,7 @@ void WxStageCanvas::DrawNodes(pt3::RenderParams::DrawType type) const
 
 	m_stage->Traverse([&](const ee0::GameObj& obj)->bool {
 #ifndef GAME_OBJ_ECS
-		n3::RenderSystem::Draw(obj, params);
+		n3::RenderSystem::Draw(*obj, params);
 #endif // GAME_OBJ_ECS
 		return true;
 	}, vars);
