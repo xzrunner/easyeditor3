@@ -19,9 +19,6 @@
     <Filter Include="view\detail">
       <UniqueIdentifier>{1b723a76-dc5a-4b61-a386-ecff073e8718}</UniqueIdentifier>
     </Filter>
-    <Filter Include="view\detail\comp">
-      <UniqueIdentifier>{99416825-d9bc-44bc-b3f3-ff663287c2c9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="dataset">
       <UniqueIdentifier>{cac92868-b9be-477e-a95c-ede1254db7b1}</UniqueIdentifier>
     </Filter>
@@ -117,9 +114,6 @@
     <ClInclude Include="..\..\..\include\ee3\WxTransformCtrl.h">
       <Filter>gui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\ee3\WxCompTransformPanel.h">
-      <Filter>view\detail\comp</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\TranslateAxisState.h">
       <Filter>editop\0.utility</Filter>
     </ClInclude>
@@ -148,7 +142,13 @@
       <Filter>editop\2.mesh</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\ee3\WxCompModelPanel.h">
-      <Filter>view\detail\comp</Filter>
+      <Filter>view\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\WxCompTransformPanel.h">
+      <Filter>view\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\WxCompLightPanel.h">
+      <Filter>view\detail</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -212,9 +212,6 @@
     <ClCompile Include="..\..\..\source\gui\WxTransformCtrl.cpp">
       <Filter>gui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\view\WxCompTransformPanel.cpp">
-      <Filter>view\detail\comp</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\editop\TranslateAxisState.cpp">
       <Filter>editop\0.utility</Filter>
     </ClCompile>
@@ -240,7 +237,13 @@
       <Filter>editop\2.mesh</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\view\WxCompModelPanel.cpp">
-      <Filter>view\detail\comp</Filter>
+      <Filter>view\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\view\WxCompTransformPanel.cpp">
+      <Filter>view\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\view\WxCompLightPanel.cpp">
+      <Filter>view\detail</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -29,6 +29,7 @@
     <ClInclude Include="..\..\..\include\ee3\CamRotateState.h" />
     <ClInclude Include="..\..\..\include\ee3\CamTranslateState.h" />
     <ClInclude Include="..\..\..\include\ee3\CamZoomState.h" />
+    <ClInclude Include="..\..\..\include\ee3\WxCompLightPanel.h" />
     <ClInclude Include="..\..\..\include\ee3\WxCompModelPanel.h" />
     <ClInclude Include="..\..\..\include\ee3\WxCompTransformPanel.h" />
     <ClInclude Include="..\..\..\include\ee3\WxLibGeoPage.h" />
@@ -67,6 +68,7 @@
     <ClCompile Include="..\..\..\source\editop\NodeTranslateState.cpp" />
     <ClCompile Include="..\..\..\source\gui\WxTransformCtrl.cpp" />
     <ClCompile Include="..\..\..\source\tools\Serializer.cpp" />
+    <ClCompile Include="..\..\..\source\view\WxCompLightPanel.cpp" />
     <ClCompile Include="..\..\..\source\view\WxCompModelPanel.cpp" />
     <ClCompile Include="..\..\..\source\view\WxCompTransformPanel.cpp" />
     <ClCompile Include="..\..\..\source\view\WxLibGeoPage.cpp" />
