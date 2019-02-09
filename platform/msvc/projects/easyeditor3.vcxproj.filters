@@ -150,6 +150,9 @@
     <ClInclude Include="..\..\..\include\ee3\WxCompLightPanel.h">
       <Filter>view\detail</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\WxCompMeshFilterPanel.h">
+      <Filter>view\detail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\editop\NodeRotateState.cpp">
@@ -243,6 +246,9 @@
       <Filter>view\detail</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\view\WxCompLightPanel.cpp">
+      <Filter>view\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\view\WxCompMeshFilterPanel.cpp">
       <Filter>view\detail</Filter>
     </ClCompile>
   </ItemGroup>
