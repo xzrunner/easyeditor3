@@ -13,8 +13,13 @@
 #include <painting3/Blackboard.h>
 #include <painting3/WindowContext.h>
 #include <painting3/PerspCam.h>
+#include <painting3/MaterialMgr.h>
+#include <painting3/PointLight.h>
 #ifndef GAME_OBJ_ECS
+#include <node0/SceneNode.h>
 #include <node3/RenderSystem.h>
+#include <node3/CompLight.h>
+#include <node3/CompTransform.h>
 #endif // GAME_OBJ_ECS
 
 namespace
@@ -212,9 +217,30 @@ void WxStageCanvas::DrawNodes(pt3::RenderParams::DrawType type) const
 	params.mt = m_camera->GetViewMat();
 	params.type = type;
 
+    pt3::RenderContext ctx;
+    sm::vec3 light_pos(0, 2, -4);
+    // calc PointLight's pos
+    m_stage->Traverse([&](const ee0::GameObj& obj)->bool
+    {
+        if (!obj->HasUniqueComp<n3::CompLight>()) {
+            return true;
+        }
+
+        auto& light = obj->GetUniqueComp<n3::CompLight>().GetLight();
+        assert(light->get_type() == rttr::type::get<pt3::PointLight>());
+        light_pos = static_cast<const pt3::PointLight*>(light.get())->GetPosition();
+        if (obj->HasUniqueComp<n3::CompTransform>()) {
+            auto& ctrans = obj->GetUniqueComp<n3::CompTransform>();
+            light_pos = ctrans.GetTransformMat() * light_pos;
+        }
+
+        return false;
+    });
+    ctx.uniforms.AddVar(pt3::MaterialMgr::PositionUniforms::light_pos.name, pt0::RenderVariant(light_pos));
+
 	m_stage->Traverse([&](const ee0::GameObj& obj)->bool {
 #ifndef GAME_OBJ_ECS
-		n3::RenderSystem::Draw(*obj, params);
+		n3::RenderSystem::Draw(*obj, params, ctx);
 #endif // GAME_OBJ_ECS
 		return true;
 	}, vars);
