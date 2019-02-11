@@ -237,6 +237,17 @@ void WxStageCanvas::DrawNodes(pt3::RenderParams::DrawType type) const
     });
     ctx.uniforms.AddVar(pt3::MaterialMgr::PositionUniforms::light_pos.name, pt0::RenderVariant(light_pos));
 
+    auto& wc = pt3::Blackboard::Instance()->GetWindowContext();
+    assert(wc);
+    ctx.uniforms.AddVar(
+        pt3::MaterialMgr::PosTransUniforms::view.name,
+        pt0::RenderVariant(wc->GetViewMat())
+    );
+    ctx.uniforms.AddVar(
+        pt3::MaterialMgr::PosTransUniforms::projection.name,
+        pt0::RenderVariant(wc->GetProjMat())
+    );
+
 	m_stage->Traverse([&](const ee0::GameObj& obj)->bool {
 #ifndef GAME_OBJ_ECS
 		n3::RenderSystem::Draw(*obj, params, ctx);

@@ -7,6 +7,7 @@
 #include <painting3/PerspCam.h>
 #include <painting3/Blackboard.h>
 #include <painting3/WindowContext.h>
+#include <painting3/MaterialMgr.h>
 
 #include <wx/sizer.h>
 
@@ -105,6 +106,18 @@ void WxMaterialPreview::Canvas::OnDrawSprites() const
         auto& p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
         ctx.cam_pos = p_cam->GetPos();
     }
+    ctx.uniforms.AddVar(
+        pt3::MaterialMgr::PositionUniforms::light_pos.name,
+        pt0::RenderVariant(sm::vec3(0, 2, -4))
+    );
+    ctx.uniforms.AddVar(
+        pt3::MaterialMgr::PosTransUniforms::view.name,
+        pt0::RenderVariant(wc->GetViewMat())
+    );
+    ctx.uniforms.AddVar(
+        pt3::MaterialMgr::PosTransUniforms::projection.name,
+        pt0::RenderVariant(wc->GetProjMat())
+    );
 
 	pt3::RenderSystem::Instance()->DrawMaterial(m_material, params, ctx);
 }
