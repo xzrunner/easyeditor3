@@ -93,7 +93,6 @@ void WxMaterialPreview::Canvas::OnDrawSprites() const
 	ee0::RenderContext::Reset3D(true);
 
 	pt3::RenderParams params;
-	params.mt = m_camera->GetViewMat();
 	params.user_effect = m_user_effect;
 
     pt3::RenderContext ctx;

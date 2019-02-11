@@ -214,7 +214,6 @@ void WxStageCanvas::DrawNodes(pt3::RenderParams::DrawType type) const
 	vars.SetVariant("type", var);
 
 	pt3::RenderParams params;
-	params.mt = m_camera->GetViewMat();
 	params.type = type;
 
     pt3::RenderContext ctx;
