@@ -119,6 +119,17 @@ void WxMaterialPreview::Canvas::OnDrawSprites() const
         pt0::RenderVariant(wc->GetProjMat())
     );
 
+    sm::mat4 model_mat;
+    ctx.uniforms.AddVar(
+        pt3::MaterialMgr::PosTransUniforms::model.name,
+        pt0::RenderVariant(model_mat)
+    );
+    auto normal_mat = model_mat.Inverted().Transposed();
+    ctx.uniforms.AddVar(
+        pt3::MaterialMgr::PositionUniforms::normal_mat.name,
+        pt0::RenderVariant(sm::mat3(normal_mat))
+    );
+
 	pt3::RenderSystem::Instance()->DrawMaterial(m_material, params, ctx);
 }
 
