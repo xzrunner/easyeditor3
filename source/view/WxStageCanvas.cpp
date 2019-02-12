@@ -216,7 +216,7 @@ void WxStageCanvas::DrawNodes(pt3::RenderParams::DrawType type) const
 	pt3::RenderParams params;
 	params.type = type;
 
-    pt3::RenderContext ctx;
+    pt0::RenderContext ctx;
     sm::vec3 light_pos(0, 2, -4);
     // calc PointLight's pos
     m_stage->Traverse([&](const ee0::GameObj& obj)->bool
@@ -235,15 +235,15 @@ void WxStageCanvas::DrawNodes(pt3::RenderParams::DrawType type) const
 
         return false;
     });
-    ctx.uniforms.AddVar(pt3::MaterialMgr::PositionUniforms::light_pos.name, pt0::RenderVariant(light_pos));
+    ctx.AddVar(pt3::MaterialMgr::PositionUniforms::light_pos.name, pt0::RenderVariant(light_pos));
 
     auto& wc = pt3::Blackboard::Instance()->GetWindowContext();
     assert(wc);
-    ctx.uniforms.AddVar(
+    ctx.AddVar(
         pt3::MaterialMgr::PosTransUniforms::view.name,
         pt0::RenderVariant(wc->GetViewMat())
     );
-    ctx.uniforms.AddVar(
+    ctx.AddVar(
         pt3::MaterialMgr::PosTransUniforms::projection.name,
         pt0::RenderVariant(wc->GetProjMat())
     );

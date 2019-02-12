@@ -8,6 +8,8 @@
 #include <painting3/Blackboard.h>
 #include <painting3/WindowContext.h>
 #include <painting3/MaterialMgr.h>
+#include <shaderweaver/node/Raymarching.h>
+#include <shaderweaver/node/CameraPos.h>
 
 #include <wx/sizer.h>
 
@@ -96,36 +98,42 @@ void WxMaterialPreview::Canvas::OnDrawSprites() const
 	pt3::RenderParams params;
 	params.user_effect = m_user_effect;
 
-    pt3::RenderContext ctx;
+    pt0::RenderContext ctx;
     auto sz = GetSize();
-    ctx.resolution.x = sz.x;
-    ctx.resolution.y = sz.y;
-    auto cam_type = m_camera->TypeID();
-    if (cam_type == pt0::GetCamTypeID<pt3::PerspCam>())
+    ctx.AddVar(
+        // fixme: get uniform name from shader
+        sw::node::Raymarching::ResolutionName(),
+        pt0::RenderVariant(sm::vec2(sz.x, sz.y))
+    );
+    if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
     {
         auto& p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
-        ctx.cam_pos = p_cam->GetPos();
+        ctx.AddVar(
+            // fixme: get uniform name from shader
+            sw::node::CameraPos::CamPosName(),
+            pt0::RenderVariant(p_cam->GetPos())
+        );
     }
-    ctx.uniforms.AddVar(
+    ctx.AddVar(
         pt3::MaterialMgr::PositionUniforms::light_pos.name,
         pt0::RenderVariant(sm::vec3(0, 2, -4))
     );
-    ctx.uniforms.AddVar(
+    ctx.AddVar(
         pt3::MaterialMgr::PosTransUniforms::view.name,
         pt0::RenderVariant(wc->GetViewMat())
     );
-    ctx.uniforms.AddVar(
+    ctx.AddVar(
         pt3::MaterialMgr::PosTransUniforms::projection.name,
         pt0::RenderVariant(wc->GetProjMat())
     );
 
     sm::mat4 model_mat;
-    ctx.uniforms.AddVar(
+    ctx.AddVar(
         pt3::MaterialMgr::PosTransUniforms::model.name,
         pt0::RenderVariant(model_mat)
     );
     auto normal_mat = model_mat.Inverted().Transposed();
-    ctx.uniforms.AddVar(
+    ctx.AddVar(
         pt3::MaterialMgr::PositionUniforms::normal_mat.name,
         pt0::RenderVariant(sm::mat3(normal_mat))
     );
