@@ -23,6 +23,8 @@ public:
 	virtual bool OnKeyDown(int key_code) override;
 	virtual bool OnMouseLeftDown(int x, int y) override;
 	virtual bool OnMouseLeftUp(int x, int y) override;
+    virtual bool OnMouseMiddleDown(int x, int y) override;
+    virtual bool OnMouseMiddleUp(int x, int y) override;
 	virtual bool OnMouseRightDown(int x, int y) override;
 	virtual bool OnMouseRightUp(int x, int y) override;
 	virtual bool OnMouseMove(int x, int y) override;
@@ -40,10 +42,10 @@ private:
 	ee0::EditOpStatePtr m_cam_translate_state = nullptr;
 	ee0::EditOpStatePtr m_cam_zoom_state      = nullptr;
 
-	ee0::EditOpStatePtr m_node_rotate_state    = nullptr;
 	ee0::EditOpStatePtr m_node_translate_state = nullptr;
 
 	sm::ivec2 m_last_left_press;
+    sm::ivec2 m_last_middle_press;
 	sm::ivec2 m_last_right_press;
 
 }; // NodeArrangeOP

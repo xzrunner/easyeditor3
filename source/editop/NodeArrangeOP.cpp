@@ -4,7 +4,6 @@
 #include "ee3/CamRotateState.h"
 #include "ee3/CamZoomState.h"
 #include "ee3/NodeTranslateState.h"
-#include "ee3/NodeRotateState.h"
 
 #include <ee0/WxStagePage.h>
 #include <ee0/SubjectMgr.h>
@@ -33,12 +32,12 @@ NodeArrangeOP::NodeArrangeOP(const std::shared_ptr<pt0::Camera>& camera,
 	m_cam_translate_state = std::make_shared<CamTranslateState>(p_cam, m_sub_mgr);
 	m_cam_zoom_state      = std::make_shared<CamZoomState>(p_cam, vp, m_sub_mgr);
 
-	m_node_rotate_state    = std::make_shared<NodeRotateState>(p_cam, vp, m_sub_mgr, m_selection);
 	m_node_translate_state = std::make_shared<NodeTranslateState>(p_cam, vp, m_sub_mgr, m_selection);
 
 	m_op_state = m_cam_rotate_state;
 
 	m_last_left_press.MakeInvalid();
+    m_last_middle_press.MakeInvalid();
 	m_last_right_press.MakeInvalid();
 }
 
@@ -110,6 +109,38 @@ bool NodeArrangeOP::OnMouseLeftUp(int x, int y)
 	return false;
 }
 
+bool NodeArrangeOP::OnMouseMiddleDown(int x, int y)
+{
+	if (NodeSelectOP::OnMouseMiddleDown(x, y)) {
+		return true;
+	}
+
+    m_last_middle_press.Set(x, y);
+
+    ChangeEditOpState(m_cam_translate_state);
+
+    return m_op_state->OnMousePress(x, y);
+}
+
+bool NodeArrangeOP::OnMouseMiddleUp(int x, int y)
+{
+    if (!m_last_middle_press.IsValid()) {
+        return false;
+    }
+
+	if (NodeSelectOP::OnMouseMiddleUp(x, y)) {
+		return true;
+	}
+
+	m_op_state->OnMouseRelease(x, y);
+
+	ChangeEditOpState(m_cam_zoom_state);
+
+    m_last_middle_press.MakeInvalid();
+
+	return false;
+}
+
 bool NodeArrangeOP::OnMouseRightDown(int x, int y)
 {
 	if (NodeSelectOP::OnMouseRightDown(x, y)) {
@@ -118,12 +149,7 @@ bool NodeArrangeOP::OnMouseRightDown(int x, int y)
 
 	m_last_right_press.Set(x, y);
 
-	auto& selection = m_stage.GetSelection();
-	if (selection.IsEmpty()) {
-		ChangeEditOpState(m_cam_translate_state);
-	} else if (selection.Size() == 1) {
-		ChangeEditOpState(m_node_rotate_state);
-	}
+    ChangeEditOpState(m_cam_rotate_state);
 
 	return m_op_state->OnMousePress(x, y);
 }
@@ -161,6 +187,7 @@ bool NodeArrangeOP::OnMouseMove(int x, int y)
 bool NodeArrangeOP::OnMouseDrag(int x, int y)
 {
 	if (!m_last_left_press.IsValid() &&
+        !m_last_middle_press.IsValid() &&
 		!m_last_right_press.IsValid()) {
 		return false;
 	}
