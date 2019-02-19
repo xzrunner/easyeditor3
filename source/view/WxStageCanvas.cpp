@@ -114,12 +114,16 @@ void WxStageCanvas::OnDrawSprites() const
 		}
 	}
 
-	DrawBackground();
-	DrawForeground();
+	DrawBackground3D();
+	DrawForeground3D();
+
+    ee0::RenderContext::Reset2D();
+
+    DrawBackground2D();
+    DrawForeground2D();
 
 	auto edit_op = m_stage->GetImpl().GetEditOP();
 	if (edit_op) {
-		ee0::RenderContext::Reset2D();
 		edit_op->OnDraw();
 	}
 }
@@ -181,7 +185,7 @@ void WxStageCanvas::OnDrawSprites() const
 //	pt2::RenderSystem::DrawPainter(pt);
 //}
 
-void WxStageCanvas::DrawBackground() const
+void WxStageCanvas::DrawBackground2D() const
 {
     // draw grids
     std::vector<sm::vec3> buf;
@@ -200,7 +204,15 @@ void WxStageCanvas::DrawBackground() const
     pt3::RenderSystem::DrawLines3D(buf.size(), buf[0].xyz, col);
 }
 
-void WxStageCanvas::DrawForeground() const
+void WxStageCanvas::DrawForeground2D() const
+{
+}
+
+void WxStageCanvas::DrawBackground3D() const
+{
+}
+
+void WxStageCanvas::DrawForeground3D() const
 {
 	DrawNodes();
 }
