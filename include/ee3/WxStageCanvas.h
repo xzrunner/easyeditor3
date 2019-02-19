@@ -31,10 +31,13 @@ protected:
 	virtual void OnSize(int w, int h) override;
 	virtual void OnDrawSprites() const override;
 
-    virtual void DrawBackground2D() const;
-    virtual void DrawForeground2D() const;
-    virtual void DrawBackground3D() const;
-    virtual void DrawForeground3D() const;
+    virtual void DrawBackground2D() const {}
+    virtual void DrawForeground2D() const {}
+    virtual void DrawBackground3D() const {}
+    virtual void DrawForeground3D() const { DrawNodes(); }
+
+    void DrawBackgroundGrids() const;  // 3d
+    void DrawBackgroundCross() const;  // 2d
 
 	void DrawNodes(pt3::RenderParams::DrawType type = pt3::RenderParams::DRAW_MESH) const;
 

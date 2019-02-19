@@ -185,9 +185,8 @@ void WxStageCanvas::OnDrawSprites() const
 //	pt2::RenderSystem::DrawPainter(pt);
 //}
 
-void WxStageCanvas::DrawBackground2D() const
+void WxStageCanvas::DrawBackgroundGrids() const
 {
-    // draw grids
     std::vector<sm::vec3> buf;
     uint32_t col = 0xff000000;
     const float TOT_LEN = 3.0f;
@@ -204,17 +203,26 @@ void WxStageCanvas::DrawBackground2D() const
     pt3::RenderSystem::DrawLines3D(buf.size(), buf[0].xyz, col);
 }
 
-void WxStageCanvas::DrawForeground2D() const
+void WxStageCanvas::DrawBackgroundCross() const
 {
-}
+	tess::Painter pt;
 
-void WxStageCanvas::DrawBackground3D() const
-{
-}
+	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
+	auto trans3d = [&](const sm::vec3& pos3)->sm::vec2 {
+		return GetViewport().TransPosProj3ToProj2(pos3, cam_mat);
+	};
 
-void WxStageCanvas::DrawForeground3D() const
-{
-	DrawNodes();
+	const float len = 1;
+	pt.AddLine3D({ -len, 0, 0 }, { len, 0, 0 }, trans3d, 0xff0000ff, 2);
+	pt.AddLine3D({ 0, -len, 0 }, { 0, len, 0 }, trans3d, 0xff00ff00, 2);
+	pt.AddLine3D({ 0, 0, -len }, { 0, 0, len }, trans3d, 0xffff0000, 2);
+
+	const float radius = 5.0f;
+	pt.AddCircleFilled(trans3d(sm::vec3(len, 0, 0)), radius, 0xff0000ff);
+	pt.AddCircleFilled(trans3d(sm::vec3(0, len, 0)), radius, 0xff00ff00);
+	pt.AddCircleFilled(trans3d(sm::vec3(0, 0, len)), radius, 0xffff0000);
+
+	pt2::RenderSystem::DrawPainter(pt);
 }
 
 void WxStageCanvas::DrawNodes(pt3::RenderParams::DrawType type) const
