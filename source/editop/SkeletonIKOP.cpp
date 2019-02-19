@@ -174,7 +174,7 @@ bool SkeletonIKOP::OneBone(int x, int y)
 	sm::vec3 rot_axis = (p_cam->GetPos() - c_pos).Normalized();
 	auto plane = GetRotatePlane(tp_wtrans[p], p_pos, rot_axis);
 	sm::vec3 cross;
-	if (!sm::ray_plane_no_dir_intersect(ray, plane, &cross)) {
+	if (!sm::ray_plane_intersect_both_faces(ray, plane, &cross)) {
 		return false;
 	}
 
@@ -216,7 +216,7 @@ bool SkeletonIKOP::TwoBones(int x, int y)
 	sm::vec3 rot_axis = (p_cam->GetPos() - c_pos).Normalized();
 	auto plane = GetRotatePlane(tp_wtrans[pp], pp_pos, rot_axis);
 	sm::vec3 cross;
-	if (!sm::ray_plane_no_dir_intersect(ray, plane, &cross)) {
+	if (!sm::ray_plane_intersect_both_faces(ray, plane, &cross)) {
 		return false;
 	}
 
