@@ -54,12 +54,15 @@ private:
 		POINT_QUERY_X,
 		POINT_QUERY_Y,
 		POINT_QUERY_Z,
+        POINT_QUERY_YZ,
+        POINT_QUERY_ZX,
+        POINT_QUERY_XY,
 	};
-	PointQueryType PointQuery(int x, int y) const;
+	PointQueryType PointQuery(int x, int y, sm::vec3& pos) const;
 
 	void UpdateSelectionSetInfo();
 
-	void Translate(const sm::vec2& start, const sm::vec2& end);
+	void Translate(int x, int y);
 
 	enum AxisNodeType
 	{
@@ -96,6 +99,9 @@ private:
 	PointQueryType m_op_type;
 
 	sm::mat4 m_ori_wmat_scale;
+    sm::mat4 m_ori_wmat_rotate;
+    sm::mat4 m_ori_wmat_translate;
+
 	sm::mat4 m_ori_wmat_no_scale;
 
 }; // TranslateAxisState

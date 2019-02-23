@@ -31,6 +31,8 @@ public:
 	virtual bool OnMouseDrag(int x, int y) override;
 	virtual bool OnMouseWheelRotation(int x, int y, int direction) override;
 
+    virtual bool OnDraw() const override;
+
 private:
 	ee0::SubjectMgrPtr m_sub_mgr;
 
@@ -40,7 +42,6 @@ private:
 
 	ee0::EditOpStatePtr m_cam_rotate_state    = nullptr;
 	ee0::EditOpStatePtr m_cam_translate_state = nullptr;
-	ee0::EditOpStatePtr m_cam_zoom_state      = nullptr;
 
 	ee0::EditOpStatePtr m_node_translate_state = nullptr;
 

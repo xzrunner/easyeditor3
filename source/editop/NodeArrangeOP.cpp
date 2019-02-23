@@ -4,6 +4,7 @@
 #include "ee3/CamRotateState.h"
 #include "ee3/CamZoomState.h"
 #include "ee3/NodeTranslateState.h"
+#include "ee3/TranslateAxisState.h"
 
 #include <ee0/WxStagePage.h>
 #include <ee0/SubjectMgr.h>
@@ -12,6 +13,7 @@
 #ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
 #include <node3/CompTransform.h>
+#include <node3/CompAABB.h>
 #endif // GAME_OBJ_ECS
 
 namespace ee3
@@ -28,11 +30,49 @@ NodeArrangeOP::NodeArrangeOP(const std::shared_ptr<pt0::Camera>& camera,
 	assert(camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>());
 	auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(camera);
 
-	m_cam_rotate_state    = std::make_shared<CamRotateState>(p_cam, m_sub_mgr);
-	m_cam_translate_state = std::make_shared<CamTranslateState>(p_cam, m_sub_mgr);
-	m_cam_zoom_state      = std::make_shared<CamZoomState>(p_cam, vp, m_sub_mgr);
+    auto cam_zoom_state = std::make_shared<CamZoomState>(p_cam, vp, m_sub_mgr);
 
-	m_node_translate_state = std::make_shared<NodeTranslateState>(p_cam, vp, m_sub_mgr, m_selection);
+	m_cam_rotate_state    = std::make_shared<CamRotateState>(p_cam, m_sub_mgr);
+    m_cam_rotate_state->SetPrevOpState(cam_zoom_state);
+	m_cam_translate_state = std::make_shared<CamTranslateState>(p_cam, m_sub_mgr);
+    m_cam_translate_state->SetPrevOpState(cam_zoom_state);
+
+    TranslateAxisState::Callback cb;
+    cb.is_need_draw = [&]() {
+        return !stage.GetSelection().IsEmpty();
+    };
+    cb.get_origin_wmat = [&]()->sm::mat4 {
+        sm::vec3 center;
+        sm::Quaternion angle;
+        int count = 0;
+        stage.GetSelection().Traverse([&](const ee0::GameObjWithPos& opw)->bool
+        {
+            ++count;
+            auto node = opw.GetNode();
+            auto aabb = opw.GetNode()->GetUniqueComp<n3::CompAABB>().GetAABB();
+            auto& ctrans = opw.GetNode()->GetUniqueComp<n3::CompTransform>();
+            angle = ctrans.GetAngle();
+            auto pos = ctrans.GetTransformMat() * aabb.Cube().Center();
+            center += pos;
+            return false;
+        });
+        center /= static_cast<float>(count);
+        auto trans_mat = sm::mat4::Translated(center.x, center.y, center.z);
+        auto rot_mat = sm::mat4(angle);
+        return trans_mat * rot_mat;
+    };
+    cb.translate = [&](const sm::vec3& offset) {
+        m_selection.Traverse([&](const ee0::GameObjWithPos& nwp)->bool
+        {
+            auto& node = nwp.GetNode();
+            auto& ctrans = node->GetUniqueComp<n3::CompTransform>();
+            ctrans.Translate(offset);
+            return true;
+        });
+    };
+    m_node_translate_state = std::make_shared<TranslateAxisState>(
+        p_cam, vp, m_sub_mgr, cb, TranslateAxisState::Config(0.5f, 5));
+    m_node_translate_state->SetPrevOpState(cam_zoom_state);
 
 	m_op_state = m_cam_rotate_state;
 
@@ -74,7 +114,9 @@ bool NodeArrangeOP::OnKeyDown(int key_code)
 
 bool NodeArrangeOP::OnMouseLeftDown(int x, int y)
 {
-	if (NodeSelectOP::OnMouseLeftDown(x, y)) {
+    auto ret = m_op_state->OnMousePress(x, y);
+
+	if (!ret && NodeSelectOP::OnMouseLeftDown(x, y)) {
 		return true;
 	}
 
@@ -87,7 +129,7 @@ bool NodeArrangeOP::OnMouseLeftDown(int x, int y)
 		ChangeEditOpState(m_node_translate_state);
 	}
 
-	return m_op_state->OnMousePress(x, y);
+    return ret;
 }
 
 bool NodeArrangeOP::OnMouseLeftUp(int x, int y)
@@ -101,8 +143,6 @@ bool NodeArrangeOP::OnMouseLeftUp(int x, int y)
 	}
 
 	m_op_state->OnMouseRelease(x, y);
-
-	ChangeEditOpState(m_cam_zoom_state);
 
 	m_last_left_press.MakeInvalid();
 
@@ -134,8 +174,6 @@ bool NodeArrangeOP::OnMouseMiddleUp(int x, int y)
 
 	m_op_state->OnMouseRelease(x, y);
 
-	ChangeEditOpState(m_cam_zoom_state);
-
     m_last_middle_press.MakeInvalid();
 
 	return false;
@@ -165,8 +203,6 @@ bool NodeArrangeOP::OnMouseRightUp(int x, int y)
 	}
 
 	m_op_state->OnMouseRelease(x, y);
-
-	ChangeEditOpState(m_cam_zoom_state);
 
 	m_last_right_press.MakeInvalid();
 
@@ -206,6 +242,15 @@ bool NodeArrangeOP::OnMouseWheelRotation(int x, int y, int direction)
 	}
 
 	return m_op_state->OnMouseWheelRotation(x, y, direction);
+}
+
+bool NodeArrangeOP::OnDraw() const
+{
+    if (NodeSelectOP::OnDraw()) {
+        return true;
+    }
+
+    return m_node_translate_state->OnDraw();
 }
 
 }
