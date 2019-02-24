@@ -11,6 +11,8 @@
 
 #include <wx/panel.h>
 
+namespace pt0 { class Shader; }
+
 namespace ee3
 {
 
@@ -25,6 +27,12 @@ public:
 	void RefreshCanvas();
 
 	auto& GetCanvas() const { return m_canvas; }
+
+    void SetShader(const std::shared_ptr<pt0::Shader>& shader) {
+        if (m_canvas) {
+            m_canvas->SetShader(shader);
+        }
+    }
 
 private:
 	void OnSize(wxSizeEvent& event);
@@ -42,6 +50,10 @@ private:
 
 		const pt3::Viewport& GetViewport() const { return m_viewport; }
 
+        void SetShader(const std::shared_ptr<pt0::Shader>& shader) {
+            m_shader = shader;
+        }
+
 	protected:
 		virtual void OnSize(int w, int h) override;
 		virtual void OnDrawSprites() const override;
@@ -53,6 +65,8 @@ private:
 		bool m_user_effect;
 
 		pt3::Viewport m_viewport;
+
+        std::shared_ptr<pt0::Shader> m_shader = nullptr;
 
 	}; // Canvas
 

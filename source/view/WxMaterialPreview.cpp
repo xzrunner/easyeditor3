@@ -138,7 +138,7 @@ void WxMaterialPreview::Canvas::OnDrawSprites() const
         pt0::RenderVariant(sm::mat3(normal_mat))
     );
 
-	pt3::RenderSystem::Instance()->DrawMaterial(m_material, params, ctx);
+	pt3::RenderSystem::Instance()->DrawMaterial(m_material, params, ctx, m_shader);
 }
 
 }
