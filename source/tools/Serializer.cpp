@@ -63,7 +63,7 @@ void Serializer::LoadFroimJson(const std::string& filepath, ee0::WxStagePage* st
 		ns::NodeSerializer::LoadFromJson(obj, dir, node_val);
 
 		bool succ = ee0::MsgHelper::InsertNode(*stage->GetSubjectMgr(), obj);
-		GD_ASSERT(succ, "no MSG_INSERT_SCENE_NODE");
+		GD_ASSERT(succ, "no MSG_SCENE_NODE_INSERT");
 #endif // GAME_OBJ_ECS
 	}
 

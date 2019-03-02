@@ -76,7 +76,7 @@ void WxStageDropTarget::InsertNode(ee0::GameObj& obj)
 	auto& sub_mgr = *m_stage->GetSubjectMgr();
 
 	bool succ = ee0::MsgHelper::InsertNode(sub_mgr, obj);
-	GD_ASSERT(succ, "no MSG_INSERT_SCENE_NODE");
+	GD_ASSERT(succ, "no MSG_SCENE_NODE_INSERT");
 
 	ee0::MsgHelper::SetEditorDirty(sub_mgr, true);
 }
