@@ -9,6 +9,7 @@
 #include <painting3/RenderSystem.h>
 
 namespace ee0 { class WxLibraryPanel; class RenderContext; class WxStagePage; }
+namespace facade { class ImageCube; }
 
 namespace ee3
 {
@@ -27,13 +28,15 @@ public:
 	//sm::vec2 TransPos3ProjectToScreen(const sm::vec3& proj) const;
 	//sm::vec3 TransPos3ScreenToDir(const sm::vec2& screen) const;
 
+    void SetSkybox(const std::shared_ptr<facade::ImageCube>& skybox) { m_skybox = skybox; }
+
 protected:
 	virtual void OnSize(int w, int h) override;
 	virtual void OnDrawSprites() const override;
 
     virtual void DrawBackground2D() const {}
     virtual void DrawForeground2D() const {}
-    virtual void DrawBackground3D() const {}
+    virtual void DrawBackground3D() const { DrawSkybox(); }
     virtual void DrawForeground3D() const { DrawNodes(); }
 
     void DrawBackgroundGrids() const;  // 3d
@@ -45,11 +48,16 @@ protected:
 	ee0::WxStagePage* m_stage;
 
 private:
+    void DrawSkybox() const;
+
+private:
 	bool m_has2d;
 
 	pt3::Viewport m_viewport;
 
 	sm::mat4 m_mat_projection;
+
+    std::shared_ptr<facade::ImageCube> m_skybox = nullptr;
 
 }; // WxStageCanvas
 

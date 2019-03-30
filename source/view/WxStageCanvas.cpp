@@ -15,12 +15,14 @@
 #include <painting3/PerspCam.h>
 #include <painting3/MaterialMgr.h>
 #include <painting3/PointLight.h>
+#include <painting3/RenderSystem.h>
 #ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
 #include <node3/RenderSystem.h>
 #include <node3/CompLight.h>
 #include <node3/CompTransform.h>
 #endif // GAME_OBJ_ECS
+#include <facade/ImageCube.h>
 
 namespace
 {
@@ -274,6 +276,16 @@ void WxStageCanvas::DrawNodes(pt3::RenderParams::DrawType type) const
 #endif // GAME_OBJ_ECS
 		return true;
 	}, vars);
+}
+
+void WxStageCanvas::DrawSkybox() const
+{
+    if (m_skybox) {
+        auto tex = m_skybox->GetTexture();
+        if (tex) {
+            pt3::RenderSystem::DrawSkybox(*tex);
+        }
+    }
 }
 
 }
