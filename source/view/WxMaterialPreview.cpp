@@ -10,6 +10,7 @@
 #include <painting3/MaterialMgr.h>
 #include <shaderweaver/node/Raymarching.h>
 #include <shaderweaver/node/CameraPos.h>
+#include <facade/ImageCube.h>
 
 #include <wx/sizer.h>
 
@@ -23,7 +24,7 @@ WxMaterialPreview::WxMaterialPreview(wxWindow* parent, const sm::ivec2& size,
 	, m_sub_mgr(sub_mgr)
 	, m_edit_impl(this, m_sub_mgr)
 {
-	m_canvas = std::make_unique<Canvas>(this, m_edit_impl, rc, m_sub_mgr, m_material, user_effect);
+	m_canvas = std::make_unique<Canvas>(this, rc, user_effect);
 
 	auto op = std::make_shared<ee3::WorldTravelOP>(
 		m_canvas->GetCamera(), m_canvas->GetViewport(), m_sub_mgr
@@ -47,20 +48,17 @@ void WxMaterialPreview::OnSize(wxSizeEvent& event)
 // class WxMaterialPreview::Canvas
 //////////////////////////////////////////////////////////////////////////
 
-WxMaterialPreview::Canvas::Canvas(wxWindow* parent, ee0::EditPanelImpl& edit_impl,
-	                              const ee0::RenderContext* rc, const ee0::SubjectMgrPtr& sub_mgr,
-	                              const pt0::Material& material, bool user_effect)
-	: ee0::WxStageCanvas(parent, edit_impl, std::make_shared<pt3::PerspCam>(sm::vec3(0, 0, -1.5f), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0)), rc, nullptr, HAS_3D)
-	, m_sub_mgr(sub_mgr)
-	, m_material(material)
+WxMaterialPreview::Canvas::Canvas(WxMaterialPreview* panel, const ee0::RenderContext* rc, bool user_effect)
+	: ee0::WxStageCanvas(panel, panel->m_edit_impl, std::make_shared<pt3::PerspCam>(sm::vec3(0, 0, -1.5f), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0)), rc, nullptr, HAS_3D)
+    , m_panel(panel)
 	, m_user_effect(user_effect)
 {
-	sub_mgr->RegisterObserver(ee0::MSG_SET_CANVAS_DIRTY, this);
+    panel->m_sub_mgr->RegisterObserver(ee0::MSG_SET_CANVAS_DIRTY, this);
 }
 
 WxMaterialPreview::Canvas::~Canvas()
 {
-	m_sub_mgr->UnregisterObserver(ee0::MSG_SET_CANVAS_DIRTY, this);
+    m_panel->m_sub_mgr->UnregisterObserver(ee0::MSG_SET_CANVAS_DIRTY, this);
 }
 
 void WxMaterialPreview::Canvas::OnNotify(uint32_t msg, const ee0::VariantSet& variants)
@@ -88,12 +86,28 @@ void WxMaterialPreview::Canvas::OnSize(int w, int h)
 
 void WxMaterialPreview::Canvas::OnDrawSprites() const
 {
+    ee0::RenderContext::Reset3D(true);
+
+    DrawSkybox();
+    DrawMaterial();
+}
+
+void WxMaterialPreview::Canvas::DrawSkybox() const
+{
+    if (m_panel->m_skybox) {
+        auto tex = m_panel->m_skybox->GetTexture();
+        if (tex) {
+            pt3::RenderSystem::DrawSkybox(*tex);
+        }
+    }
+}
+
+void WxMaterialPreview::Canvas::DrawMaterial() const
+{
 	auto& wc = pt3::Blackboard::Instance()->GetWindowContext();
 	if (!wc) {
 		return;
 	}
-
-	ee0::RenderContext::Reset3D(true);
 
 	pt3::RenderParams params;
 	params.user_effect = m_user_effect;
@@ -138,7 +152,7 @@ void WxMaterialPreview::Canvas::OnDrawSprites() const
         pt0::RenderVariant(sm::mat3(normal_mat))
     );
 
-	pt3::RenderSystem::Instance()->DrawMaterial(m_material, params, ctx, m_shader);
+	pt3::RenderSystem::Instance()->DrawMaterial(m_panel->m_material, params, ctx, m_shader);
 }
 
 }

@@ -12,6 +12,7 @@
 #include <wx/panel.h>
 
 namespace pt0 { class Shader; }
+namespace facade { class ImageCube; }
 
 namespace ee3
 {
@@ -34,6 +35,10 @@ public:
         }
     }
 
+    void SetSkybox(const std::shared_ptr<facade::ImageCube>& skybox) {
+        m_skybox = skybox;
+    }
+
 private:
 	void OnSize(wxSizeEvent& event);
 
@@ -41,9 +46,7 @@ private:
 	class Canvas : public ee0::WxStageCanvas, public ee0::Observer
 	{
 	public:
-		Canvas(wxWindow* parent, ee0::EditPanelImpl& edit_impl,
-			const ee0::RenderContext* rc, const ee0::SubjectMgrPtr& sub_mgr,
-			const pt0::Material& material, bool user_effect);
+		Canvas(WxMaterialPreview* panel, const ee0::RenderContext* rc, bool user_effect);
 		virtual ~Canvas();
 
 		virtual void OnNotify(uint32_t msg, const ee0::VariantSet& variants) override;
@@ -58,9 +61,12 @@ private:
 		virtual void OnSize(int w, int h) override;
 		virtual void OnDrawSprites() const override;
 
+    private:
+        void DrawSkybox() const;
+        void DrawMaterial() const;
+
 	private:
-		ee0::SubjectMgrPtr   m_sub_mgr;
-		const pt0::Material& m_material;
+        WxMaterialPreview* m_panel;
 
 		bool m_user_effect;
 
@@ -76,6 +82,8 @@ private:
 	std::unique_ptr<Canvas> m_canvas = nullptr;
 
 	pt0::Material m_material;
+
+    std::shared_ptr<facade::ImageCube> m_skybox = nullptr;
 
 }; // WxMaterialPreview
 
