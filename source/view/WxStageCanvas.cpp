@@ -6,6 +6,8 @@
 #include <ee0/SubjectMgr.h>
 #include <ee0/RenderContext.h>
 
+#include <unirender/Blackboard.h>
+#include <unirender/TextureCube.h>
 #include <tessellation/Painter.h>
 #include <painting2/Blackboard.h>
 #include <painting2/WindowContext.h>
@@ -16,6 +18,7 @@
 #include <painting3/MaterialMgr.h>
 #include <painting3/PointLight.h>
 #include <painting3/RenderSystem.h>
+#include <rendergraph/CreateIrradianceCubemap.h>
 #ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
 #include <node3/RenderSystem.h>
@@ -74,6 +77,21 @@ void WxStageCanvas::OnNotify(uint32_t msg, const ee0::VariantSet& variants)
 //{
 //	return m_viewport.TransPos3ScreenToDir(screen, m_camera);
 //}
+
+void WxStageCanvas::SetSkybox(const std::shared_ptr<facade::ImageCube>& skybox)
+{
+    m_skybox = skybox;
+
+    if (m_skybox && m_skybox->GetTexture())
+    {
+        auto& rc = ur::Blackboard::Instance()->GetRenderContext();
+        if (!m_gi.irradiance_map) {
+            m_gi.irradiance_map = std::make_shared<ur::TextureCube>(&rc);
+        }
+        auto tex_id = rg::CreateIrradianceCubemap(m_skybox->GetTexture()->GetTexID());
+        m_gi.irradiance_map->SetTexID(tex_id);
+    }
+}
 
 void WxStageCanvas::OnSize(int w, int h)
 {

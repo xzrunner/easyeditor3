@@ -3,11 +3,14 @@
 #include <ee0/RenderContext.h>
 #include <ee3/WorldTravelOP.h>
 
+#include <unirender/Blackboard.h>
+#include <unirender/TextureCube.h>
 #include <painting3/RenderSystem.h>
 #include <painting3/PerspCam.h>
 #include <painting3/Blackboard.h>
 #include <painting3/WindowContext.h>
 #include <painting3/MaterialMgr.h>
+#include <rendergraph/CreateIrradianceCubemap.h>
 #include <shaderweaver/node/Raymarching.h>
 #include <shaderweaver/node/CameraPos.h>
 #include <facade/ImageCube.h>
@@ -37,6 +40,21 @@ WxMaterialPreview::WxMaterialPreview(wxWindow* parent, const sm::ivec2& size,
 void WxMaterialPreview::RefreshCanvas()
 {
 	m_canvas->SetDirty();
+}
+
+void WxMaterialPreview::SetSkybox(const std::shared_ptr<facade::ImageCube>& skybox)
+{
+    m_skybox = skybox;
+
+    if (m_skybox && m_skybox->GetTexture())
+    {
+        auto& rc = ur::Blackboard::Instance()->GetRenderContext();
+        if (!m_gi.irradiance_map) {
+            m_gi.irradiance_map = std::make_shared<ur::TextureCube>(&rc);
+        }
+        auto tex_id = rg::CreateIrradianceCubemap(m_skybox->GetTexture()->GetTexID());
+        m_gi.irradiance_map->SetTexID(tex_id);
+    }
 }
 
 void WxMaterialPreview::OnSize(wxSizeEvent& event)

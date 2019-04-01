@@ -8,6 +8,7 @@
 #include <SM_Vector.h>
 #include <painting0/Material.h>
 #include <painting3/Viewport.h>
+#include <painting3/GlobalIllumination.h>
 
 #include <wx/panel.h>
 
@@ -35,9 +36,8 @@ public:
         }
     }
 
-    void SetSkybox(const std::shared_ptr<facade::ImageCube>& skybox) {
-        m_skybox = skybox;
-    }
+    void SetSkybox(const std::shared_ptr<facade::ImageCube>& skybox);
+    auto& GetGlobalIllumination() const { return m_gi; }
 
 private:
 	void OnSize(wxSizeEvent& event);
@@ -84,6 +84,7 @@ private:
 	pt0::Material m_material;
 
     std::shared_ptr<facade::ImageCube> m_skybox = nullptr;
+    pt3::GlobalIllumination m_gi;
 
 }; // WxMaterialPreview
 

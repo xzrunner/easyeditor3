@@ -7,6 +7,7 @@
 #include <painting0/Camera.h>
 #include <painting3/Viewport.h>
 #include <painting3/RenderSystem.h>
+#include <painting3/GlobalIllumination.h>
 
 namespace ee0 { class WxLibraryPanel; class RenderContext; class WxStagePage; }
 namespace facade { class ImageCube; }
@@ -28,7 +29,7 @@ public:
 	//sm::vec2 TransPos3ProjectToScreen(const sm::vec3& proj) const;
 	//sm::vec3 TransPos3ScreenToDir(const sm::vec2& screen) const;
 
-    void SetSkybox(const std::shared_ptr<facade::ImageCube>& skybox) { m_skybox = skybox; }
+    void SetSkybox(const std::shared_ptr<facade::ImageCube>& skybox);
 
 protected:
 	virtual void OnSize(int w, int h) override;
@@ -44,6 +45,8 @@ protected:
 
 	void DrawNodes(pt3::RenderParams::DrawType type = pt3::RenderParams::DRAW_MESH) const;
 
+    auto& GetGlobalIllumination() const { return m_gi; }
+
 protected:
 	ee0::WxStagePage* m_stage;
 
@@ -58,6 +61,7 @@ private:
 	sm::mat4 m_mat_projection;
 
     std::shared_ptr<facade::ImageCube> m_skybox = nullptr;
+    pt3::GlobalIllumination m_gi;
 
 }; // WxStageCanvas
 
