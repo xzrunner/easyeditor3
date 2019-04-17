@@ -12,7 +12,7 @@
 
 #include <wx/panel.h>
 
-namespace pt0 { class Shader; }
+namespace ur { class Shader; }
 namespace facade { class ImageCube; }
 
 namespace ee3
@@ -30,7 +30,7 @@ public:
 
 	auto& GetCanvas() const { return m_canvas; }
 
-    void SetShader(const std::shared_ptr<pt0::Shader>& shader) {
+    void SetShader(const std::shared_ptr<ur::Shader>& shader) {
         if (m_canvas) {
             m_canvas->SetShader(shader);
         }
@@ -53,7 +53,7 @@ private:
 
 		const pt3::Viewport& GetViewport() const { return m_viewport; }
 
-        void SetShader(const std::shared_ptr<pt0::Shader>& shader) {
+        void SetShader(const std::shared_ptr<ur::Shader>& shader) {
             m_shader = shader;
         }
 
@@ -72,7 +72,7 @@ private:
 
 		pt3::Viewport m_viewport;
 
-        std::shared_ptr<pt0::Shader> m_shader = nullptr;
+        std::shared_ptr<ur::Shader> m_shader = nullptr;
 
 	}; // Canvas
 
