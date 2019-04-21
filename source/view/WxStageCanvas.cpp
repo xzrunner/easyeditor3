@@ -18,7 +18,7 @@
 #include <painting3/MaterialMgr.h>
 #include <painting3/PointLight.h>
 #include <painting3/RenderSystem.h>
-#include <renderpipeline/CreateIrradianceCubemap.h>
+#include <renderpipeline/Utility.h>
 #ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
 #include <node3/RenderSystem.h>
@@ -85,11 +85,7 @@ void WxStageCanvas::SetSkybox(const std::shared_ptr<facade::ImageCube>& skybox)
     if (m_skybox && m_skybox->GetTexture())
     {
         auto& rc = ur::Blackboard::Instance()->GetRenderContext();
-        if (!m_gi.irradiance_map) {
-            m_gi.irradiance_map = std::make_shared<ur::TextureCube>(&rc);
-        }
-        auto tex_id = rp::CreateIrradianceCubemap(m_skybox->GetTexture()->GetTexID());
-        m_gi.irradiance_map->SetTexID(tex_id);
+        rp::InitGIWithSkybox(rc, m_skybox->GetTexture()->GetTexID(), m_gi);
     }
 }
 

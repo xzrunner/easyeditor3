@@ -10,9 +10,7 @@
 #include <painting3/Blackboard.h>
 #include <painting3/WindowContext.h>
 #include <painting3/MaterialMgr.h>
-#include <renderpipeline/CreateIrradianceCubemap.h>
-#include <renderpipeline/CreatePrefilterCubemap.h>
-#include <renderpipeline/CreateBrdfLutTex.h>
+#include <renderpipeline/Utility.h>
 #include <shaderweaver/node/Raymarching.h>
 #include <shaderweaver/node/CameraPos.h>
 #include <facade/ImageCube.h>
@@ -51,22 +49,7 @@ void WxMaterialPreview::SetSkybox(const std::shared_ptr<facade::ImageCube>& skyb
     if (m_skybox && m_skybox->GetTexture())
     {
         auto& rc = ur::Blackboard::Instance()->GetRenderContext();
-
-        if (!m_gi.irradiance_map) {
-            m_gi.irradiance_map = std::make_shared<ur::TextureCube>(&rc);
-        }
-        auto tex_id = rp::CreateIrradianceCubemap(m_skybox->GetTexture()->GetTexID());
-        m_gi.irradiance_map->SetTexID(tex_id);
-
-        if (!m_gi.prefilter_map) {
-            m_gi.prefilter_map = std::make_shared<ur::TextureCube>(&rc);
-        }
-        tex_id = rp::CreatePrefilterCubemap(m_skybox->GetTexture()->GetTexID());
-        m_gi.prefilter_map->SetTexID(tex_id);
-
-        tex_id = rp::CreateBrdfLutTex();
-        m_gi.brdf_lut = std::make_shared<ur::Texture>(&rc, rp::BRDF_LUT_TEX_SIZE,
-            rp::BRDF_LUT_TEX_SIZE, rp::BRDF_LUT_TEX_FMT, tex_id);
+        rp::InitGIWithSkybox(rc, m_skybox->GetTexture()->GetTexID(), m_gi);
     }
 }
 
