@@ -52,6 +52,9 @@
     <Filter Include="dataset\msg">
       <UniqueIdentifier>{edf06c26-d07b-471f-9995-f65a67a030b2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="editop\5.physics">
+      <UniqueIdentifier>{65218638-a0ce-4018-b20a-730f55062c00}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\ee3\NodeRotateState.h">
@@ -153,6 +156,9 @@
     <ClInclude Include="..\..\..\include\ee3\WxCompMeshFilterPanel.h">
       <Filter>view\detail</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\ee3\DragRigidOP.h">
+      <Filter>editop\5.physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\editop\NodeRotateState.cpp">
@@ -250,6 +256,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\view\WxCompMeshFilterPanel.cpp">
       <Filter>view\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\editop\DragRigidOP.cpp">
+      <Filter>editop\5.physics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
