@@ -54,7 +54,7 @@ bool TranslateAxisState::OnMousePress(int x, int y)
 		return false;
 	}
 
-	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
+	auto cam_mat = m_camera->GetProjectionMat() * m_camera->GetViewMat();
 	m_last_pos2 = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * pos, cam_mat);
 	m_first_pos2 = m_last_pos2;
 
@@ -114,7 +114,7 @@ bool TranslateAxisState::OnDraw() const
 
 	tess::Painter pt;
 
-	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
+	auto cam_mat = m_camera->GetProjectionMat() * m_camera->GetViewMat();
 
 	const float line_width = 2.0f;
 
@@ -168,7 +168,7 @@ bool TranslateAxisState::OnDraw() const
 
 TranslateAxisState::PointQueryType TranslateAxisState::PointQuery(int x, int y, sm::vec3& pos) const
 {
-	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
+	auto cam_mat = m_camera->GetProjectionMat() * m_camera->GetViewMat();
 
     // point test
 

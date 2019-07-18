@@ -149,7 +149,7 @@ void WxStageCanvas::OnDrawSprites() const
 //{
 //	tess::Painter pt;
 //
-//	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
+//	auto cam_mat = m_camera->GetProjectionMat() * m_camera->GetViewMat();
 //	auto trans3d = [&](const sm::vec3& pos3)->sm::vec2 {
 //		return m_viewport.TransPosProj3ToProj2(pos3, cam_mat);
 //	};
@@ -223,7 +223,7 @@ void WxStageCanvas::DrawBackgroundCross() const
 {
 	tess::Painter pt;
 
-	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
+	auto cam_mat = m_camera->GetProjectionMat() * m_camera->GetViewMat();
 	auto trans3d = [&](const sm::vec3& pos3)->sm::vec2 {
 		return GetViewport().TransPosProj3ToProj2(pos3, cam_mat);
 	};

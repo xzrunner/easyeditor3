@@ -32,7 +32,7 @@ void DebugDraw(const pt0::Camera& cam, const pt3::Viewport& vp)
 {
 	tess::Painter pt;
 
-	auto cam_mat = cam.GetViewMat() * cam.GetProjectionMat();
+	auto cam_mat = cam.GetProjectionMat() * cam.GetViewMat();
 	auto trans3d = [&](const sm::vec3& pos3)->sm::vec2 {
 		return vp.TransPosProj3ToProj2(pos3, cam_mat);
 	};

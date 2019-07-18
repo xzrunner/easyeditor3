@@ -35,7 +35,7 @@ bool NodeSelectOP::OnDraw() const
 
 	tess::Painter pt;
 
-	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
+	auto cam_mat = m_camera->GetProjectionMat() * m_camera->GetViewMat();
 	m_stage.GetSelection().Traverse([&](const ee0::GameObjWithPos& nwp)->bool
 	{
 #ifndef GAME_OBJ_ECS

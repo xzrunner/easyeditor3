@@ -218,7 +218,7 @@ void MeshIKOP::DrawGUI() const
 
 void MeshIKOP::DebugDraw() const
 {
-	auto cam_mat = m_camera->GetViewMat() * m_camera->GetProjectionMat();
+	auto cam_mat = m_camera->GetProjectionMat() * m_camera->GetViewMat();
 
 	sm::vec2 tri[3];
 	for (size_t i = 0; i < 3; ++i) {
