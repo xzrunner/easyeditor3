@@ -53,13 +53,13 @@ void WxTransformCtrl::InitLayout()
 		auto& position = m_cb.get_position();
 		sizer->Add(new wxStaticText(this, wxID_ANY, wxT("X ")));
 		sizer->Add(m_pos_x = new wxTextCtrl(this, wxID_ANY, std::to_string(position.x),
-			wxDefaultPosition, INPUT_SIZE, wxEVT_COMMAND_TEXT_ENTER));
+			wxDefaultPosition, INPUT_SIZE, wxTE_PROCESS_ENTER));
 		sizer->Add(new wxStaticText(this, wxID_ANY, wxT("  Y ")));
 		sizer->Add(m_pos_y = new wxTextCtrl(this, wxID_ANY, std::to_string(position.y),
-			wxDefaultPosition, INPUT_SIZE, wxEVT_COMMAND_TEXT_ENTER));
+			wxDefaultPosition, INPUT_SIZE, wxTE_PROCESS_ENTER));
 		sizer->Add(new wxStaticText(this, wxID_ANY, wxT("  Z ")));
 		sizer->Add(m_pos_z = new wxTextCtrl(this, wxID_ANY, std::to_string(position.z),
-			wxDefaultPosition, INPUT_SIZE, wxEVT_COMMAND_TEXT_ENTER));
+			wxDefaultPosition, INPUT_SIZE, wxTE_PROCESS_ENTER));
 
 		Connect(m_pos_x->GetId(), wxEVT_COMMAND_TEXT_ENTER,
 			wxCommandEventHandler(WxTransformCtrl::EnterTextValue));
