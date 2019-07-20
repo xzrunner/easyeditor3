@@ -110,7 +110,7 @@ void NodeTranslateOP::InitTranslateState(ee0::WxStagePage& stage, const pt3::Vie
 		center /= static_cast<float>(count);
 		auto trans_mat = sm::mat4::Translated(center.x, center.y, center.z);
 		auto rot_mat = sm::mat4(angle);
-		return trans_mat * rot_mat;
+		return rot_mat * trans_mat;
 	};
 	cb.translate = [&](const sm::vec3& offset) {
 		stage.GetSelection().Traverse([&](const ee0::GameObjWithPos& nwp)->bool

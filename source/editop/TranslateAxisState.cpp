@@ -358,7 +358,7 @@ void TranslateAxisState::Translate(int x, int y)
 	//		return true;
 	//	});
 
-		m_ori_wmat_no_scale = sm::mat4::Translated(offset.x, offset.y, offset.z) * m_ori_wmat_no_scale;
+		m_ori_wmat_no_scale = m_ori_wmat_no_scale * sm::mat4::Translated(offset.x, offset.y, offset.z);
 	}
 }
 
