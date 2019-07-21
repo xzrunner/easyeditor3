@@ -55,15 +55,15 @@ bool TranslateAxisState::OnMousePress(int x, int y)
 	}
 
 	auto cam_mat = m_camera->GetProjectionMat() * m_camera->GetViewMat();
-	m_last_pos2 = m_vp.TransPosProj3ToProj2(m_ori_wmat_no_scale * pos, cam_mat);
+	m_last_pos2 = m_vp.TransPosProj3ToProj2(pos, cam_mat);
 	m_first_pos2 = m_last_pos2;
 
-	m_last_pos3 = m_ori_wmat_no_scale * pos;
+	m_last_pos3 = pos;
 
 	m_first_pos2 = m_last_pos2;
 
 	m_move_path3d.origin = m_last_pos3;
-	m_move_path3d.dir = (pos - GetCtrlPos3D(AXIS_CENTER)).Normalized();
+	m_move_path3d.dir = (pos - m_ori_wmat_no_scale * GetCtrlPos3D(AXIS_CENTER)).Normalized();
 
 	auto next_pos2 = m_vp.TransPosProj3ToProj2(m_move_path3d.origin + m_move_path3d.dir, cam_mat);
 	m_first_dir2 = (next_pos2 - m_first_pos2).Normalized();
@@ -177,19 +177,19 @@ TranslateAxisState::PointQueryType TranslateAxisState::PointQuery(int x, int y, 
 	// x, red
 	auto pos2d = GetCtrlPos2D(cam_mat, AXIS_X);
 	if (sm::dis_pos_to_pos(pos2d, proj2d) < m_cfg.node_radius) {
-        pos.Set(CalcCoordAxisLen(), 0, 0);
+        pos = m_ori_wmat_no_scale * sm::vec3(CalcCoordAxisLen(), 0, 0);
 		return POINT_QUERY_X;
 	}
 	// y, green
 	pos2d = GetCtrlPos2D(cam_mat, AXIS_Y);
 	if (sm::dis_pos_to_pos(pos2d, proj2d) < m_cfg.node_radius) {
-        pos.Set(0, CalcCoordAxisLen(), 0);
+        pos = m_ori_wmat_no_scale * sm::vec3(0, CalcCoordAxisLen(), 0);
 		return POINT_QUERY_Y;
 	}
 	// z, blue
 	pos2d = GetCtrlPos2D(cam_mat, AXIS_Z);
 	if (sm::dis_pos_to_pos(pos2d, proj2d) < m_cfg.node_radius) {
-        pos.Set(0, 0, -CalcCoordAxisLen());
+        pos = m_ori_wmat_no_scale * sm::vec3(0, 0, -CalcCoordAxisLen());
 		return POINT_QUERY_Z;
 	}
 
@@ -215,7 +215,6 @@ TranslateAxisState::PointQueryType TranslateAxisState::PointQuery(int x, int y, 
     sm::mat4 mat = m_ori_wmat_no_scale;
     sm::vec3 cross;
     if (sm::ray_polygon_intersect_both_faces(mat, face_xy, 4, ray, &cross)) {
-        pos = cross;
         sm::Plane face_plane(
             mat * face_xy[0],
             mat * face_xy[1],
@@ -224,7 +223,6 @@ TranslateAxisState::PointQueryType TranslateAxisState::PointQuery(int x, int y, 
         sm::ray_plane_intersect_both_faces(ray, face_plane, &pos);
         return POINT_QUERY_XY;
     } else if (sm::ray_polygon_intersect_both_faces(mat, face_yz, 4, ray, &cross)) {
-        pos = cross;
         sm::Plane face_plane(
             mat * face_yz[0],
             mat * face_yz[1],
@@ -233,7 +231,6 @@ TranslateAxisState::PointQueryType TranslateAxisState::PointQuery(int x, int y, 
         sm::ray_plane_intersect_both_faces(ray, face_plane, &pos);
         return POINT_QUERY_YZ;
     } else if (sm::ray_polygon_intersect_both_faces(mat, face_zx, 4, ray, &cross)) {
-        pos = cross;
         sm::Plane face_plane(
             mat * face_zx[0],
             mat * face_zx[1],
@@ -329,13 +326,13 @@ void TranslateAxisState::Translate(int x, int y)
         }
             break;
         case POINT_QUERY_YZ:
-            cross_face.Build(m_ori_wmat_rotate * sm::vec3(1, 0, 0), m_ori_wmat_no_scale * sm::vec3(0, 0, 0));
+            cross_face.Build(m_ori_wmat_rotate * sm::vec3(1, 0, 0), m_ori_wmat_translate * sm::vec3(0, 0, 0));
             break;
         case POINT_QUERY_ZX:
-            cross_face.Build(m_ori_wmat_rotate * sm::vec3(0, 1, 0), m_ori_wmat_no_scale * sm::vec3(0, 0, 0));
+            cross_face.Build(m_ori_wmat_rotate * sm::vec3(0, 1, 0), m_ori_wmat_translate * sm::vec3(0, 0, 0));
             break;
         case POINT_QUERY_XY:
-            cross_face.Build(m_ori_wmat_rotate * sm::vec3(0, 0, 1), m_ori_wmat_no_scale * sm::vec3(0, 0, 0));
+            cross_face.Build(m_ori_wmat_rotate * sm::vec3(0, 0, 1), m_ori_wmat_translate * sm::vec3(0, 0, 0));
             break;
         }
 
