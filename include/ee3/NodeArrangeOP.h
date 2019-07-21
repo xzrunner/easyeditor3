@@ -33,6 +33,12 @@ public:
 
     virtual bool OnDraw() const override;
 
+protected:
+    // callback func
+    virtual void AfterInsertSelected(const n0::SceneNodePtr& node) const override;
+    virtual void AfterDeleteSelected(const n0::SceneNodePtr& node) const override;
+    virtual void AfterClearSelection() const override;
+
 private:
 	ee0::SubjectMgrPtr m_sub_mgr;
 

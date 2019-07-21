@@ -253,4 +253,28 @@ bool NodeArrangeOP::OnDraw() const
     return m_node_translate_state->OnDraw();
 }
 
+void NodeArrangeOP::AfterInsertSelected(const n0::SceneNodePtr& node) const
+{
+    NodeSelectOP::AfterInsertSelected(node);
+
+    // update edited node's coordinate system
+    m_node_translate_state->OnActive(true);
+}
+
+void NodeArrangeOP::AfterDeleteSelected(const n0::SceneNodePtr& node) const
+{
+    NodeSelectOP::AfterDeleteSelected(node);
+
+    // update edited node's coordinate system
+    m_node_translate_state->OnActive(false);
+}
+
+void NodeArrangeOP::AfterClearSelection() const
+{
+    NodeSelectOP::AfterClearSelection();
+
+    // update edited node's coordinate system
+    m_node_translate_state->OnActive(false);
+}
+
 }
