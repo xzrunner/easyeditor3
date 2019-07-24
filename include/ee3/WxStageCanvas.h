@@ -40,7 +40,7 @@ protected:
     virtual void DrawBackground3D() const { DrawSkybox(); }
     virtual void DrawForeground3D() const { DrawNodes(); }
 
-    void DrawBackgroundGrids() const;  // 3d
+    void DrawBackgroundGrids(float tot_len = 3.0f, float grid_edge = 0.1f) const;  // 3d
     void DrawBackgroundCross() const;  // 2d
 
 	void DrawNodes(pt3::RenderParams::DrawType type = pt3::RenderParams::DRAW_MESH) const;

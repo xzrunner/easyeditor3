@@ -201,20 +201,18 @@ void WxStageCanvas::OnDrawSprites() const
 //	pt2::RenderSystem::DrawPainter(pt);
 //}
 
-void WxStageCanvas::DrawBackgroundGrids() const
+void WxStageCanvas::DrawBackgroundGrids(float tot_len, float grid_edge) const
 {
     std::vector<sm::vec3> buf;
     uint32_t col = 0xff000000;
-    const float TOT_LEN = 3.0f;
-    const float GRID_EDGE = 0.1f;
-    buf.reserve(TOT_LEN * 2 / GRID_EDGE * 2);
-    for (float z = -TOT_LEN; z <= TOT_LEN; z += GRID_EDGE) {
-        buf.push_back({ -TOT_LEN, 0, z });
-        buf.push_back({  TOT_LEN, 0, z });
+    buf.reserve(tot_len * 2 / grid_edge * 2);
+    for (float z = -tot_len; z <= tot_len; z += grid_edge) {
+        buf.push_back({ -tot_len, 0, z });
+        buf.push_back({  tot_len, 0, z });
     }
-    for (float x = -TOT_LEN; x <= TOT_LEN; x += GRID_EDGE) {
-        buf.push_back({ x, 0, -TOT_LEN });
-        buf.push_back({ x, 0, TOT_LEN });
+    for (float x = -tot_len; x <= tot_len; x += grid_edge) {
+        buf.push_back({ x, 0, -tot_len });
+        buf.push_back({ x, 0, tot_len });
     }
     pt3::RenderSystem::DrawLines3D(buf.size(), buf[0].xyz, col);
 }
