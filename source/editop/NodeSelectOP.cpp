@@ -13,6 +13,8 @@
 #include <painting3/PerspCam.h>
 #ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
+#include <node0/NodeFlagsHelper.h>
+#include <node0/NodeFlags.h>
 #include <node3/CompAABB.h>
 #include <node3/CompTransform.h>
 #endif // GAME_OBJ_ECS
@@ -84,6 +86,10 @@ ee0::GameObj NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
 	ee0::GameObj ret = nullptr;
 	m_stage.Traverse([&](const ee0::GameObj& obj)->bool
 	{
+        if (n0::NodeFlagsHelper::GetFlag<n0::NodeNotVisible>(*obj)) {
+            return true;
+        }
+
 		auto& caabb = obj->GetUniqueComp<n3::CompAABB>();
 		auto& ctrans = obj->GetUniqueComp<n3::CompTransform>();
 
