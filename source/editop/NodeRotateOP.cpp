@@ -110,7 +110,7 @@ void NodeRotateOP::InitRotateState(ee0::WxStagePage& stage,
 		center /= static_cast<float>(count);
 		auto trans_mat = sm::mat4::Translated(center.x, center.y, center.z);
 		auto rot_mat = sm::mat4(angle);
-		return rot_mat * trans_mat;
+		return trans_mat * rot_mat;
 	};
 	cb.rotate = [&](const sm::Quaternion& delta) {
 		stage.GetSelection().Traverse([&](const ee0::GameObjWithPos& nwp)->bool

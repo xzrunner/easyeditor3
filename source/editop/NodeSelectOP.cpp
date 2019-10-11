@@ -55,7 +55,7 @@ bool NodeSelectOP::OnDraw() const
 		//}
 
 		pt.AddCube(caabb.GetAABB().Cube(), [&](const sm::vec3& pos3)->sm::vec2 {
-			auto fix = prev_mt * ctrans.GetTransformMat() * pos3;
+			auto fix = (prev_mt * ctrans.GetTransformMat()) * pos3;
 			return m_vp.TransPosProj3ToProj2(fix, cam_mat);
 		}, ee0::MID_RED.ToABGR());
 #endif // GAME_OBJ_ECS

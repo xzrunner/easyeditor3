@@ -165,7 +165,7 @@ void RotateAxisState::UpdateSelectionSetInfo()
 
 	auto rot_mat = sm::mat4::Rotated(rotate.x, rotate.y, rotate.z);
 	auto trans_mat = sm::mat4::Translated(trans.x, trans.y, trans.z);
-	m_ori_wmat_no_scale = rot_mat * trans_mat;
+	m_ori_wmat_no_scale = trans_mat * rot_mat;
 
 	auto cam_mat = m_camera->GetProjectionMat() * m_camera->GetViewMat();
 	m_pos2d = m_vp.TransPosProj3ToProj2(trans, cam_mat);

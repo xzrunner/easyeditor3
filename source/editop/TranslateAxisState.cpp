@@ -265,7 +265,7 @@ void TranslateAxisState::UpdateSelectionSetInfo()
 	m_ori_wmat_scale     = sm::mat4::Scaled(scale.x, scale.y, scale.z);
     m_ori_wmat_rotate    = sm::mat4::Rotated(rotate.x, rotate.y, rotate.z);
     m_ori_wmat_translate = sm::mat4::Translated(trans.x, trans.y, trans.z);
-	m_ori_wmat_no_scale = m_ori_wmat_rotate * m_ori_wmat_translate;
+	m_ori_wmat_no_scale = m_ori_wmat_translate * m_ori_wmat_rotate;
 
 	//int count = 0;
 	//m_center.Set(0, 0, 0);
@@ -355,7 +355,7 @@ void TranslateAxisState::Translate(int x, int y)
 	//		return true;
 	//	});
 
-		m_ori_wmat_no_scale = m_ori_wmat_no_scale * sm::mat4::Translated(offset.x, offset.y, offset.z);
+		m_ori_wmat_no_scale = sm::mat4::Translated(offset.x, offset.y, offset.z) * m_ori_wmat_no_scale;
 	}
 }
 
