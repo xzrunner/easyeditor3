@@ -30,12 +30,12 @@ NodeArrangeOP::NodeArrangeOP(const std::shared_ptr<pt0::Camera>& camera,
 	assert(camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>());
 	auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(camera);
 
-    auto cam_zoom_state = std::make_shared<CamZoomState>(p_cam, vp, m_sub_mgr);
+    m_ops[OP_CAM_ZOOM] = std::make_shared<CamZoomState>(p_cam, vp, m_sub_mgr);
 
-	m_cam_rotate_state    = std::make_shared<CamRotateState>(p_cam, m_sub_mgr);
-    m_cam_rotate_state->SetPrevOpState(cam_zoom_state);
-	m_cam_translate_state = std::make_shared<CamTranslateState>(p_cam, m_sub_mgr);
-    m_cam_translate_state->SetPrevOpState(cam_zoom_state);
+    m_ops[OP_CAM_ROTATE] = std::make_shared<CamRotateState>(p_cam, m_sub_mgr);
+    m_ops[OP_CAM_ROTATE]->SetPrevOpState(m_ops[OP_CAM_ZOOM]);
+    m_ops[OP_CAM_TRANSLATE] = std::make_shared<CamTranslateState>(p_cam, m_sub_mgr);
+    m_ops[OP_CAM_TRANSLATE]->SetPrevOpState(m_ops[OP_CAM_ZOOM]);
 
     TranslateAxisState::Callback cb;
     cb.is_need_draw = [&]() {
@@ -70,11 +70,11 @@ NodeArrangeOP::NodeArrangeOP(const std::shared_ptr<pt0::Camera>& camera,
             return true;
         });
     };
-    m_node_translate_state = std::make_shared<TranslateAxisState>(
+    m_ops[OP_NODE_TRANSLATE] = std::make_shared<TranslateAxisState>(
         p_cam, vp, m_sub_mgr, cb, TranslateAxisState::Config(0.5f, 5));
-    m_node_translate_state->SetPrevOpState(cam_zoom_state);
+    m_ops[OP_NODE_TRANSLATE]->SetPrevOpState(m_ops[OP_CAM_ZOOM]);
 
-	m_op_state = m_cam_rotate_state;
+	m_op_state = m_ops[OP_CAM_ROTATE];
 
 	m_last_left_press.MakeInvalid();
     m_last_middle_press.MakeInvalid();
@@ -124,9 +124,9 @@ bool NodeArrangeOP::OnMouseLeftDown(int x, int y)
 
 	auto& selection = m_stage.GetSelection();
 	if (selection.IsEmpty()) {
-		ChangeEditOpState(m_cam_rotate_state);
+		ChangeEditOpState(m_ops[OP_CAM_ROTATE]);
 	} else {
-		ChangeEditOpState(m_node_translate_state);
+		ChangeEditOpState(m_ops[OP_NODE_TRANSLATE]);
 	}
 
     return ret;
@@ -157,7 +157,7 @@ bool NodeArrangeOP::OnMouseMiddleDown(int x, int y)
 
     m_last_middle_press.Set(x, y);
 
-    ChangeEditOpState(m_cam_translate_state);
+    ChangeEditOpState(m_ops[OP_CAM_TRANSLATE]);
 
     return m_op_state->OnMousePress(x, y);
 }
@@ -187,7 +187,7 @@ bool NodeArrangeOP::OnMouseRightDown(int x, int y)
 
 	m_last_right_press.Set(x, y);
 
-    ChangeEditOpState(m_cam_rotate_state);
+    ChangeEditOpState(m_ops[OP_CAM_ROTATE]);
 
 	return m_op_state->OnMousePress(x, y);
 }
@@ -250,7 +250,16 @@ bool NodeArrangeOP::OnDraw() const
         return true;
     }
 
-    return m_node_translate_state->OnDraw();
+    return m_ops[OP_NODE_TRANSLATE]->OnDraw();
+}
+
+void NodeArrangeOP::SetCamera(const std::shared_ptr<pt0::Camera>& camera)
+{
+    NodeSelectOP::SetCamera(camera);
+
+    for (auto& op : m_ops) {
+        op->SetCamera(camera);
+    }
 }
 
 void NodeArrangeOP::AfterInsertSelected(const n0::SceneNodePtr& node) const
@@ -258,7 +267,7 @@ void NodeArrangeOP::AfterInsertSelected(const n0::SceneNodePtr& node) const
     NodeSelectOP::AfterInsertSelected(node);
 
     // update edited node's coordinate system
-    m_node_translate_state->OnActive(true);
+    m_ops[OP_NODE_TRANSLATE]->OnActive(true);
 }
 
 void NodeArrangeOP::AfterDeleteSelected(const n0::SceneNodePtr& node) const
@@ -266,7 +275,7 @@ void NodeArrangeOP::AfterDeleteSelected(const n0::SceneNodePtr& node) const
     NodeSelectOP::AfterDeleteSelected(node);
 
     // update edited node's coordinate system
-    m_node_translate_state->OnActive(false);
+    m_ops[OP_NODE_TRANSLATE]->OnActive(false);
 }
 
 void NodeArrangeOP::AfterClearSelection() const
@@ -274,7 +283,7 @@ void NodeArrangeOP::AfterClearSelection() const
     NodeSelectOP::AfterClearSelection();
 
     // update edited node's coordinate system
-    m_node_translate_state->OnActive(false);
+    m_ops[OP_NODE_TRANSLATE]->OnActive(false);
 }
 
 }

@@ -33,11 +33,24 @@ public:
 
     virtual bool OnDraw() const override;
 
+    virtual void SetCamera(const std::shared_ptr<pt0::Camera>& camera) override;
+
 protected:
     // callback func
     virtual void AfterInsertSelected(const n0::SceneNodePtr& node) const override;
     virtual void AfterDeleteSelected(const n0::SceneNodePtr& node) const override;
     virtual void AfterClearSelection() const override;
+
+private:
+    enum Operator
+    {
+        OP_CAM_ZOOM = 0,
+        OP_CAM_ROTATE,
+        OP_CAM_TRANSLATE,
+        OP_NODE_TRANSLATE,
+
+        OP_MAX_COUNT,
+    };
 
 private:
 	ee0::SubjectMgrPtr m_sub_mgr;
@@ -46,10 +59,7 @@ private:
 
 	std::shared_ptr<WxStageCanvas> m_canvas = nullptr;
 
-	ee0::EditOpStatePtr m_cam_rotate_state    = nullptr;
-	ee0::EditOpStatePtr m_cam_translate_state = nullptr;
-
-	ee0::EditOpStatePtr m_node_translate_state = nullptr;
+    ee0::EditOpStatePtr m_ops[OP_MAX_COUNT];
 
 	sm::ivec2 m_last_left_press;
     sm::ivec2 m_last_middle_press;

@@ -3,6 +3,7 @@
 #include <ee0/SubjectMgr.h>
 #include <ee0/MessageID.h>
 
+#include <painting3/OrthoCam.h>
 #include <painting3/PerspCam.h>
 #include <painting3/Viewport.h>
 
@@ -20,7 +21,20 @@ CamZoomState::CamZoomState(const std::shared_ptr<pt0::Camera>& camera,
 
 bool CamZoomState::OnMouseWheelRotation(int x, int y, int direction)
 {
-	if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
+    if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::OrthoCam>())
+    {
+        auto& o_cam = std::dynamic_pointer_cast<pt3::OrthoCam>(m_camera);
+
+		float w = m_vp.Width(),
+			  h = m_vp.Height();
+		float scale = direction > 0 ? 1 / 1.1f : 1.1f;
+		const float cx = static_cast<float>(x),
+				    cy = static_cast<float>(h - y);
+		o_cam->Scale(scale, cx, cy, w, h);
+
+        m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+    }
+	else if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
 	{
 		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 

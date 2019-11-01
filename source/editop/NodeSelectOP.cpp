@@ -71,7 +71,11 @@ bool NodeSelectOP::OnDraw() const
 // AABB not changed, transform ray from Camera and spr's mat
 ee0::GameObj NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
 {
-	assert(m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>());
+    // todo: ortho cam select
+    if (m_camera->TypeID() != pt0::GetCamTypeID<pt3::PerspCam>()) {
+        return nullptr;
+    }
+
 	auto& camera = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 	sm::vec3 ray_dir = m_vp.TransPos3ScreenToDir(sm::vec2(screen_x, screen_y), *camera);
 	sm::Ray ray(camera->GetPos(), ray_dir);
