@@ -3,6 +3,7 @@
 #include <ee0/SubjectMgr.h>
 #include <ee0/MessageID.h>
 
+#include <painting3/OrthoCam.h>
 #include <painting3/PerspCam.h>
 
 namespace ee3
@@ -29,7 +30,17 @@ bool CamTranslateState::OnMouseRelease(int x, int y)
 
 bool CamTranslateState::OnMouseDrag(int x, int y)
 {
-	if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
+    if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::OrthoCam>())
+    {
+        auto o_cam = std::dynamic_pointer_cast<pt3::OrthoCam>(m_camera);
+
+        float dx = static_cast<float>(m_last_pos.x - x);
+        float dy = static_cast<float>(y - m_last_pos.y);
+        o_cam->Translate(sm::vec2(dx, dy));
+
+        m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
+    }
+	else if (m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>())
 	{
 		auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 
