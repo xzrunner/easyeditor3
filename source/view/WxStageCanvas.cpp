@@ -122,14 +122,6 @@ void WxStageCanvas::OnDrawSprites() const
 	}
 	wc->SetView(m_camera->GetViewMat());
 
-	if (m_has2d)
-	{
-		auto& wc = pt2::Blackboard::Instance()->GetWindowContext();
-		if (wc) {
-			wc->SetView(sm::vec2(0, 0), 1);
-		}
-	}
-
 	DrawBackground3D();
 	DrawForeground3D();
 
