@@ -26,8 +26,6 @@ public:
 
 	const pt3::Viewport& GetViewport() const { return m_viewport; }
 
-    auto GetStagePage() const { return m_stage; }
-
 	//sm::vec2 TransPos3ProjectToScreen(const sm::vec3& proj) const;
 	//sm::vec3 TransPos3ScreenToDir(const sm::vec2& screen) const;
 
