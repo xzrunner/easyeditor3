@@ -108,6 +108,7 @@ void WxStageCanvas::OnSize(int w, int h)
 		{
 			wc->SetScreen(w, h);
 			wc->SetProjection(w, h);
+            wc->SetView(sm::vec2(0, 0), 1.0f);
 		}
 	}
 }
