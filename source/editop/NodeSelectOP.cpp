@@ -95,6 +95,9 @@ ee0::GameObj NodeSelectOP::QueryByPos(int screen_x, int screen_y) const
         }
 
 		auto& caabb = obj->GetUniqueComp<n3::CompAABB>();
+        if (!caabb.GetAABB().Cube().IsValid()) {
+            return true;
+        }
 		auto& ctrans = obj->GetUniqueComp<n3::CompTransform>();
 
 		sm::vec3 cross;
