@@ -232,7 +232,7 @@ void WxStageCanvas::DrawBackgroundCross() const
 	pt2::RenderSystem::DrawPainter(pt);
 }
 
-void WxStageCanvas::DrawNodes(pt3::RenderParams::DrawType type) const
+void WxStageCanvas::DrawNodes(bool draw_mesh_border) const
 {
 	ee0::VariantSet vars;
 	ee0::Variant var;
@@ -241,7 +241,9 @@ void WxStageCanvas::DrawNodes(pt3::RenderParams::DrawType type) const
 	vars.SetVariant("type", var);
 
 	pt3::RenderParams params;
-	params.type = type;
+    if (draw_mesh_border) {
+        params.mask.set(pt3::RenderParams::DrawMeshBorder);
+    }
 
     pt0::RenderContext ctx;
     sm::vec3 light_pos(0, 2, -4);

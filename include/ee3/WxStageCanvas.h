@@ -43,7 +43,7 @@ protected:
     void DrawBackgroundGrids(float tot_len = 3.0f, float grid_edge = 0.1f) const;  // 3d
     void DrawBackgroundCross() const;  // 2d
 
-	void DrawNodes(pt3::RenderParams::DrawType type = pt3::RenderParams::DRAW_MESH) const;
+	void DrawNodes(bool draw_mesh_border = false) const;
 
     auto& GetGlobalIllumination() const { return m_gi; }
 

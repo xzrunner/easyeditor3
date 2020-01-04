@@ -124,7 +124,9 @@ void WxMaterialPreview::Canvas::DrawMaterial() const
 	}
 
 	pt3::RenderParams params;
-	params.user_effect = m_user_effect;
+    if (m_user_effect) {
+        params.mask.set(pt3::RenderParams::UserEffect);
+    }
 
     pt0::RenderContext ctx;
     auto sz = GetSize();
