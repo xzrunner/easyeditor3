@@ -26,7 +26,7 @@ WorldTravelOP::WorldTravelOP(const std::shared_ptr<pt0::Camera>& camera,
 	m_rotate_state    = std::make_shared<CamRotateState>(p_cam, sub_mgr);
 	m_translate_state = std::make_shared<CamTranslateState>(p_cam, sub_mgr);
 	m_zoom_state      = std::make_shared<CamZoomState>(p_cam, vp, sub_mgr);
-	m_op_state = m_rotate_state;
+	m_op_state = m_zoom_state;
 }
 
 bool WorldTravelOP::OnKeyDown(int key_code)
