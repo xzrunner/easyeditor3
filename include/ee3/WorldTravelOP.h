@@ -12,7 +12,7 @@ class WorldTravelOP : public ee0::EditOP
 {
 public:
 	WorldTravelOP(const std::shared_ptr<pt0::Camera>& camera,
-		const pt3::Viewport& vp, const ee0::SubjectMgrPtr& sub_mgr);
+		const pt3::Viewport& vp, const ee0::SubjectMgrPtr& sub_mgr, bool only_zoom = false);
 
 	virtual bool OnKeyDown(int key_code) override;
 	virtual bool OnMouseLeftDown(int x, int y) override;
@@ -25,6 +25,8 @@ public:
 
 protected:
 	ee0::SubjectMgrPtr  m_sub_mgr;
+
+    bool m_only_zoom = false;
 
 	ee0::EditOpStatePtr m_rotate_state = nullptr;
 	ee0::EditOpStatePtr m_translate_state = nullptr;

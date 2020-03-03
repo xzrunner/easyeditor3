@@ -17,9 +17,11 @@ static const float MOUSE_SENSITIVITY = 0.3f;
 
 WorldTravelOP::WorldTravelOP(const std::shared_ptr<pt0::Camera>& camera,
 	                         const pt3::Viewport& vp,
-	                         const ee0::SubjectMgrPtr& sub_mgr)
+	                         const ee0::SubjectMgrPtr& sub_mgr,
+                             bool only_zoom)
 	: ee0::EditOP(camera)
 	, m_sub_mgr(sub_mgr)
+    , m_only_zoom(only_zoom)
 {
 	assert(camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>());
 	auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(camera);
@@ -80,7 +82,9 @@ bool WorldTravelOP::OnMouseLeftDown(int x, int y)
 		return true;
 	}
 
-	ChangeEditOpState(m_rotate_state);
+    if (!m_only_zoom) {
+        ChangeEditOpState(m_rotate_state);
+    }
 	return m_op_state->OnMousePress(x, y);
 }
 
@@ -101,7 +105,9 @@ bool WorldTravelOP::OnMouseRightDown(int x, int y)
 		return true;
 	}
 
-	ChangeEditOpState(m_translate_state);
+    if (!m_only_zoom) {
+        ChangeEditOpState(m_translate_state);
+    }
 	return m_op_state->OnMousePress(x, y);
 }
 
