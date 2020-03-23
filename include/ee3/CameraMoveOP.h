@@ -25,6 +25,8 @@ private:
 		MOVE_RIGHT,
 		MOVE_UP,
 		MOVE_DOWN,
+        MOVE_NEAR,
+        MOVE_FAR,
 	};
 
 private:

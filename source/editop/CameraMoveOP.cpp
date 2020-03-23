@@ -30,11 +30,12 @@ bool CameraMoveOP::OnKeyDown(int key_code)
 		m_camera->Reset();
 		m_sub_mgr->NotifyObservers(ee0::MSG_SET_CANVAS_DIRTY);
 		break;
+
 	case 'w': case 'W':
-		m_move_dir = MOVE_UP;
+		m_move_dir = MOVE_NEAR;
 		break;
 	case 's': case 'S':
-		m_move_dir = MOVE_DOWN;
+		m_move_dir = MOVE_FAR;
 		break;
 	case 'a': case 'A':
 		m_move_dir = MOVE_LEFT;
@@ -42,6 +43,25 @@ bool CameraMoveOP::OnKeyDown(int key_code)
 	case 'd': case 'D':
 		m_move_dir = MOVE_RIGHT;
 		break;
+
+    case WXK_LEFT:
+        m_move_dir = MOVE_LEFT;
+        break;
+    case WXK_RIGHT:
+        m_move_dir = MOVE_RIGHT;
+        break;
+    case WXK_UP:
+        m_move_dir = MOVE_UP;
+        break;
+    case WXK_DOWN:
+        m_move_dir = MOVE_DOWN;
+        break;
+    case WXK_PAGEUP:
+        m_move_dir = MOVE_NEAR;
+        break;
+    case WXK_PAGEDOWN:
+        m_move_dir = MOVE_FAR;
+        break;
 	}
 
 	return false;
@@ -53,14 +73,7 @@ bool CameraMoveOP::OnKeyUp(int key_code)
 		return true;
 	}
 
-	switch (key_code)
-	{
-	case 'W':
-	case 'S':
-	case 'A':
-	case 'D':
-		m_move_dir = MOVE_NONE;
-	}
+    m_move_dir = MOVE_NONE;
 
 	return false;
 }
@@ -93,10 +106,16 @@ bool CameraMoveOP::Update(float dt)
 		case MOVE_RIGHT:
 			p_cam->Translate(-offset, 0);
 			break;
-		case MOVE_UP:
+        case MOVE_UP:
+            p_cam->Translate(0, offset);
+            break;
+        case MOVE_DOWN:
+            p_cam->Translate(0, -offset);
+            break;
+		case MOVE_NEAR:
 			p_cam->MoveToward(offset);
 			break;
-		case MOVE_DOWN:
+		case MOVE_FAR:
 			p_cam->MoveToward(-offset);
 			break;
 		}
