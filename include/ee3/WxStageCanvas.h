@@ -18,7 +18,7 @@ namespace ee3
 class WxStageCanvas : public ee0::WxStageCanvas, public ee0::Observer
 {
 public:
-	WxStageCanvas(ee0::WxStagePage* stage, const ee0::RenderContext* rc = nullptr,
+	WxStageCanvas(const ur2::Device& dev, ee0::WxStagePage* stage, const ee0::RenderContext* rc = nullptr,
 		const ee0::WindowContext* wc = nullptr, bool has2d = false);
 	virtual ~WxStageCanvas();
 
@@ -32,7 +32,6 @@ public:
     void SetSkybox(const std::shared_ptr<facade::ImageCube>& skybox);
 
 protected:
-	virtual void OnSize(int w, int h) override;
 	virtual void OnDrawSprites() const override;
 
     virtual void DrawBackground2D() const {}

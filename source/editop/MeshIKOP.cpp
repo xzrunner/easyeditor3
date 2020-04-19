@@ -6,6 +6,7 @@
 #include <SM_RayIntersect.h>
 #include <model/MeshIK.h>
 #include <model/Model.h>
+#include <unirender2/RenderState.h>
 #include <painting2/RenderSystem.h>
 #include <painting3/Blackboard.h>
 #include <painting3/WindowContext.h>
@@ -107,13 +108,13 @@ bool MeshIKOP::OnMouseDrag(int x, int y)
 //	return false;
 //}
 
-bool MeshIKOP::OnDraw() const
+bool MeshIKOP::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
 {
-	if (ee0::EditOP::OnDraw()) {
+	if (ee0::EditOP::OnDraw(dev, ctx)) {
 		return true;
 	}
 
-	DrawGUI();
+	DrawGUI(dev, ctx);
 	DebugDraw();
 
 	return false;
@@ -182,20 +183,19 @@ void MeshIKOP::QueryByPos(int x, int y)
 	}
 }
 
-void MeshIKOP::DrawGUI() const
+void MeshIKOP::DrawGUI(const ur2::Device& dev, ur2::Context& ur_ctx) const
 {
     auto& ctx = m_canvas->GetWidnowContext().egui;
     if (!ctx) {
         return;
     }
 
-	auto& wc = pt3::Blackboard::Instance()->GetWindowContext();
-	auto sz = wc->GetScreenSize();
-	m_canvas->PrepareDrawGui(sz.x, sz.y);
+    auto& sz = m_canvas->GetScreenSize();
+	m_canvas->PrepareDrawGui(m_canvas->GetRenderDevice(), sz.x, sz.y);
 
 	int uid = 1;
 
-	ctx->BeginDraw();
+	ctx->BeginDraw(dev);
 
 	bool dirty = facade::Facade::Instance()->IsLastFrameDirty();
 	//if (m_last_screen_sz != sz) {
@@ -209,7 +209,7 @@ void MeshIKOP::DrawGUI() const
 		PrepareDeform();
 	}
 
-	ctx->EndDraw();
+	ctx->EndDraw(dev, ur_ctx);
 
 	// todo
 	const float dt = 0.033f;
@@ -227,7 +227,9 @@ void MeshIKOP::DebugDraw() const
 
 	tess::Painter pt;
 	pt.AddTriangleFilled(tri[0], tri[1], tri[2], 0xff0000ff);
-	pt2::RenderSystem::DrawPainter(pt);
+
+    ur2::RenderState rs;
+	pt2::RenderSystem::DrawPainter(m_canvas->GetRenderDevice(), *m_canvas->GetRenderContext().ur_ctx, rs, pt);
 }
 
 }

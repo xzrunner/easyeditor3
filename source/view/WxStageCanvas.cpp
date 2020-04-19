@@ -6,9 +6,9 @@
 #include <ee0/SubjectMgr.h>
 #include <ee0/RenderContext.h>
 
-#include <unirender/Blackboard.h>
-#include <unirender/TextureCube.h>
 #include <tessellation/Painter.h>
+#include <unirender2/Context.h>
+#include <unirender2/RenderState.h>
 #include <painting2/Blackboard.h>
 #include <painting2/WindowContext.h>
 #include <painting2/RenderSystem.h>
@@ -40,9 +40,9 @@ const uint32_t MESSAGES[] =
 namespace ee3
 {
 
-WxStageCanvas::WxStageCanvas(ee0::WxStagePage* stage, const ee0::RenderContext* rc,
+WxStageCanvas::WxStageCanvas(const ur2::Device& dev, ee0::WxStagePage* stage, const ee0::RenderContext* rc,
 	                         const ee0::WindowContext* wc, bool has2d)
-	: ee0::WxStageCanvas(stage, stage->GetImpl(), std::make_shared<pt3::PerspCam>(sm::vec3(0, 2, -2), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0)), rc, wc, HAS_2D * has2d | HAS_3D)
+	: ee0::WxStageCanvas(dev, stage, stage->GetImpl(), std::make_shared<pt3::PerspCam>(sm::vec3(0, 2, -2), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0)), rc, wc, HAS_2D * has2d | HAS_3D)
 	, m_stage(stage)
 	, m_has2d(has2d)
 {
@@ -82,46 +82,20 @@ void WxStageCanvas::SetSkybox(const std::shared_ptr<facade::ImageCube>& skybox)
 {
     m_skybox = skybox;
 
-    if (m_skybox && m_skybox->GetTexture())
-    {
-        auto& rc = ur::Blackboard::Instance()->GetRenderContext();
-        rp::InitGIWithSkybox(rc, m_skybox->GetTexture()->GetTexID(), m_gi);
+    if (m_skybox && m_skybox->GetTexture()) {
+        rp::InitGIWithSkybox(m_dev, *GetRenderContext().ur_ctx, m_skybox->GetTexture(), m_gi);
     }
-}
-
-void WxStageCanvas::OnSize(int w, int h)
-{
-	auto& wc = pt3::Blackboard::Instance()->GetWindowContext();
-	if (wc)
-	{
-		wc->SetScreen(w, h);
-		m_viewport.SetSize(w, h);
-
-		m_camera->OnSize(static_cast<float>(w), static_cast<float>(h));
-		wc->SetProjection(m_camera->GetProjectionMat());
-	}
-
-	if (m_has2d)
-	{
-		auto& wc = pt2::Blackboard::Instance()->GetWindowContext();
-		if (wc)
-		{
-			wc->SetScreen(w, h);
-			wc->SetProjection(w, h);
-            wc->SetView(sm::vec2(0, 0), 1.0f);
-		}
-	}
 }
 
 void WxStageCanvas::OnDrawSprites() const
 {
 	ee0::RenderContext::Reset3D(true);
 
-	auto& wc = pt3::Blackboard::Instance()->GetWindowContext();
-	if (!wc) {
-		return;
-	}
-	wc->SetView(m_camera->GetViewMat());
+	//auto& wc = pt3::Blackboard::Instance()->GetWindowContext();
+	//if (!wc) {
+	//	return;
+	//}
+	//wc->SetView(m_camera->GetViewMat());
 
 	DrawBackground3D();
 	DrawForeground3D();
@@ -133,7 +107,7 @@ void WxStageCanvas::OnDrawSprites() const
 
 	auto edit_op = m_stage->GetImpl().GetEditOP();
 	if (edit_op) {
-		edit_op->OnDraw();
+		edit_op->OnDraw(m_dev, *GetRenderContext().ur_ctx);
 	}
 }
 
@@ -207,7 +181,7 @@ void WxStageCanvas::DrawBackgroundGrids(float tot_len, float grid_edge) const
         buf.push_back({ x, 0, -tot_len });
         buf.push_back({ x, 0, tot_len });
     }
-    pt3::RenderSystem::DrawLines3D(buf.size(), buf[0].xyz, col);
+    pt3::RenderSystem::DrawLines3D(m_dev, *GetRenderContext().ur_ctx, buf.size(), buf[0].xyz, col);
 }
 
 void WxStageCanvas::DrawBackgroundCross() const
@@ -229,7 +203,8 @@ void WxStageCanvas::DrawBackgroundCross() const
 	pt.AddCircleFilled(trans3d(sm::vec3(0, len, 0)), radius, 0xff00ff00);
 	pt.AddCircleFilled(trans3d(sm::vec3(0, 0, len)), radius, 0xffff0000);
 
-	pt2::RenderSystem::DrawPainter(pt);
+    ur2::RenderState rs;
+	pt2::RenderSystem::DrawPainter(m_dev, *GetRenderContext().ur_ctx, rs, pt);
 }
 
 void WxStageCanvas::DrawNodes(bool draw_mesh_border) const
@@ -266,20 +241,20 @@ void WxStageCanvas::DrawNodes(bool draw_mesh_border) const
     });
     ctx.AddVar(pt3::MaterialMgr::PositionUniforms::light_pos.name, pt0::RenderVariant(light_pos));
 
-    auto& wc = pt3::Blackboard::Instance()->GetWindowContext();
-    assert(wc);
-    ctx.AddVar(
-        pt3::MaterialMgr::PosTransUniforms::view.name,
-        pt0::RenderVariant(wc->GetViewMat())
-    );
-    ctx.AddVar(
-        pt3::MaterialMgr::PosTransUniforms::projection.name,
-        pt0::RenderVariant(wc->GetProjMat())
-    );
+    //auto& wc = pt3::Blackboard::Instance()->GetWindowContext();
+    //assert(wc);
+    //ctx.AddVar(
+    //    pt3::MaterialMgr::PosTransUniforms::view.name,
+    //    pt0::RenderVariant(wc->GetViewMat())
+    //);
+    //ctx.AddVar(
+    //    pt3::MaterialMgr::PosTransUniforms::projection.name,
+    //    pt0::RenderVariant(wc->GetProjMat())
+    //);
 
 	m_stage->Traverse([&](const ee0::GameObj& obj)->bool {
 #ifndef GAME_OBJ_ECS
-		n3::RenderSystem::Draw(*obj, params, ctx);
+		n3::RenderSystem::Draw(m_dev, *GetRenderContext().ur_ctx, *obj, params, ctx);
 #endif // GAME_OBJ_ECS
 		return true;
 	}, vars);
@@ -290,7 +265,7 @@ void WxStageCanvas::DrawSkybox() const
     if (m_skybox) {
         auto tex = m_skybox->GetTexture();
         if (tex) {
-            pt3::RenderSystem::DrawSkybox(*tex);
+            pt3::RenderSystem::DrawSkybox(m_dev, *GetRenderContext().ur_ctx, *tex);
         }
     }
 }

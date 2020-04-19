@@ -9,6 +9,7 @@
 #include <SM_Ray.h>
 #include <SM_RayIntersect.h>
 #include <tessellation/Painter.h>
+#include <unirender2/RenderState.h>
 #include <painting2/RenderSystem.h>
 #include <painting3/PerspCam.h>
 #ifndef GAME_OBJ_ECS
@@ -29,9 +30,9 @@ NodeSelectOP::NodeSelectOP(const std::shared_ptr<pt0::Camera>& camera,
 {
 }
 
-bool NodeSelectOP::OnDraw() const
+bool NodeSelectOP::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
 {
-	if (ee0::NodeSelectOP::OnDraw()) {
+	if (ee0::NodeSelectOP::OnDraw(dev, ctx)) {
 		return true;
 	}
 
@@ -63,7 +64,9 @@ bool NodeSelectOP::OnDraw() const
 		return true;
 	});
 
-	pt2::RenderSystem::DrawPainter(pt);
+    auto canvas = m_stage.GetImpl().GetCanvas();
+    ur2::RenderState rs;
+	pt2::RenderSystem::DrawPainter(canvas->GetRenderDevice(), *canvas->GetRenderContext().ur_ctx, rs, pt);
 
 	return false;
 }

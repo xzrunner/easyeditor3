@@ -12,13 +12,14 @@
 namespace ee3
 {
 
-SkeletonJointOP::SkeletonJointOP(const std::shared_ptr<pt0::Camera>& camera,
-	                           const pt3::Viewport& vp,
-	                           const ee0::SubjectMgrPtr& sub_mgr)
-	: SkeletonSelectOp(camera, vp, sub_mgr)
+SkeletonJointOP::SkeletonJointOP(const ur2::Device& dev, ur2::Context& ctx,
+                                 const std::shared_ptr<pt0::Camera>& camera,
+	                             const pt3::Viewport& vp,
+	                             const ee0::SubjectMgrPtr& sub_mgr)
+	: SkeletonSelectOp(dev, ctx, camera, vp, sub_mgr)
 {
-	InitRotateState();
-	InitTranslateState();
+	InitRotateState(dev, ctx);
+	InitTranslateState(dev, ctx);
 
 	ChangeEditOpState(m_rotate_state);
 }
@@ -100,15 +101,15 @@ bool SkeletonJointOP::OnActive()
 	return false;
 }
 
-bool SkeletonJointOP::OnDraw() const
+bool SkeletonJointOP::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
 {
-	if (ee0::EditOP::OnDraw()) {
+	if (ee0::EditOP::OnDraw(dev, ctx)) {
 		return true;
 	}
 
-	SkeletonSelectOp::OnDraw();
+	SkeletonSelectOp::OnDraw(dev, ctx);
 
-	if (m_op_state->OnDraw()) {
+	if (m_op_state->OnDraw(dev, ctx)) {
 		return true;
 	}
 
@@ -125,7 +126,7 @@ void SkeletonJointOP::ChangeToOpTranslate()
 	ChangeEditOpState(m_translate_state);
 }
 
-void SkeletonJointOP::InitRotateState()
+void SkeletonJointOP::InitRotateState(const ur2::Device& dev, ur2::Context& ctx)
 {
 	RotateAxisState::Callback cb;
 	cb.is_need_draw = [&]() {
@@ -155,10 +156,11 @@ void SkeletonJointOP::InitRotateState()
 	cfg.arc_radius = 0.5f;
 
 	m_rotate_state = std::make_shared<RotateAxisState>(
-		p_cam, m_vp, m_sub_mgr, cb, cfg);
+		dev, ctx, p_cam, m_vp, m_sub_mgr, cb, cfg
+    );
 }
 
-void SkeletonJointOP::InitTranslateState()
+void SkeletonJointOP::InitTranslateState(const ur2::Device& dev, ur2::Context& ctx)
 {
 	TranslateAxisState::Callback cb;
 	cb.is_need_draw = [&]() {
@@ -188,7 +190,8 @@ void SkeletonJointOP::InitTranslateState()
 	cfg.arc_radius = 0.5f;
 
 	m_translate_state = std::make_shared<TranslateAxisState>(
-		p_cam, m_vp, m_sub_mgr, cb, cfg);
+        dev, ctx, p_cam, m_vp, m_sub_mgr, cb, cfg
+    );
 }
 
 }

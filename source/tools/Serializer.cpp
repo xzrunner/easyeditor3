@@ -48,7 +48,7 @@ void Serializer::StoreToJson(const std::string& filepath, const ee0::WxStagePage
 	js::RapidJsonHelper::WriteToFile(filepath.c_str(), doc);
 }
 
-void Serializer::LoadFroimJson(const std::string& filepath, ee0::WxStagePage* stage)
+void Serializer::LoadFroimJson(const ur2::Device& dev, const std::string& filepath, ee0::WxStagePage* stage)
 {
 	rapidjson::Document doc;
 	js::RapidJsonHelper::ReadFromFile(filepath.c_str(), doc);
@@ -60,7 +60,7 @@ void Serializer::LoadFroimJson(const std::string& filepath, ee0::WxStagePage* st
 	{
 #ifndef GAME_OBJ_ECS
 		auto obj = std::make_shared<n0::SceneNode>();
-		ns::NodeSerializer::LoadFromJson(obj, dir, node_val);
+		ns::NodeSerializer::LoadFromJson(dev, obj, dir, node_val);
 
 		bool succ = ee0::MsgHelper::InsertNode(*stage->GetSubjectMgr(), obj);
 		GD_ASSERT(succ, "no MSG_SCENE_NODE_INSERT");

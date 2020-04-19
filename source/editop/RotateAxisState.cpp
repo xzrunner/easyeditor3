@@ -5,6 +5,7 @@
 
 #include <SM_Cube.h>
 #include <SM_Calc.h>
+#include <unirender2/RenderState.h>
 #include <painting2/OrthoCamera.h>
 #include <painting2/RenderSystem.h>
 #include <painting3/Viewport.h>
@@ -19,12 +20,15 @@
 namespace ee3
 {
 
-RotateAxisState::RotateAxisState(const std::shared_ptr<pt0::Camera>& camera,
+RotateAxisState::RotateAxisState(const ur2::Device& dev, ur2::Context& ctx,
+                                 const std::shared_ptr<pt0::Camera>& camera,
 	                             const pt3::Viewport& vp,
 	                             const ee0::SubjectMgrPtr& sub_mgr,
 	                             const Callback& cb,
 	                             const Config& cfg)
 	: ee0::EditOpState(camera)
+    , m_dev(dev)
+    , m_ctx(ctx)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 	, m_cb(cb)
@@ -81,7 +85,7 @@ bool RotateAxisState::OnActive(bool active)
 	return false;
 }
 
-bool RotateAxisState::OnDraw() const
+bool RotateAxisState::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
 {
 	if (!m_cb.is_need_draw()) {
 		return false;
@@ -124,7 +128,8 @@ bool RotateAxisState::OnDraw() const
 	// z, red
 	pt.AddCircleFilled(z, m_cfg.node_radius, 0xff0000ff);
 
-	pt2::RenderSystem::DrawPainter(pt);
+    ur2::RenderState rs;
+	pt2::RenderSystem::DrawPainter(m_dev, m_ctx, rs, pt);
 
 	return false;
 }

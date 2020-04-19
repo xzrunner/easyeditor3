@@ -70,8 +70,12 @@ NodeArrangeOP::NodeArrangeOP(const std::shared_ptr<pt0::Camera>& camera,
             return true;
         });
     };
+
+    auto canvas = m_stage.GetImpl().GetCanvas();
+    auto& dev = canvas->GetRenderDevice();
+    auto& ctx = *canvas->GetRenderContext().ur_ctx;
     m_ops[OP_NODE_TRANSLATE] = std::make_shared<TranslateAxisState>(
-        p_cam, vp, m_sub_mgr, cb, TranslateAxisState::Config(0.5f, 5));
+        dev, ctx, p_cam, vp, m_sub_mgr, cb, TranslateAxisState::Config(0.5f, 5));
     m_ops[OP_NODE_TRANSLATE]->SetPrevOpState(m_ops[OP_CAM_ZOOM]);
 
 	m_op_state = m_ops[OP_CAM_ROTATE];
@@ -244,13 +248,13 @@ bool NodeArrangeOP::OnMouseWheelRotation(int x, int y, int direction)
 	return m_op_state->OnMouseWheelRotation(x, y, direction);
 }
 
-bool NodeArrangeOP::OnDraw() const
+bool NodeArrangeOP::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
 {
-    if (NodeSelectOP::OnDraw()) {
+    if (NodeSelectOP::OnDraw(dev, ctx)) {
         return true;
     }
 
-    return m_ops[OP_NODE_TRANSLATE]->OnDraw();
+    return m_ops[OP_NODE_TRANSLATE]->OnDraw(dev, ctx);
 }
 
 void NodeArrangeOP::SetCamera(const std::shared_ptr<pt0::Camera>& camera)

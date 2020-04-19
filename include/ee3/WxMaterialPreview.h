@@ -12,7 +12,6 @@
 
 #include <wx/panel.h>
 
-namespace ur { class Shader; }
 namespace facade { class ImageCube; }
 
 namespace ee3
@@ -21,7 +20,8 @@ namespace ee3
 class WxMaterialPreview : public wxPanel
 {
 public:
-	WxMaterialPreview(wxWindow* parent, const sm::ivec2& size, const ee0::SubjectMgrPtr& sub_mgr,
+	WxMaterialPreview(const ur2::Device& dev, ur2::Context& ctx, wxWindow* parent,
+        const sm::ivec2& size, const ee0::SubjectMgrPtr& sub_mgr,
 		const ee0::RenderContext* rc, bool user_effect = false);
 
 	pt0::Material& GetMaterial() { return m_material; }
@@ -30,7 +30,7 @@ public:
 
 	auto& GetCanvas() const { return m_canvas; }
 
-    void SetShader(const std::shared_ptr<ur::Shader>& shader) {
+    void SetShader(const std::shared_ptr<ur2::ShaderProgram>& shader) {
         if (m_canvas) {
             m_canvas->SetShader(shader);
         }
@@ -46,19 +46,19 @@ private:
 	class Canvas : public ee0::WxStageCanvas, public ee0::Observer
 	{
 	public:
-		Canvas(WxMaterialPreview* panel, const ee0::RenderContext* rc, bool user_effect);
+		Canvas(const ur2::Device& dev, ur2::Context& ctx, WxMaterialPreview* panel,
+            const ee0::RenderContext* rc, bool user_effect);
 		virtual ~Canvas();
 
 		virtual void OnNotify(uint32_t msg, const ee0::VariantSet& variants) override;
 
 		const pt3::Viewport& GetViewport() const { return m_viewport; }
 
-        void SetShader(const std::shared_ptr<ur::Shader>& shader) {
+        void SetShader(const std::shared_ptr<ur2::ShaderProgram>& shader) {
             m_shader = shader;
         }
 
 	protected:
-		virtual void OnSize(int w, int h) override;
 		virtual void OnDrawSprites() const override;
 
     private:
@@ -66,17 +66,23 @@ private:
         void DrawMaterial() const;
 
 	private:
+        const ur2::Device& m_dev;
+        ur2::Context& m_ctx;
+
         WxMaterialPreview* m_panel;
 
 		bool m_user_effect;
 
 		pt3::Viewport m_viewport;
 
-        std::shared_ptr<ur::Shader> m_shader = nullptr;
+        std::shared_ptr<ur2::ShaderProgram> m_shader = nullptr;
 
 	}; // Canvas
 
 private:
+    const ur2::Device& m_dev;
+    ur2::Context& m_ctx;
+
 	ee0::SubjectMgrPtr      m_sub_mgr = nullptr;
 	ee0::EditPanelImpl      m_edit_impl;
 	std::unique_ptr<Canvas> m_canvas = nullptr;

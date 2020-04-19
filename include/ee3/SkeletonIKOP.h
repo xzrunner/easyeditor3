@@ -8,13 +8,16 @@
 #include <memory>
 #include <vector>
 
+namespace ur2 { class Device; class Context; }
+
 namespace ee3
 {
 
 class SkeletonIKOP : public SkeletonSelectOp
 {
 public:
-	SkeletonIKOP(const std::shared_ptr<pt0::Camera>& camera,
+	SkeletonIKOP(const ur2::Device& dev, ur2::Context& ctx,
+        const std::shared_ptr<pt0::Camera>& camera,
 		const pt3::Viewport& vp, const ee0::SubjectMgrPtr& sub_mgr);
 
 	virtual bool OnMouseLeftDown(int x, int y) override;
@@ -22,7 +25,7 @@ public:
 	virtual bool OnMouseMove(int x, int y) override;
 	virtual bool OnMouseDrag(int x, int y) override;
 
-	virtual bool OnDraw() const override;
+	virtual bool OnDraw(const ur2::Device& dev, ur2::Context& ctx) const override;
 
 private:
 	bool OneBone(int x, int y);
@@ -34,6 +37,9 @@ private:
 		const sm::vec3& base, const sm::vec3& from, const sm::vec3& to);
 
 private:
+    const ur2::Device& m_dev;
+    ur2::Context& m_ctx;
+
 	bool m_active = false;
 
 }; // SkeletonIKOP

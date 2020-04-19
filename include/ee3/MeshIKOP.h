@@ -21,7 +21,7 @@ public:
 	virtual bool OnMouseRightUp(int x, int y) override;
 	virtual bool OnMouseDrag(int x, int y) override;
 
-	virtual bool OnDraw() const;
+	virtual bool OnDraw(const ur2::Device& dev, ur2::Context& ctx) const;
 	virtual bool Update(float dt);
 
 	void SetModel(const std::shared_ptr<model::Model>& model);
@@ -31,7 +31,7 @@ private:
 
 	void QueryByPos(int x, int y);
 
-	void DrawGUI() const;
+	void DrawGUI(const ur2::Device& dev, ur2::Context& ctx) const;
 	void DebugDraw() const;
 
 private:

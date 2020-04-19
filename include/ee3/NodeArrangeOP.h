@@ -31,7 +31,7 @@ public:
 	virtual bool OnMouseDrag(int x, int y) override;
 	virtual bool OnMouseWheelRotation(int x, int y, int direction) override;
 
-    virtual bool OnDraw() const override;
+    virtual bool OnDraw(const ur2::Device& dev, ur2::Context& ctx) const override;
 
     virtual void SetCamera(const std::shared_ptr<pt0::Camera>& camera) override;
 

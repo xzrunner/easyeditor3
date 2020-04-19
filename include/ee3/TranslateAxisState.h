@@ -11,6 +11,7 @@
 
 #include <functional>
 
+namespace ur2 { class Device; class Context; }
 namespace pt2 { class OrthoCamera; }
 namespace pt3 { class Viewport; }
 
@@ -37,7 +38,8 @@ public:
 	};
 
 public:
-	TranslateAxisState(const std::shared_ptr<pt0::Camera>& camera, const pt3::Viewport& vp,
+	TranslateAxisState(const ur2::Device& dev, ur2::Context& ctx,
+        const std::shared_ptr<pt0::Camera>& camera, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr, const Callback& cb, const Config& cfg);
 
 	virtual bool OnMousePress(int x, int y) override;
@@ -45,7 +47,7 @@ public:
 	virtual bool OnMouseDrag(int x, int y) override;
 
 	virtual bool OnActive(bool active) override;
-	virtual bool OnDraw() const override;
+	virtual bool OnDraw(const ur2::Device& dev, ur2::Context& ctx) const override;
 
 private:
 	enum PointQueryType
@@ -78,6 +80,9 @@ private:
     float CalcCoordAxisLen() const;
 
 private:
+    const ur2::Device& m_dev;
+    ur2::Context& m_ctx;
+
 	const pt3::Viewport& m_vp;
 
 	ee0::SubjectMgrPtr m_sub_mgr;

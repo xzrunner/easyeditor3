@@ -6,6 +6,7 @@
 
 #include <string>
 
+namespace ur2 { class Device; }
 namespace ee0 { class WxStagePage; }
 
 namespace ee3
@@ -15,7 +16,7 @@ class Serializer
 {
 public:
 	static void StoreToJson(const std::string& filepath, const ee0::WxStagePage* stage);
-	static void LoadFroimJson(const std::string& filepath, ee0::WxStagePage* stage);
+	static void LoadFroimJson(const ur2::Device& dev, const std::string& filepath, ee0::WxStagePage* stage);
 
 private:
 	static rapidjson::Value StoreCamera(const std::shared_ptr<pt0::Camera>& camera, rapidjson::MemoryPoolAllocator<>& alloc);

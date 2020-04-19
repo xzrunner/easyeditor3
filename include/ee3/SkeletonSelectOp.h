@@ -5,6 +5,7 @@
 
 #include <memory>
 
+namespace ur2 { class Device; class Context; }
 namespace model { class ModelInstance; }
 namespace pt0 { class Camera; }
 namespace pt2 { class OrthoCamera; }
@@ -16,10 +17,11 @@ namespace ee3
 class SkeletonSelectOp : public ee0::EditOP
 {
 public:
-	SkeletonSelectOp(const std::shared_ptr<pt0::Camera>& camera,
+	SkeletonSelectOp(const ur2::Device& dev, ur2::Context& ctx,
+        const std::shared_ptr<pt0::Camera>& camera,
 		const pt3::Viewport& vp, const ee0::SubjectMgrPtr& sub_mgr);
 
-	virtual bool OnDraw() const override;
+	virtual bool OnDraw(const ur2::Device& dev, ur2::Context& ctx) const override;
 
 	void SetModel(model::ModelInstance* model) {
 		m_model = model;
@@ -36,6 +38,9 @@ protected:
 		int x, int y) const;
 
 protected:
+    const ur2::Device& m_dev;
+    ur2::Context& m_ctx;
+
 	const pt3::Viewport& m_vp;
 	ee0::SubjectMgrPtr   m_sub_mgr;
 

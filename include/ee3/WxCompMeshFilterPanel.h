@@ -6,14 +6,16 @@
 
 class wxChoice;
 
+namespace ur2 { class Device; class Context; }
+
 namespace ee3
 {
 
 class WxCompMeshFilterPanel : public ee0::WxCompPanel
 {
 public:
-    WxCompMeshFilterPanel(wxWindow* parent, const ee0::SubjectMgrPtr& sub_mgr,
-        const ee0::GameObj& obj);
+    WxCompMeshFilterPanel(const ur2::Device& dev, wxWindow* parent,
+        const ee0::SubjectMgrPtr& sub_mgr, const ee0::GameObj& obj);
 
     virtual void RefreshNodeComp() override;
 
@@ -32,6 +34,8 @@ private:
     };
 
 private:
+    const ur2::Device& m_dev;
+
     ee0::SubjectMgrPtr m_sub_mgr;
     ee0::GameObj       m_obj;
 

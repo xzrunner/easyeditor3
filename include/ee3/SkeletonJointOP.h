@@ -13,7 +13,8 @@ namespace ee3
 class SkeletonJointOP : public SkeletonSelectOp
 {
 public:
-	SkeletonJointOP(const std::shared_ptr<pt0::Camera>& camera,
+	SkeletonJointOP(const ur2::Device& dev, ur2::Context& ctx,
+        const std::shared_ptr<pt0::Camera>& camera,
 		const pt3::Viewport& vp, const ee0::SubjectMgrPtr& sub_mgr);
 
 	virtual bool OnMouseLeftDown(int x, int y) override;
@@ -22,16 +23,14 @@ public:
 	virtual bool OnMouseDrag(int x, int y) override;
 
 	virtual bool OnActive() override;
-	virtual bool OnDraw() const override;
-
-
+	virtual bool OnDraw(const ur2::Device& dev, ur2::Context& ctx) const override;
 
 	void ChangeToOpRotate();
 	void ChangeToOpTranslate();
 
 private:
-	void InitRotateState();
-	void InitTranslateState();
+	void InitRotateState(const ur2::Device& dev, ur2::Context& ctx);
+	void InitTranslateState(const ur2::Device& dev, ur2::Context& ctx);
 
 private:
 	ee0::EditOpStatePtr m_rotate_state    = nullptr;

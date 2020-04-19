@@ -7,6 +7,7 @@
 #include <model/SkeletalAnim.h>
 #include <model/Model.h>
 #include <model/ModelInstance.h>
+#include <unirender2/RenderState.h>
 #include <painting0/Camera.h>
 #include <painting2/OrthoCamera.h>
 #include <painting2/RenderSystem.h>
@@ -27,17 +28,20 @@ static const float NODE_QUERY_RADIUS = 10;
 namespace ee3
 {
 
-SkeletonSelectOp::SkeletonSelectOp(const std::shared_ptr<pt0::Camera>& camera,
+SkeletonSelectOp::SkeletonSelectOp(const ur2::Device& dev, ur2::Context& ctx,
+                                   const std::shared_ptr<pt0::Camera>& camera,
 	                               const pt3::Viewport& vp,
 	                               const ee0::SubjectMgrPtr& sub_mgr)
 	: ee0::EditOP(camera)
+    , m_dev(dev)
+    , m_ctx(ctx)
 	, m_vp(vp)
 	, m_sub_mgr(sub_mgr)
 	, m_cam2d(std::make_shared<pt2::OrthoCamera>())
 {
 }
 
-bool SkeletonSelectOp::OnDraw() const
+bool SkeletonSelectOp::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
 {
 	if (!m_model) {
 		return false;
@@ -97,7 +101,9 @@ bool SkeletonSelectOp::OnDraw() const
             pt.AddPolygonFilled(triangle.data(), triangle.size(), 0xffff00ff);
 		}
 	}
-	pt2::RenderSystem::DrawPainter(pt);
+
+    ur2::RenderState rs;
+	pt2::RenderSystem::DrawPainter(m_dev, m_ctx, rs, pt);
 
 	return false;
 }

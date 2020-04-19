@@ -20,7 +20,7 @@ public:
 	virtual bool OnMouseDrag(int x, int y) override;
 
 	virtual bool OnActive() override;
-	virtual bool OnDraw() const override;
+	virtual bool OnDraw(const ur2::Device& dev, ur2::Context& ctx) const override;
 
 private:
 	void InitTranslateState(ee0::WxStagePage& stage,

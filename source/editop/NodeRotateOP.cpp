@@ -2,6 +2,7 @@
 #include "ee3/RotateAxisState.h"
 
 #include <ee0/WxStagePage.h>
+#include <ee0/WxStageCanvas.h>
 #include <ee0/SubjectMgr.h>
 
 #include <node0/SceneNode.h>
@@ -63,13 +64,13 @@ bool NodeRotateOP::OnActive()
 	return m_rotate_state->OnActive(true);
 }
 
-bool NodeRotateOP::OnDraw() const
+bool NodeRotateOP::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
 {
-	if (EditOP::OnDraw()) {
+	if (EditOP::OnDraw(dev, ctx)) {
 		return true;
 	}
 
-	return m_rotate_state->OnDraw();
+	return m_rotate_state->OnDraw(dev, ctx);
 }
 
 void NodeRotateOP::InitRotateState(ee0::WxStagePage& stage,
@@ -126,8 +127,11 @@ void NodeRotateOP::InitRotateState(ee0::WxStagePage& stage,
 	assert(m_camera->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>());
 	auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
 
+    auto canvas = stage.GetImpl().GetCanvas();
+    auto& dev = canvas->GetRenderDevice();
+    auto& ctx = *canvas->GetRenderContext().ur_ctx;
 	m_rotate_state = std::make_shared<RotateAxisState>(
-		p_cam, vp, m_sub_mgr, cb, RotateAxisState::Config());
+        dev, ctx, p_cam, vp, m_sub_mgr, cb, RotateAxisState::Config());
 }
 
 }

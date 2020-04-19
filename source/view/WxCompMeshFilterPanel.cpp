@@ -24,10 +24,12 @@ std::vector<WxCompMeshFilterPanel::MeshInfo> WxCompMeshFilterPanel::m_meshes_inf
     { "KleinBottle", model::KleinBottle::TYPE_NAME },
 };
 
-WxCompMeshFilterPanel::WxCompMeshFilterPanel(wxWindow* parent, const ee0::SubjectMgrPtr& sub_mgr, const ee0::GameObj& obj)
+WxCompMeshFilterPanel::WxCompMeshFilterPanel(const ur2::Device& dev, wxWindow* parent,
+                                             const ee0::SubjectMgrPtr& sub_mgr, const ee0::GameObj& obj)
     : ee0::WxCompPanel(parent, "MeshFilter")
     , m_sub_mgr(sub_mgr)
     , m_obj(obj)
+    , m_dev(dev)
 {
     InitLayout();
     Expand();
@@ -66,7 +68,7 @@ void WxCompMeshFilterPanel::InitLayout()
 void WxCompMeshFilterPanel::OnMeshTypeChanged(wxCommandEvent& event)
 {
     auto& cmesh = m_obj->GetUniqueComp<n3::CompMeshFilter>();
-    cmesh.SetMesh(m_meshes_info[m_mesh_type->GetSelection()].name);
+    cmesh.SetMesh(m_dev, m_meshes_info[m_mesh_type->GetSelection()].name);
 
     // update aabb
     auto& caabb = m_obj->GetUniqueComp<n3::CompAABB>();
