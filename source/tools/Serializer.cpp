@@ -48,7 +48,7 @@ void Serializer::StoreToJson(const std::string& filepath, const ee0::WxStagePage
 	js::RapidJsonHelper::WriteToFile(filepath.c_str(), doc);
 }
 
-void Serializer::LoadFroimJson(const ur2::Device& dev, const std::string& filepath, ee0::WxStagePage* stage)
+void Serializer::LoadFroimJson(const ur::Device& dev, const std::string& filepath, ee0::WxStagePage* stage)
 {
 	rapidjson::Document doc;
 	js::RapidJsonHelper::ReadFromFile(filepath.c_str(), doc);

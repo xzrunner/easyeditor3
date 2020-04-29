@@ -18,7 +18,7 @@
 namespace ee3
 {
 
-WxMaterialPreview::WxMaterialPreview(const ur2::Device& dev, ur2::Context& ctx,
+WxMaterialPreview::WxMaterialPreview(const ur::Device& dev, ur::Context& ctx,
                                      wxWindow* parent, const sm::ivec2& size,
 	                                 const ee0::SubjectMgrPtr& sub_mgr,
 	                                 const ee0::RenderContext* rc, bool user_effect)
@@ -61,7 +61,7 @@ void WxMaterialPreview::OnSize(wxSizeEvent& event)
 // class WxMaterialPreview::Canvas
 //////////////////////////////////////////////////////////////////////////
 
-WxMaterialPreview::Canvas::Canvas(const ur2::Device& dev, ur2::Context& ctx, WxMaterialPreview* panel, const ee0::RenderContext* rc, bool user_effect)
+WxMaterialPreview::Canvas::Canvas(const ur::Device& dev, ur::Context& ctx, WxMaterialPreview* panel, const ee0::RenderContext* rc, bool user_effect)
 	: ee0::WxStageCanvas(dev, panel, panel->m_edit_impl, std::make_shared<pt3::PerspCam>(sm::vec3(0, 0, -1.5f), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0)), rc, nullptr, HAS_3D)
     , m_dev(dev)
     , m_ctx(ctx)

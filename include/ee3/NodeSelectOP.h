@@ -14,7 +14,7 @@ public:
 	NodeSelectOP(const std::shared_ptr<pt0::Camera>& camera,
 		ee0::WxStagePage& stage, const pt3::Viewport& vp);
 
-	virtual bool OnDraw(const ur2::Device& dev, ur2::Context& ctx) const override;
+	virtual bool OnDraw(const ur::Device& dev, ur::Context& ctx) const override;
 
 private:
 	virtual ee0::GameObj QueryByPos(int screen_x, int screen_y) const override;

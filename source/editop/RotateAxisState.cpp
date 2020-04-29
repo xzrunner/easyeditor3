@@ -5,7 +5,7 @@
 
 #include <SM_Cube.h>
 #include <SM_Calc.h>
-#include <unirender2/RenderState.h>
+#include <unirender/RenderState.h>
 #include <painting2/OrthoCamera.h>
 #include <painting2/RenderSystem.h>
 #include <painting3/Viewport.h>
@@ -20,7 +20,7 @@
 namespace ee3
 {
 
-RotateAxisState::RotateAxisState(const ur2::Device& dev, ur2::Context& ctx,
+RotateAxisState::RotateAxisState(const ur::Device& dev, ur::Context& ctx,
                                  const std::shared_ptr<pt0::Camera>& camera,
 	                             const pt3::Viewport& vp,
 	                             const ee0::SubjectMgrPtr& sub_mgr,
@@ -85,7 +85,7 @@ bool RotateAxisState::OnActive(bool active)
 	return false;
 }
 
-bool RotateAxisState::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
+bool RotateAxisState::OnDraw(const ur::Device& dev, ur::Context& ctx) const
 {
 	if (!m_cb.is_need_draw()) {
 		return false;
@@ -128,7 +128,7 @@ bool RotateAxisState::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
 	// z, red
 	pt.AddCircleFilled(z, m_cfg.node_radius, 0xff0000ff);
 
-    ur2::RenderState rs;
+    ur::RenderState rs;
 	pt2::RenderSystem::DrawPainter(m_dev, m_ctx, rs, pt);
 
 	return false;

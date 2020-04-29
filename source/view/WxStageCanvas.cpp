@@ -7,8 +7,8 @@
 #include <ee0/RenderContext.h>
 
 #include <tessellation/Painter.h>
-#include <unirender2/Context.h>
-#include <unirender2/RenderState.h>
+#include <unirender/Context.h>
+#include <unirender/RenderState.h>
 #include <painting2/Blackboard.h>
 #include <painting2/WindowContext.h>
 #include <painting2/RenderSystem.h>
@@ -40,7 +40,7 @@ const uint32_t MESSAGES[] =
 namespace ee3
 {
 
-WxStageCanvas::WxStageCanvas(const ur2::Device& dev, ee0::WxStagePage* stage, const ee0::RenderContext* rc,
+WxStageCanvas::WxStageCanvas(const ur::Device& dev, ee0::WxStagePage* stage, const ee0::RenderContext* rc,
 	                         const ee0::WindowContext* wc, bool has2d)
 	: ee0::WxStageCanvas(dev, stage, stage->GetImpl(), std::make_shared<pt3::PerspCam>(sm::vec3(0, 2, -2), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0)), rc, wc, HAS_2D * has2d | HAS_3D)
 	, m_stage(stage)
@@ -203,7 +203,7 @@ void WxStageCanvas::DrawBackgroundCross() const
 	pt.AddCircleFilled(trans3d(sm::vec3(0, len, 0)), radius, 0xff00ff00);
 	pt.AddCircleFilled(trans3d(sm::vec3(0, 0, len)), radius, 0xffff0000);
 
-    ur2::RenderState rs;
+    ur::RenderState rs;
 	pt2::RenderSystem::DrawPainter(m_dev, *GetRenderContext().ur_ctx, rs, pt);
 }
 

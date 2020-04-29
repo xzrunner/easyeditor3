@@ -10,7 +10,7 @@
 
 #include <functional>
 
-namespace ur2 { class Device; class Context; }
+namespace ur { class Device; class Context; }
 namespace pt2 { class OrthoCamera; }
 namespace pt3 { class Viewport; }
 
@@ -37,7 +37,7 @@ public:
 	};
 
 public:
-	RotateAxisState(const ur2::Device& dev, ur2::Context& ctx,
+	RotateAxisState(const ur::Device& dev, ur::Context& ctx,
         const std::shared_ptr<pt0::Camera>& camera, const pt3::Viewport& vp,
 		const ee0::SubjectMgrPtr& sub_mgr, const Callback& cb, const Config& cfg);
 
@@ -46,7 +46,7 @@ public:
 	virtual bool OnMouseDrag(int x, int y) override;
 
 	virtual bool OnActive(bool active) override;
-	virtual bool OnDraw(const ur2::Device& dev, ur2::Context& ctx) const override;
+	virtual bool OnDraw(const ur::Device& dev, ur::Context& ctx) const override;
 
 private:
 	enum PointQueryType
@@ -65,8 +65,8 @@ private:
     float CalcCoordAxisLen() const;
 
 private:
-    const ur2::Device& m_dev;
-    ur2::Context& m_ctx;
+    const ur::Device& m_dev;
+    ur::Context& m_ctx;
 
 	const pt3::Viewport& m_vp;
 

@@ -248,7 +248,7 @@ bool NodeArrangeOP::OnMouseWheelRotation(int x, int y, int direction)
 	return m_op_state->OnMouseWheelRotation(x, y, direction);
 }
 
-bool NodeArrangeOP::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
+bool NodeArrangeOP::OnDraw(const ur::Device& dev, ur::Context& ctx) const
 {
     if (NodeSelectOP::OnDraw(dev, ctx)) {
         return true;

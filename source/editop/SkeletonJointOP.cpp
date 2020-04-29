@@ -12,7 +12,7 @@
 namespace ee3
 {
 
-SkeletonJointOP::SkeletonJointOP(const ur2::Device& dev, ur2::Context& ctx,
+SkeletonJointOP::SkeletonJointOP(const ur::Device& dev, ur::Context& ctx,
                                  const std::shared_ptr<pt0::Camera>& camera,
 	                             const pt3::Viewport& vp,
 	                             const ee0::SubjectMgrPtr& sub_mgr)
@@ -101,7 +101,7 @@ bool SkeletonJointOP::OnActive()
 	return false;
 }
 
-bool SkeletonJointOP::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
+bool SkeletonJointOP::OnDraw(const ur::Device& dev, ur::Context& ctx) const
 {
 	if (ee0::EditOP::OnDraw(dev, ctx)) {
 		return true;
@@ -126,7 +126,7 @@ void SkeletonJointOP::ChangeToOpTranslate()
 	ChangeEditOpState(m_translate_state);
 }
 
-void SkeletonJointOP::InitRotateState(const ur2::Device& dev, ur2::Context& ctx)
+void SkeletonJointOP::InitRotateState(const ur::Device& dev, ur::Context& ctx)
 {
 	RotateAxisState::Callback cb;
 	cb.is_need_draw = [&]() {
@@ -160,7 +160,7 @@ void SkeletonJointOP::InitRotateState(const ur2::Device& dev, ur2::Context& ctx)
     );
 }
 
-void SkeletonJointOP::InitTranslateState(const ur2::Device& dev, ur2::Context& ctx)
+void SkeletonJointOP::InitTranslateState(const ur::Device& dev, ur::Context& ctx)
 {
 	TranslateAxisState::Callback cb;
 	cb.is_need_draw = [&]() {

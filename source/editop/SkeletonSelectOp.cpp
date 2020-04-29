@@ -7,7 +7,7 @@
 #include <model/SkeletalAnim.h>
 #include <model/Model.h>
 #include <model/ModelInstance.h>
-#include <unirender2/RenderState.h>
+#include <unirender/RenderState.h>
 #include <painting0/Camera.h>
 #include <painting2/OrthoCamera.h>
 #include <painting2/RenderSystem.h>
@@ -28,7 +28,7 @@ static const float NODE_QUERY_RADIUS = 10;
 namespace ee3
 {
 
-SkeletonSelectOp::SkeletonSelectOp(const ur2::Device& dev, ur2::Context& ctx,
+SkeletonSelectOp::SkeletonSelectOp(const ur::Device& dev, ur::Context& ctx,
                                    const std::shared_ptr<pt0::Camera>& camera,
 	                               const pt3::Viewport& vp,
 	                               const ee0::SubjectMgrPtr& sub_mgr)
@@ -41,7 +41,7 @@ SkeletonSelectOp::SkeletonSelectOp(const ur2::Device& dev, ur2::Context& ctx,
 {
 }
 
-bool SkeletonSelectOp::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
+bool SkeletonSelectOp::OnDraw(const ur::Device& dev, ur::Context& ctx) const
 {
 	if (!m_model) {
 		return false;
@@ -102,7 +102,7 @@ bool SkeletonSelectOp::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
 		}
 	}
 
-    ur2::RenderState rs;
+    ur::RenderState rs;
 	pt2::RenderSystem::DrawPainter(m_dev, m_ctx, rs, pt);
 
 	return false;

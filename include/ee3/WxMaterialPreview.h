@@ -20,7 +20,7 @@ namespace ee3
 class WxMaterialPreview : public wxPanel
 {
 public:
-	WxMaterialPreview(const ur2::Device& dev, ur2::Context& ctx, wxWindow* parent,
+	WxMaterialPreview(const ur::Device& dev, ur::Context& ctx, wxWindow* parent,
         const sm::ivec2& size, const ee0::SubjectMgrPtr& sub_mgr,
 		const ee0::RenderContext* rc, bool user_effect = false);
 
@@ -30,7 +30,7 @@ public:
 
 	auto& GetCanvas() const { return m_canvas; }
 
-    void SetShader(const std::shared_ptr<ur2::ShaderProgram>& shader) {
+    void SetShader(const std::shared_ptr<ur::ShaderProgram>& shader) {
         if (m_canvas) {
             m_canvas->SetShader(shader);
         }
@@ -46,7 +46,7 @@ private:
 	class Canvas : public ee0::WxStageCanvas, public ee0::Observer
 	{
 	public:
-		Canvas(const ur2::Device& dev, ur2::Context& ctx, WxMaterialPreview* panel,
+		Canvas(const ur::Device& dev, ur::Context& ctx, WxMaterialPreview* panel,
             const ee0::RenderContext* rc, bool user_effect);
 		virtual ~Canvas();
 
@@ -54,7 +54,7 @@ private:
 
 		const pt3::Viewport& GetViewport() const { return m_viewport; }
 
-        void SetShader(const std::shared_ptr<ur2::ShaderProgram>& shader) {
+        void SetShader(const std::shared_ptr<ur::ShaderProgram>& shader) {
             m_shader = shader;
         }
 
@@ -66,8 +66,8 @@ private:
         void DrawMaterial() const;
 
 	private:
-        const ur2::Device& m_dev;
-        ur2::Context& m_ctx;
+        const ur::Device& m_dev;
+        ur::Context& m_ctx;
 
         WxMaterialPreview* m_panel;
 
@@ -75,13 +75,13 @@ private:
 
 		pt3::Viewport m_viewport;
 
-        std::shared_ptr<ur2::ShaderProgram> m_shader = nullptr;
+        std::shared_ptr<ur::ShaderProgram> m_shader = nullptr;
 
 	}; // Canvas
 
 private:
-    const ur2::Device& m_dev;
-    ur2::Context& m_ctx;
+    const ur::Device& m_dev;
+    ur::Context& m_ctx;
 
 	ee0::SubjectMgrPtr      m_sub_mgr = nullptr;
 	ee0::EditPanelImpl      m_edit_impl;

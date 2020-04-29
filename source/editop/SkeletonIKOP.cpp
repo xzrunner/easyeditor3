@@ -11,7 +11,7 @@
 #include <model/ModelInstance.h>
 #include <model/AnimIK.h>
 #include <tessellation/Painter.h>
-#include <unirender2/RenderState.h>
+#include <unirender/RenderState.h>
 #include <painting2/OrthoCamera.h>
 #include <painting2/RenderSystem.h>
 #include <painting3/Viewport.h>
@@ -29,7 +29,7 @@ static const float NODE_QUERY_RADIUS = 10;
 
 #ifdef DEBUG_DRAW
 std::array<sm::vec3, 3> debug_pos;
-void DebugDraw(const ur2::Device& dev, ur2::Context& ctx,
+void DebugDraw(const ur::Device& dev, ur::Context& ctx,
                const pt0::Camera& cam, const pt3::Viewport& vp)
 {
 	tess::Painter pt;
@@ -46,7 +46,7 @@ void DebugDraw(const ur2::Device& dev, ur2::Context& ctx,
 	pt.AddCircleFilled(trans3d(debug_pos[1]), radius, 0xff00ff00);
 	pt.AddCircleFilled(trans3d(debug_pos[2]), radius, 0xffff0000);
 
-    ur2::RenderState rs;
+    ur::RenderState rs;
 	pt2::RenderSystem::DrawPainter(dev, ctx, rs, pt);
 }
 #endif // DEBUG_DRAW
@@ -56,7 +56,7 @@ void DebugDraw(const ur2::Device& dev, ur2::Context& ctx,
 namespace ee3
 {
 
-SkeletonIKOP::SkeletonIKOP(const ur2::Device& dev, ur2::Context& ctx,
+SkeletonIKOP::SkeletonIKOP(const ur::Device& dev, ur::Context& ctx,
                            const std::shared_ptr<pt0::Camera>& camera,
 	                       const pt3::Viewport& vp,
 	                       const ee0::SubjectMgrPtr& sub_mgr)
@@ -131,7 +131,7 @@ bool SkeletonIKOP::OnMouseDrag(int x, int y)
 	return false;
 }
 
-bool SkeletonIKOP::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
+bool SkeletonIKOP::OnDraw(const ur::Device& dev, ur::Context& ctx) const
 {
 	if (ee0::EditOP::OnDraw(dev, ctx)) {
 		return true;

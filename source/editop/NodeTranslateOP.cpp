@@ -64,7 +64,7 @@ bool NodeTranslateOP::OnActive()
 	return m_translate_state->OnActive(true);
 }
 
-bool NodeTranslateOP::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
+bool NodeTranslateOP::OnDraw(const ur::Device& dev, ur::Context& ctx) const
 {
 	if (EditOP::OnDraw(dev, ctx)) {
 		return true;

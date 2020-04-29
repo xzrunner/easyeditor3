@@ -25,7 +25,7 @@
 namespace ee3
 {
 
-WxStageDropTarget::WxStageDropTarget(const ur2::Device& dev, ECS_WORLD_PARAM
+WxStageDropTarget::WxStageDropTarget(const ur::Device& dev, ECS_WORLD_PARAM
                                      ee0::WxLibraryPanel* library, ee0::WxStagePage* stage)
 	: m_dev(dev)
     , m_library(library)

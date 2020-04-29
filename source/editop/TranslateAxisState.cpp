@@ -6,7 +6,7 @@
 #include <SM_Cube.h>
 #include <SM_Calc.h>
 #include <SM_RayIntersect.h>
-#include <unirender2/RenderState.h>
+#include <unirender/RenderState.h>
 #include <painting2/OrthoCamera.h>
 #include <painting2/RenderSystem.h>
 #include <painting3/Viewport.h>
@@ -28,7 +28,7 @@ const float TRANS_FACE_SIZE = 0.3f;
 namespace ee3
 {
 
-TranslateAxisState::TranslateAxisState(const ur2::Device& dev, ur2::Context& ctx,
+TranslateAxisState::TranslateAxisState(const ur::Device& dev, ur::Context& ctx,
                                        const std::shared_ptr<pt0::Camera>& camera,
 	                                   const pt3::Viewport& vp,
 	                                   const ee0::SubjectMgrPtr& sub_mgr,
@@ -107,7 +107,7 @@ bool TranslateAxisState::OnActive(bool active)
 	return false;
 }
 
-bool TranslateAxisState::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
+bool TranslateAxisState::OnDraw(const ur::Device& dev, ur::Context& ctx) const
 {
 	//if (m_selection.IsEmpty()) {
 	//	return false;
@@ -165,7 +165,7 @@ bool TranslateAxisState::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
     sm::vec2 poly_zx[4] = { cc2, cz2, czx2, cx2 };
     pt.AddPolygonFilled(poly_zx, 4, 0x8800ff00);
 
-    ur2::RenderState rs;
+    ur::RenderState rs;
 	pt2::RenderSystem::DrawPainter(m_dev, m_ctx, rs, pt);
 
 	return false;

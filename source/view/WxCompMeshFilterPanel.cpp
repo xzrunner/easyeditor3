@@ -24,7 +24,7 @@ std::vector<WxCompMeshFilterPanel::MeshInfo> WxCompMeshFilterPanel::m_meshes_inf
     { "KleinBottle", model::KleinBottle::TYPE_NAME },
 };
 
-WxCompMeshFilterPanel::WxCompMeshFilterPanel(const ur2::Device& dev, wxWindow* parent,
+WxCompMeshFilterPanel::WxCompMeshFilterPanel(const ur::Device& dev, wxWindow* parent,
                                              const ee0::SubjectMgrPtr& sub_mgr, const ee0::GameObj& obj)
     : ee0::WxCompPanel(parent, "MeshFilter")
     , m_sub_mgr(sub_mgr)

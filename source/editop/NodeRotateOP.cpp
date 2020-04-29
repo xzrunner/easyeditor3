@@ -64,7 +64,7 @@ bool NodeRotateOP::OnActive()
 	return m_rotate_state->OnActive(true);
 }
 
-bool NodeRotateOP::OnDraw(const ur2::Device& dev, ur2::Context& ctx) const
+bool NodeRotateOP::OnDraw(const ur::Device& dev, ur::Context& ctx) const
 {
 	if (EditOP::OnDraw(dev, ctx)) {
 		return true;
