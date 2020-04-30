@@ -8,7 +8,7 @@
 
 #include <tessellation/Painter.h>
 #include <unirender/Context.h>
-#include <unirender/RenderState.h>
+#include <unirender/Factory.h>
 #include <painting2/Blackboard.h>
 #include <painting2/WindowContext.h>
 #include <painting2/RenderSystem.h>
@@ -85,6 +85,11 @@ void WxStageCanvas::SetSkybox(const std::shared_ptr<facade::ImageCube>& skybox)
     if (m_skybox && m_skybox->GetTexture()) {
         rp::InitGIWithSkybox(m_dev, *GetRenderContext().ur_ctx, m_skybox->GetTexture(), m_gi);
     }
+}
+
+void WxStageCanvas::OnSize(int w, int h)
+{
+    m_viewport.SetSize(w, h);
 }
 
 void WxStageCanvas::OnDrawSprites() const
@@ -203,7 +208,7 @@ void WxStageCanvas::DrawBackgroundCross() const
 	pt.AddCircleFilled(trans3d(sm::vec3(0, len, 0)), radius, 0xff00ff00);
 	pt.AddCircleFilled(trans3d(sm::vec3(0, 0, len)), radius, 0xffff0000);
 
-    ur::RenderState rs;
+    auto rs = ur::DefaultRenderState2D();
 	pt2::RenderSystem::DrawPainter(m_dev, *GetRenderContext().ur_ctx, rs, pt);
 }
 
