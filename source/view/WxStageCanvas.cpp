@@ -1,30 +1,26 @@
 #include "ee3/WxStageCanvas.h"
 
-#include <ee0/color_config.h>
 #include <ee0/EditOP.h>
 #include <ee0/WxStagePage.h>
 #include <ee0/SubjectMgr.h>
-#include <ee0/RenderContext.h>
+
+#undef DrawState
 
 #include <tessellation/Painter.h>
-#include <unirender/Context.h>
 #include <unirender/Factory.h>
-#include <painting2/Blackboard.h>
-#include <painting2/WindowContext.h>
+#include <unirender/DrawState.h>
 #include <painting2/RenderSystem.h>
-#include <painting3/Blackboard.h>
 #include <painting3/WindowContext.h>
 #include <painting3/PerspCam.h>
 #include <painting3/MaterialMgr.h>
 #include <painting3/PointLight.h>
-#include <painting3/RenderSystem.h>
 #include <renderpipeline/Utility.h>
-#ifndef GAME_OBJ_ECS
+//#ifndef GAME_OBJ_ECS
 #include <node0/SceneNode.h>
 #include <node3/RenderSystem.h>
 #include <node3/CompLight.h>
 #include <node3/CompTransform.h>
-#endif // GAME_OBJ_ECS
+//#endif // GAME_OBJ_ECS
 #include <facade/ImageCube.h>
 
 namespace
@@ -257,9 +253,11 @@ void WxStageCanvas::DrawNodes(bool draw_mesh_border) const
     //    pt0::RenderVariant(wc->GetProjMat())
     //);
 
+    ur::DrawState ds;
+
 	m_stage->Traverse([&](const ee0::GameObj& obj)->bool {
 #ifndef GAME_OBJ_ECS
-		n3::RenderSystem::Draw(m_dev, *GetRenderContext().ur_ctx, *obj, params, ctx);
+		n3::RenderSystem::Draw(m_dev, *GetRenderContext().ur_ctx, ds, *obj, params, ctx);
 #endif // GAME_OBJ_ECS
 		return true;
 	}, vars);

@@ -3,6 +3,7 @@
 #include <ee0/RenderContext.h>
 #include <ee3/WorldTravelOP.h>
 
+#include <unirender/DrawState.h>
 #include <painting3/RenderSystem.h>
 #include <painting3/PerspCam.h>
 #include <painting3/Blackboard.h>
@@ -151,8 +152,10 @@ void WxMaterialPreview::Canvas::DrawMaterial() const
         pt0::RenderVariant(sm::mat3(normal_mat))
     );
 
+    ur::DrawState ds;
+    ds.program = m_shader;
 	pt3::RenderSystem::Instance()->DrawMaterial(
-        m_dev, m_ctx, m_panel->m_material, params, ctx, m_shader
+        m_dev, m_ctx, ds, m_panel->m_material, params, ctx
     );
 }
 
