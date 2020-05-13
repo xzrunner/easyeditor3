@@ -45,6 +45,8 @@ WxStageCanvas::WxStageCanvas(const ur::Device& dev, ee0::WxStagePage* stage, con
 	for (auto& msg : MESSAGES) {
 		stage->GetSubjectMgr()->RegisterObserver(msg, this);
 	}
+
+    std::static_pointer_cast<pt3::PerspCam>(m_camera)->SetWndCtx(GetWidnowContext().wc3);
 }
 
 WxStageCanvas::~WxStageCanvas()
