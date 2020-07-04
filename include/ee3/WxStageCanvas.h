@@ -22,6 +22,8 @@ public:
 		const ee0::WindowContext* wc = nullptr, bool has2d = false);
 	virtual ~WxStageCanvas();
 
+	virtual void ResetCamera() override;
+
 	virtual void OnNotify(uint32_t msg, const ee0::VariantSet& variants) override;
 
 	const pt3::Viewport& GetViewport() const { return m_viewport; }

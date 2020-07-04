@@ -31,6 +31,10 @@ const uint32_t MESSAGES[] =
 	ee0::MSG_SET_CANVAS_DIRTY,
 };
 
+sm::vec3 DEFAULT_CAM_POS(0, 2, -2);
+sm::vec3 DEFAULT_CAM_TARGET(0, 0, 0);
+sm::vec3 DEFAULT_CAM_UP(0, 1, 0);
+
 }
 
 namespace ee3
@@ -38,7 +42,7 @@ namespace ee3
 
 WxStageCanvas::WxStageCanvas(const ur::Device& dev, ee0::WxStagePage* stage, const ee0::RenderContext* rc,
 	                         const ee0::WindowContext* wc, bool has2d)
-	: ee0::WxStageCanvas(dev, stage, stage->GetImpl(), std::make_shared<pt3::PerspCam>(sm::vec3(0, 2, -2), sm::vec3(0, 0, 0), sm::vec3(0, 1, 0)), rc, wc, HAS_2D * has2d | HAS_3D)
+	: ee0::WxStageCanvas(dev, stage, stage->GetImpl(), std::make_shared<pt3::PerspCam>(DEFAULT_CAM_POS, DEFAULT_CAM_TARGET, DEFAULT_CAM_UP), rc, wc, HAS_2D * has2d | HAS_3D)
 	, m_stage(stage)
 	, m_has2d(has2d)
 {
@@ -54,6 +58,14 @@ WxStageCanvas::~WxStageCanvas()
 	for (auto& msg : MESSAGES) {
 		m_stage->GetSubjectMgr()->UnregisterObserver(msg, this);
 	}
+}
+
+void WxStageCanvas::ResetCamera()
+{
+    auto cam = GetCamera();
+    assert(cam->TypeID() == pt0::GetCamTypeID<pt3::PerspCam>());
+    auto p_cam = std::dynamic_pointer_cast<pt3::PerspCam>(m_camera);
+    p_cam->SetPosAndAngle(DEFAULT_CAM_POS, DEFAULT_CAM_TARGET, DEFAULT_CAM_UP);
 }
 
 void WxStageCanvas::OnNotify(uint32_t msg, const ee0::VariantSet& variants)
