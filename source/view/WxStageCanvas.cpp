@@ -9,6 +9,8 @@
 #include <tessellation/Painter.h>
 #include <unirender/Factory.h>
 #include <unirender/DrawState.h>
+#include <unirender/ClearState.h>
+#include <unirender/Context.h>
 #include <painting2/RenderSystem.h>
 #include <painting3/WindowContext.h>
 #include <painting3/PerspCam.h>
@@ -104,6 +106,11 @@ void WxStageCanvas::OnSize(int w, int h)
 
 void WxStageCanvas::OnDrawSprites() const
 {
+    ur::ClearState clear;
+    clear.buffers = ur::ClearBuffers::ColorAndDepthBuffer;
+    clear.color.FromRGBA(m_bg_color);
+    GetRenderContext().ur_ctx->Clear(clear);
+
 	ee0::RenderContext::Reset3D(true);
 
 	//auto& wc = pt3::Blackboard::Instance()->GetWindowContext();
